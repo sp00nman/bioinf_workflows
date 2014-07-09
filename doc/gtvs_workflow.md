@@ -16,6 +16,8 @@ Set environment variables. [Reference genome hg19 ](http://www.ncbi.nlm.nih.gov/
 
 ```bash
 export $REFERENCE="/path/to/reference"
+export $EXONS="/path/to/exons"
+export $INTRONS="/path/to/introns"
 export $SCREEN="name_of_your_screen"
 export $NGS_PICARD="/path/to/picard"
 ```
