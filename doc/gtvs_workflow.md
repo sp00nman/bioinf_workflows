@@ -18,7 +18,7 @@ export $REFERENCE="/path/to/reference"
 export $SCREEN="name_of_your_screen"
 ```
 
-Align data to reference genome
+Align data to reference genome hg19. Parameter ```--sensitive``` equals to ```-D 15 -R 2 -L 22 -i S,1,1.15``` 
 
 ```bash
 bowtie2 \
