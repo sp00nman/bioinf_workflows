@@ -1,14 +1,25 @@
 Analysis workflow
 =================
 
-1. Source Material
-2. 
 
 ### Software requirements
  
 + [Picard] (http://picard.sourceforge.net/)
 + [Bowtie2] (http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
 + [Bedtools] (https://github.com/arq5x/bedtools2)
+
+
+### Workflow
+
+```bash
+bowtie2 \
+-p 2 \
+--end-to-end \
+--sensitive \
+-x $REFERENCE \
+-U ${SCREEN}.fastq \
+-S ${SCREEN}.sam
+```
 
 
 ### Parameter description
@@ -33,4 +44,7 @@ Analysis workflow
 
 ### Summary table
 [goole spreadsheet with results of 41 screens](https://docs.google.com/spreadsheets/d/1XcimT1Aj45mjhUPsX4qHMlbFcj62h4InKtYPB6O1S4U/edit#gid=0)
+
+### Plotting your data
+
 
