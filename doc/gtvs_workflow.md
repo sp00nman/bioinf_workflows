@@ -110,43 +110,42 @@ Assign insetions to groups
 
 ```bash
  awk '
-        (($5==16 && $26=="+") || \
-        ($5==0 && $26=="-"))
-        ' ${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.bed \
-        >${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.antisense.bed
+(($5==16 && $26=="+") || \
+($5==0 && $26=="-"))
+' ${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.bed \
+>${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.antisense.bed
 
-        awk '
-        (($5==16 && $26=="-") || \
-        ($5==0 && $26=="+"))
-        ' ${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.bed \
-        >${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.sense.bed
+awk '
+(($5==16 && $26=="-") || \
+($5==0 && $26=="+"))
+' ${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.bed \
+>${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.sense.bed
 
-        cat  ${SCREEN}.filt.header.sorted.rem_dupl.bp.exon.bed \
-        ${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.sense.bed \
-        >${SCREEN}.correct.insertions.bed
+cat  ${SCREEN}.filt.header.sorted.rem_dupl.bp.exon.bed \
+${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.sense.bed \
+>${SCREEN}.correct.insertions.bed
 ```
 
 Count insertions.
 
 ```bash
 cut -f28 ${SCREEN}.correct.insertions.bed | sort | uniq -c | \
-        sort -k1 -r -n | awk '{print $1"\t"$2}' >${SCREEN}.correct.insertions.count
-s.bed
+sort -k1 -r -n | awk '{print $1"\t"$2}' >${SCREEN}.correct.insertions.counts.bed
 
-        cut -f28 ${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.antisense.bed | \
-        sort | uniq -c | sort -k1 -r -n | awk '{print $1"\t"$2}' \
-        >${SCREEN}.incorrect.insertions.counts.bed
+cut -f28 ${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.antisense.bed | \
+sort | uniq -c | sort -k1 -r -n | awk '{print $1"\t"$2}' \
+>${SCREEN}.incorrect.insertions.counts.bed
 
-        #merge sense/antisense
-        awk -F"\t" '
-        NR==FNR {f1[$2]=$0; next}
-        ($2 in f1) \
-        {print $0"\t"f1[$2]} \
-        ' ${SCREEN}.correct.insertions.counts.bed \
-        ${SCREEN}.incorrect.insertions.counts.bed | \
-        awk -F"\t" '
-        BEGIN{OFS="\t"}
-        {ratio=$3/$1} {print $2,$1,$3,ratio}' >${SCREEN}.counts.t
+awk -F"\t" '
+NR==FNR {f1[$2]=$0; next}
+($2 in f1) \
+{print $0"\t"f1[$2]} \
+' ${SCREEN}.correct.insertions.counts.bed \
+${SCREEN}.incorrect.insertions.counts.bed | \
+awk -F"\t" '
+BEGIN{OFS="\t"}
+{ratio=$3/$1} {print $2,$1,$3,ratio}' >${SCREEN}.counts.table.txt
+
 ```
 
 ### Parameter description
