@@ -13,7 +13,7 @@ Analysis workflow
 
 ### Parameter description
 | metrics                 | description          |
-| ----------------------- |----------------------|
+| :----------------------- |----------------------|
 | TOTAL_NUMBER_READS      | total amount of sequencing reads |
 | UNMAPPED_READS          | number of reads that map 0 times     |
 | UNMAPPED_READS_PCT      | percentage of unmapped reads    |
