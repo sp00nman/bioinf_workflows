@@ -7,8 +7,7 @@ Collection of bioinformatics workflows to analyze next-generation sequening data
 Table of contents
 =================
 
-1. First ordered list item
+1. [Genetrap virus screen workflow](doc/gtvs_workflow.md)
+1. ⋅⋅*reftofile
 2. Another item
-⋅⋅* Unordered sub-list. 
 
-[I'm a relative reference to a repository file](../blob/master/LICENSE)
