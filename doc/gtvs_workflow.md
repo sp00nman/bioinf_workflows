@@ -180,7 +180,8 @@ BEGIN{OFS="\t"}
 | TOP10_GENES | number of top 10 genes |
 
 ### Some example results
-[DUPLICATION_RATE vs UNIQUE_READS](https://github.com/sp00nman/bionf_workflows/blob/master/img/img1.png)
+![DUPLICATION_RATE vs UNIQUE_READS](https://github.com/sp00nman/bionf_workflows/blob/master/img/img1.png)
+![DUPLICATION_RATE vs UNIQUE_READS](https://github.com/sp00nman/bionf_workflows/blob/master/img/img2.png)
 
 
 ### Summary table
