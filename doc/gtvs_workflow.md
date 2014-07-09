@@ -160,6 +160,14 @@ BEGIN{OFS="\t"}
 
 ```
 
+(Optional) Fisher test
+
+| Gene A                 | SCREEN         | CONTROL |
+| :--------------------- |:---------------|:--------|
+| NUMBER OF INSERTIONS   | 24             | 48      |
+| NO INSERTIONS          | 1303           | 1730    |
+
+
 ### Parameter description
 | metrics                 | description          |
 | :----------------------- |:----------------------|
@@ -178,6 +186,15 @@ BEGIN{OFS="\t"}
 | NUMBER_INSERTIONS_INTRONIC_ANTISENSE | number of insertions that are within introns and antisense |
 | NUMBER_INSERTIONS_EXONIC | number of insertions that are within exons |
 | TOP10_GENES | number of top 10 genes |
+
+### Some example results
+
+![TOTAL_NUMBER_READS vs UNIQUE_READS](https://github.com/sp00nman/bionf_workflows/blob/master/img/img2.png?raw=true "TOTAL_NUMBER_READS vs UNIQUE_READS")
+
+![DUPLICATION_RATE vs UNIQUE_READS](https://github.com/sp00nman/bionf_workflows/blob/master/img/img1.png?raw=true "DUPLICATION_RATE vs UNIQUE_READS")
+
+
+
 
 
 ### Summary table
