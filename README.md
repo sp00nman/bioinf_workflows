@@ -8,6 +8,7 @@ Table of contents
 =================
 
 1. [Genetrap virus screen workflow](doc/gtvs_workflow.md)
-..* test
+⋅⋅* Unordered sub-list. 
+
 2. Another item
 
