@@ -45,6 +45,9 @@ Filter for reads that
 2. have multiple alignments (XS:i)
 3. have a mapping quality MAPQ higher than 20
 
++ [Description of SAM format](http://samtools.github.io/hts-specs/SAMv1.pdf)
++ [Samflags explained](http://picard.sourceforge.net/explain-flags.html)
+
 ```bash
 samtools view -H -S ${SCREEN}.sam >${SCREEN}.filt.header.sam
 awk -F"\t" '($0 ~ /^@/) {NR--; next}; ($2!=4 && ($13 !~/XS:i/) && $5>20)' ${SCREEN}.sam \
