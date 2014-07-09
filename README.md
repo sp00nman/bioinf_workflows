@@ -8,6 +8,6 @@ Table of contents
 =================
 
 1. [Genetrap virus screen workflow](doc/gtvs_workflow.md)
-1. ⋅⋅*reftofile
+⋅⋅*reftofile
 2. Another item
 
