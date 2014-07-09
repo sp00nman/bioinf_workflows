@@ -10,7 +10,7 @@ Analysis workflow
 + [Samtools] (http://samtools.sourceforge.net/)
 
 
-### Workflow
+### Step-by-step workflow
 
 Set environment variables. [Reference genome hg19 ](http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/human/)
 
