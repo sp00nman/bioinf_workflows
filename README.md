@@ -8,5 +8,5 @@ Table of contents
 =================
 
 1. [Genetrap virus screen workflow](doc/gtvs_workflow.md)
-2. Another item
+2. [How to submit to the cluster]()
 
