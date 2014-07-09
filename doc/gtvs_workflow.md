@@ -160,6 +160,13 @@ BEGIN{OFS="\t"}
 
 ```
 
+(Optional) Fisher test
+| Gene A                | SCREEN         | CONTROL |
+| :----------------------- |:----------------------|:------|
+| NUMBER OF INSERTIONS    | 24 | 48 |
+| NO INSERTIONS | 1303 | 1730 |
+
+
 ### Parameter description
 | metrics                 | description          |
 | :----------------------- |:----------------------|
