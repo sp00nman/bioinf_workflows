@@ -29,3 +29,8 @@ Analysis workflow
 | NUMBER_INSERTIONS_INTRONIC_ANTISENSE | number of insertions that are within introns and antisense |
 | NUMBER_INSERTIONS_EXONIC | number of insertions that are within exons |
 | TOP10_GENES | number of top 10 genes |
+
+
+### Summary table
+[goole spreadsheet with results of 41 screens](https://docs.google.com/spreadsheets/d/1XcimT1Aj45mjhUPsX4qHMlbFcj62h4InKtYPB6O1S4U/edit#gid=0)
+
