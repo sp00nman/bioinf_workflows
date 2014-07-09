@@ -179,6 +179,9 @@ BEGIN{OFS="\t"}
 | NUMBER_INSERTIONS_EXONIC | number of insertions that are within exons |
 | TOP10_GENES | number of top 10 genes |
 
+### Some example results
+![image](https://github.com/sp00nman/bionf_workflows/blob/master/img/img1.png)
+
 
 ### Summary table
 [google spreadsheet with results of 41 screens](https://docs.google.com/spreadsheets/d/1XcimT1Aj45mjhUPsX4qHMlbFcj62h4InKtYPB6O1S4U/edit#gid=0)
