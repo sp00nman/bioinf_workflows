@@ -19,7 +19,12 @@ export $REFERENCE="/path/to/reference"
 export $EXONS="/path/to/exons"
 export $INTRONS="/path/to/introns"
 export $SCREEN="name_of_your_screen"
+
+export $BOWTIE2="/path/to/bowtie"
 export $NGS_PICARD="/path/to/picard"
+export $INTERSECTBED="path/to/bedtools"
+export $SAMTOOLS="path/to/samtools"
+
 ```
 
 Align data to reference genome hg19. Parameter ```--sensitive``` equals to ```-D 15 -R 2 -L 22 -i S,1,1.15``` 
