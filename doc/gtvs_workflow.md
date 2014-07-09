@@ -196,6 +196,7 @@ BEGIN{OFS="\t"}
 
 ### Upload your data to ensemble 
 
+![NF1 insertions](https://github.com/sp00nman/bionf_workflows/blob/master/img/NF1_2.png?raw=true)
 
 
 ### Summary table
