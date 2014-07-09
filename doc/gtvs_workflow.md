@@ -11,7 +11,7 @@ Analysis workflow
 
 ### Workflow
 
-Set environment variables. [hg19 reference genome](http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/human/)
+Set environment variables. [Reference genome hg19 ](http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/human/)
 
 ```bash
 export $REFERENCE="/path/to/reference"
