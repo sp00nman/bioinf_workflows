@@ -6,9 +6,9 @@ Analysis workflow
 
 ### Software requirements
  
-+ [picard] (http://picard.sourceforge.net/)
-+ [bowtie2] (http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
-+ [bedtools] (https://github.com/arq5x/bedtools2)
++ [Picard] (http://picard.sourceforge.net/)
++ [Bowtie2] (http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
++ [Bedtools] (https://github.com/arq5x/bedtools2)
 
 
 ### Parameter description
