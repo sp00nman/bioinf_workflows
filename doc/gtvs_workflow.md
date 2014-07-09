@@ -11,6 +11,12 @@ Analysis workflow
 
 ### Workflow
 
+Set environment variables.
+export $REFERENCE="/path/to/reference"
+export $SCREEN="name_of_your_screen"
+
+Align data to 
+
 ```bash
 bowtie2 \
 -p 2 \
