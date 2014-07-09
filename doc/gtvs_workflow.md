@@ -11,11 +11,14 @@ Analysis workflow
 
 ### Workflow
 
-Set environment variables.
+Set environment variables. [hg19 reference genome](http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/human/)
+
+```bash
 export $REFERENCE="/path/to/reference"
 export $SCREEN="name_of_your_screen"
+```
 
-Align data to 
+Align data to reference genome
 
 ```bash
 bowtie2 \
