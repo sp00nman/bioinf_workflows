@@ -194,6 +194,7 @@ BEGIN{OFS="\t"}
 ![DUPLICATION_RATE vs UNIQUE_READS](https://github.com/sp00nman/bionf_workflows/blob/master/img/img1.png?raw=true "DUPLICATION_RATE vs UNIQUE_READS")
 
 
+### Upload your data to ensemble 
 
 
 
