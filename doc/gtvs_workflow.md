@@ -44,8 +44,8 @@ Filter for reads that
 1. don't have a reported alignment (column 2 equals for 4 )
 2. have multiple alignments (XS:i)
 3. have a mapping quality MAPQ higher than 20
-4. test
 
+What are FLAGS? 
 + [Description of SAM format](http://samtools.github.io/hts-specs/SAMv1.pdf)
 + [Samflags explained](http://picard.sourceforge.net/explain-flags.html)
 
