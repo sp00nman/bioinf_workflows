@@ -107,29 +107,29 @@ cut -f1-21 >${SCREEN}.filt.header.sorted.rem_dupl.bp.bed
 Annotate insertions. 
 
 ```bash
-intersectBed \
+$INTERSECTBED \
 -a ${SCREEN}.filt.header.sorted.rem_dupl.bp.bed \
 -b ${EXONS} \
 -wo >${SCREEN}.filt.header.sorted.rem_dupl.bp.exon.bed
 
- intersectBed \
+$INTERSECTBED \
 -a ${SCREEN}.filt.header.sorted.rem_dupl.bp.bed \
 -b ${INTRONS} \
 -wo >${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.bed
 ```
 
-Annotate overlapping insertions.
+Annotate insertions withing overlapping genes
 
 ![overlapping](https://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png?raw=true)
 
-
-Group insertions as silent or disruptive.
-
-![grouping](https://github.com/sp00nman/bionf_workflows/blob/master/img/grouping.png?raw=true )
+| Gene (strand)       | insertions (chr[n]:position |  strand  | intronic/exonic   | group     |
+| :------------------ |:----------------------------|:------- -|:------------------|-----------|
+| GENE A (+)          | chr1:4,389,753              | +        | intronic          | disruptive  |
+| GENE B (-)          | chr1:4,389,753              | +        | intronic          | silent     |
 
 
 ```bash
- awk '
+awk '
 (($5==16 && $26=="+") || \
 ($5==0 && $26=="-"))
 ' ${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.bed \
@@ -145,6 +145,19 @@ cat  ${SCREEN}.filt.header.sorted.rem_dupl.bp.exon.bed \
 ${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.sense.bed \
 >${SCREEN}.disruptive.insertions.bed
 ```
+
+Group insertions as silent or disruptive.
+
+![grouping](https://github.com/sp00nman/bionf_workflows/blob/master/img/grouping.png?raw=true )
+
+| Gene A (chr[n]:position)   | strand(*)  | intronic/exonic   | group         |
+| :------------------------- |:--------|:------------------|:--------------|
+| chr1:4,389,753             | +       | intronic          | disruptive    |
+| chr1:4,399,100             | -       | intronic          | silent        |
+| chr1:4,443,563             | +       | exonic            | disruptive    |
+| chr1:4,431,342             | -       | exonic            | disruptive    |
+
+(*) strand refers to how the insertions was mapped to the genome.
 
 Count insertions.
 
