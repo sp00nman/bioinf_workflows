@@ -41,11 +41,12 @@ bowtie2 \
 
 Filter for reads that
 
-1. don't have a reported alignment (column 2 equals for 4 )
+1. don't have a reported alignment (SAM flag = 4 )
 2. have multiple alignments (XS:i)
 3. have a mapping quality MAPQ higher than 20
 
-What are FLAGS? 
+SAM format and SAM flags explained.
+
 + [Description of SAM format](http://samtools.github.io/hts-specs/SAMv1.pdf)
 + [Samflags explained](http://picard.sourceforge.net/explain-flags.html)
 
@@ -115,10 +116,15 @@ intersectBed \
 -a ${SCREEN}.filt.header.sorted.rem_dupl.bp.bed \
 -b ${INTRONS} \
 -wo >${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.bed
-
 ```
 
-Assign insetions to groups
+Annotate overlapping insertions.
+![silent/disruptive](https://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png?raw=true "silent vs disruptive"]
+
+Group insertions as silent or disruptive.
+
+![silent/disruptive](https://github.com/sp00nman/bionf_workflows/blob/master/img/grouping.png?raw=true "silent vs disruptive"]
+
 
 ```bash
  awk '
@@ -135,25 +141,25 @@ awk '
 
 cat  ${SCREEN}.filt.header.sorted.rem_dupl.bp.exon.bed \
 ${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.sense.bed \
->${SCREEN}.correct.insertions.bed
+>${SCREEN}.disruptive.insertions.bed
 ```
 
 Count insertions.
 
 ```bash
 cut -f28 ${SCREEN}.correct.insertions.bed | sort | uniq -c | \
-sort -k1 -r -n | awk '{print $1"\t"$2}' >${SCREEN}.correct.insertions.counts.bed
+sort -k1 -r -n | awk '{print $1"\t"$2}' >${SCREEN}.disruptive.insertions.counts.bed
 
 cut -f28 ${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.antisense.bed | \
 sort | uniq -c | sort -k1 -r -n | awk '{print $1"\t"$2}' \
->${SCREEN}.incorrect.insertions.counts.bed
+>${SCREEN}.silent.insertions.counts.bed
 
 awk -F"\t" '
 NR==FNR {f1[$2]=$0; next}
 ($2 in f1) \
 {print $0"\t"f1[$2]} \
-' ${SCREEN}.correct.insertions.counts.bed \
-${SCREEN}.incorrect.insertions.counts.bed | \
+' ${SCREEN}.disruptive.insertions.counts.bed \
+${SCREEN}.silent.insertions.counts.bed | \
 awk -F"\t" '
 BEGIN{OFS="\t"}
 {ratio=$3/$1} {print $2,$1,$3,ratio}' >${SCREEN}.counts.table.txt
