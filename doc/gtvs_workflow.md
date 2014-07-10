@@ -120,7 +120,7 @@ intersectBed \
 
 Annotate overlapping insertions.
 
-![silent vs disruptive](https://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png?raw=true "silent vs disruptive"]
+![silent vs disruptive](https://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png?raw=true =100x]
 
 Group insertions as silent or disruptive.
 
