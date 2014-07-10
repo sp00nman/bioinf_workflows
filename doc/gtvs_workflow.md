@@ -122,10 +122,10 @@ Annotate insertions withing overlapping genes
 
 ![overlapping](https://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png?raw=true)
 
-| Gene (strand)       | insertions (chr[n]:position |  strand  | intronic/exonic   | group     |
-| :------------------ |:----------------------------|:------- -|:------------------|-----------|
+| Gene (strand)       | insertions (chr[n]:position |  strand  | intronic/exonic   | group       |
+| :------------------ |:----------------------------|:---------|:------------------|:------------|
 | GENE A (+)          | chr1:4,389,753              | +        | intronic          | disruptive  |
-| GENE B (-)          | chr1:4,389,753              | +        | intronic          | silent     |
+| GENE B (-)          | chr1:4,389,753              | +        | intronic          | silent      |
 
 
 ```bash
