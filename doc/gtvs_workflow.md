@@ -159,7 +159,7 @@ to be mutagenic if the gene-trap cassette is inserted in the sense orientation."
 | chr1:4,389,753             | +       | intronic          | mutagenic    |
 | chr1:4,399,100             | -       | intronic          | silent        |
 | chr1:4,443,563             | +       | exonic            | mutagenic    |
-| chr1:4,431,342             | -       | exonic            | mutagenci    |
+| chr1:4,431,342             | -       | exonic            | mutagenic    |
 
 (*) strand refers to how the insertions was mapped to the genome.
 
@@ -184,14 +184,6 @@ BEGIN{OFS="\t"}
 {ratio=$3/$1} {print $2,$1,$3,ratio}' >${SCREEN}.counts.table.txt
 
 ```
-
-(Optional) Fisher test
-
-| Gene A                 | SCREEN         | CONTROL |
-| :--------------------- |:---------------|:--------|
-| number of insertions   | 24             | 48      |
-| no insertions          | 1303           | 1730    |
-
 
 ### Output files explained
 
@@ -259,7 +251,8 @@ The output file with the following extension ${SCREEN}.mutagenic.genome_browser.
 ![DUPLICATION_RATE vs UNIQUE_READS](https://github.com/sp00nman/bionf_workflows/blob/master/img/img1.png?raw=true "DUPLICATION_RATE vs UNIQUE_READS")
 
 
-### Plotting your data
-[Plot your data using R](../doc/plot_data.md)
+### Visualize your data
++ [Plot bubble plot using R](../doc/plot_data.md)
++ [Create publication ready circos plots](../doc/circos_plots.md)
 
 
