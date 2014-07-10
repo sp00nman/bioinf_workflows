@@ -189,9 +189,40 @@ BEGIN{OFS="\t"}
 
 | Gene A                 | SCREEN         | CONTROL |
 | :--------------------- |:---------------|:--------|
-| NUMBER OF INSERTIONS   | 24             | 48      |
-| NO INSERTIONS          | 1303           | 1730    |
+| number of insertions   | 24             | 48      |
+| no insertions          | 1303           | 1730    |
 
+
+### Output files explained
+
+# ${SCREEN}.filt.header.sorted.sam
++ [Description of SAM format](http://samtools.github.io/hts-specs/SAMv1.pdf)
+
+# ${SCREEN}.filt.header.sorted.rem_dupl.bp.exon.bed
+|desription|example|
+|:----------|:-----|
+|chromosome (where insertions mapped to)|chr1|    
+|start position (of insertion)|713901|  
+|end position (of insertions)|713902 | 
+|[QNAME](http://samtools.github.io/hts-specs/SAMv1.pdf)|HWI-ST815:70:D1F2MACXX:2:2303:6014:198907|       
+|[FLAG](http://samtools.github.io/hts-specs/SAMv1.pdf)|16 |      
+|[MAPQ](http://samtools.github.io/hts-specs/SAMv1.pdf)|40 |     
+|[CIGAR](http://samtools.github.io/hts-specs/SAMv1.pdf)|51M |    
+|[RNEXT](http://samtools.github.io/hts-specs/SAMv1.pdf)|*  |     
+|[PNEXT](http://samtools.github.io/hts-specs/SAMv1.pdf)|0  |     
+|[TLEN](http://samtools.github.io/hts-specs/SAMv1.pdf)|0  |     
+|[SEQ](http://samtools.github.io/hts-specs/SAMv1.pdf)|CGGCAACCCACAGGTCCTGGCGGGGACGTCACTCTTACCAGTCCCCACTCT | 
+|[QUAL](http://samtools.github.io/hts-specs/SAMv1.pdf)|###################A:CF?1:)AFA<<@BF@FA=HFCDDBB=?@?? |    
+|[OPTIONAL FIELDS](http://samtools.github.io/hts-specs/SAMv1.pdf)|MD:Z:7A5A0A11G24 PG:Z:MarkDuplicates XG:i:0  NM:i:4  XM:i:4  XN:i:0  XO:i:0  AS:i:-8 YT:Z:UU | 
+|chromosome of annotated gene |chr1  |  
+|start position of feature|713664 | 
+|end position of feature |714006 | 
+|description of feature|exon  |  
+|strand direction of feature|-  |     
+|ensembl id associated to that feature|ENSG00000228327 |
+|gene symbol associated to that feature|RP11-206L10.2  | 
+|transcript id associated to that feature|ENST00000428504 |
+|depricated, will be removed in later versions |1 |
 
 ### Parameter description
 | metrics                 | description          |
