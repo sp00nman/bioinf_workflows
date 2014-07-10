@@ -195,10 +195,10 @@ BEGIN{OFS="\t"}
 
 ### Output files explained
 
-# ${SCREEN}.filt.header.sorted.sam
+#### ${SCREEN}.filt.header.sorted.sam
 + [Description of SAM format](http://samtools.github.io/hts-specs/SAMv1.pdf)
 
-# ${SCREEN}.filt.header.sorted.rem_dupl.bp.exon.bed
+##### ${SCREEN}.filt.header.sorted.rem_dupl.bp.exon.bed
 |desription|example|
 |:----------|:-----|
 |chromosome (where insertions mapped to)|chr1|    
