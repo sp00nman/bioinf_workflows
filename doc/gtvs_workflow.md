@@ -122,11 +122,10 @@ Annotate overlapping insertions.
 
 ![overlapping](https://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png?raw=true "overlapping" width=100)
 
-![silent vs disruptive](https://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png?raw=true =100x]
 
 Group insertions as silent or disruptive.
 
-![silent vs disruptive](https://github.com/sp00nman/bionf_workflows/blob/master/img/grouping.png?raw=true "silent vs disruptive"]
+![grouping](https://github.com/sp00nman/bionf_workflows/blob/master/img/grouping.png?raw=true "grouping" width=100)
 
 
 ```bash
