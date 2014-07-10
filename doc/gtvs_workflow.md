@@ -120,7 +120,7 @@ intersectBed \
 
 Annotate overlapping insertions.
 
-![overlapping](https://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png?raw=true "overlapping")
+![overlapping](https://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png?raw=true "overlapping" width=200)
 
 ![silent vs disruptive](https://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png?raw=true =100x]
 
