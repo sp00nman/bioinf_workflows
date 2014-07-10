@@ -104,7 +104,7 @@ awk '!($23<=2 && $23>0)' |
 cut -f1-21 >${SCREEN}.filt.header.sorted.rem_dupl.bp.bed
 ```
 
-Annotate insertions. Depending on the annotation used 
+Annotate insertions. For annotation the genome assembly hg19 (ucsc) combined with the ensembl annotation (build 70) is used. The canonical transcripts for each gene is used as reference gene model. The bed file with coordinates for exons and introns is formated using the following [script] (https://gist.github.com/sp00nman/e9adb3c7e207c0de03d7)
 
 ```bash
 $INTERSECTBED \
@@ -118,7 +118,7 @@ $INTERSECTBED \
 -wo >${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.bed
 ```
 
-Annotate insertions withing overlapping genes.
+Annotate insertions within overlapping genes.
 
 ![overlapping](https://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png?raw=true)
 
@@ -166,7 +166,7 @@ to be mutagenic if the gene-trap cassette is inserted in the sense orientation."
 Count insertions.
 
 ```bash
-cut -f28 ${SCREEN}.correct.insertions.bed | sort | uniq -c | \
+cut -f28 ${SCREEN}.mutagenic.insertions.bed | sort | uniq -c | \
 sort -k1 -r -n | awk '{print $1"\t"$2}' >${SCREEN}.mutagenic.insertions.counts.bed
 
 cut -f28 ${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.antisense.bed | \
@@ -224,6 +224,15 @@ BEGIN{OFS="\t"}
 |transcript id associated to that feature|ENST00000428504 |
 |depricated, will be removed in later versions |1 |
 
+### Upload your data to ensemble 
+The output file with the following extension ${SCREEN}.mutagenic.genome_browser.bed can be visualized with a genome browser. 
++ [UCSC] genome browser (https://genome.ucsc.edu/cgi-bin/hgCustom?hgsid=382317369_ghDqdehOZl31AdcEk6KiErMEyhw8)
++ [Ensembl] genome browser (http://www.ensembl.org/)
+![NF1 insertions](https://github.com/sp00nman/bionf_workflows/blob/master/img/NF1_2.png?raw=true)
+
+### Summary table
+[google spreadsheet with results of 41 screens](https://docs.google.com/spreadsheets/d/1XcimT1Aj45mjhUPsX4qHMlbFcj62h4InKtYPB6O1S4U/edit#gid=0)
+
 ### Parameter description
 | metrics                 | description          |
 | :----------------------- |:----------------------|
@@ -249,14 +258,6 @@ BEGIN{OFS="\t"}
 
 ![DUPLICATION_RATE vs UNIQUE_READS](https://github.com/sp00nman/bionf_workflows/blob/master/img/img1.png?raw=true "DUPLICATION_RATE vs UNIQUE_READS")
 
-
-### Upload your data to ensemble 
-
-![NF1 insertions](https://github.com/sp00nman/bionf_workflows/blob/master/img/NF1_2.png?raw=true)
-
-
-### Summary table
-[google spreadsheet with results of 41 screens](https://docs.google.com/spreadsheets/d/1XcimT1Aj45mjhUPsX4qHMlbFcj62h4InKtYPB6O1S4U/edit#gid=0)
 
 ### Plotting your data
 [Plot your data using R](../doc/plot_data.md)
