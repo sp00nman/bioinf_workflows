@@ -30,7 +30,7 @@ export $SAMTOOLS="path/to/samtools"
 Align data to reference genome hg19. Parameter ```--sensitive``` equals to ```-D 15 -R 2 -L 22 -i S,1,1.15``` 
 
 ```bash
-bowtie2 \
+$BOWTIE2 \
 -p 2 \
 --end-to-end \
 --sensitive \
@@ -51,7 +51,7 @@ SAM format and SAM flags explained.
 + [Samflags explained](http://picard.sourceforge.net/explain-flags.html)
 
 ```bash
-samtools view -H -S ${SCREEN}.sam >${SCREEN}.filt.header.sam
+$SAMTOOLS view -H -S ${SCREEN}.sam >${SCREEN}.filt.header.sam
 awk -F"\t" '($0 ~ /^@/) {NR--; next}; ($2!=4 && ($13 !~/XS:i/) && $5>20)' ${SCREEN}.sam \
 >> ${SCREEN}.filt.header.sam
 ```
@@ -87,7 +87,7 @@ awk 'BEGIN{OFS="\t"} \
  >${SCREEN}.filt.header.sorted.rem_dupl.bed
 ```
 
-Remove insertions 1 or 2 base pairs away
+Remove insertions 1 or 2 base pairs away. Insertions that are within close proximity could be a result of mapping errors due to sequencing errors and are therefore removed from the analysis.
 
 ```bash
 sort -k1,1 -k2n ${SCREEN}.filt.header.sorted.rem_dupl.bed | 
@@ -104,7 +104,7 @@ awk '!($23<=2 && $23>0)' |
 cut -f1-21 >${SCREEN}.filt.header.sorted.rem_dupl.bp.bed
 ```
 
-Annotate insertions. 
+Annotate insertions. Depending on the annotation used 
 
 ```bash
 $INTERSECTBED \
