@@ -118,13 +118,13 @@ $INTERSECTBED \
 -wo >${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.bed
 ```
 
-Annotate insertions withing overlapping genes
+Annotate insertions withing overlapping genes.
 
 ![overlapping](https://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png?raw=true)
 
 | Gene (strand)       | insertions (chr[n]:position |  strand  | intronic/exonic   | group       |
 | :------------------ |:----------------------------|:---------|:------------------|:------------|
-| GENE A (+)          | chr1:4,389,753              | +        | intronic          | disruptive  |
+| GENE A (+)          | chr1:4,389,753              | +        | intronic          | mutagenic  |
 | GENE B (-)          | chr1:4,389,753              | +        | intronic          | silent      |
 
 
@@ -143,19 +143,23 @@ awk '
 
 cat  ${SCREEN}.filt.header.sorted.rem_dupl.bp.exon.bed \
 ${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.sense.bed \
->${SCREEN}.disruptive.insertions.bed
+>${SCREEN}.mutagenic.insertions.bed
 ```
 
-Group insertions as silent or disruptive.
+"Gene trap-based insertional mutagenesis operates by random insertion of a splice acceptor followed by a GFP
+marker and termination sequence into the genome, thus disrupting gene expression. The insertion site must
+be determined to identify the disrupted gene.....Of these, 321 clones contained gene-trap insertions
+in a coding exon, directly disrupting the respective open reading frame. Insertions in introns are predictive
+to be mutagenic if the gene-trap cassette is inserted in the sense orientation." T. Bürckstümmer et al., "a reversible gene trap collection empowers haploid genetics in human cells", Nature Methods, 2013.
 
 ![grouping](https://github.com/sp00nman/bionf_workflows/blob/master/img/grouping.png?raw=true )
 
 | Gene A (chr[n]:position)   | strand(*)  | intronic/exonic   | group         |
 | :------------------------- |:--------|:------------------|:--------------|
-| chr1:4,389,753             | +       | intronic          | disruptive    |
+| chr1:4,389,753             | +       | intronic          | mutagenic    |
 | chr1:4,399,100             | -       | intronic          | silent        |
-| chr1:4,443,563             | +       | exonic            | disruptive    |
-| chr1:4,431,342             | -       | exonic            | disruptive    |
+| chr1:4,443,563             | +       | exonic            | mutagenic    |
+| chr1:4,431,342             | -       | exonic            | mutagenci    |
 
 (*) strand refers to how the insertions was mapped to the genome.
 
@@ -163,7 +167,7 @@ Count insertions.
 
 ```bash
 cut -f28 ${SCREEN}.correct.insertions.bed | sort | uniq -c | \
-sort -k1 -r -n | awk '{print $1"\t"$2}' >${SCREEN}.disruptive.insertions.counts.bed
+sort -k1 -r -n | awk '{print $1"\t"$2}' >${SCREEN}.mutagenic.insertions.counts.bed
 
 cut -f28 ${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.antisense.bed | \
 sort | uniq -c | sort -k1 -r -n | awk '{print $1"\t"$2}' \
@@ -173,7 +177,7 @@ awk -F"\t" '
 NR==FNR {f1[$2]=$0; next}
 ($2 in f1) \
 {print $0"\t"f1[$2]} \
-' ${SCREEN}.disruptive.insertions.counts.bed \
+' ${SCREEN}.mutagenic.insertions.counts.bed \
 ${SCREEN}.silent.insertions.counts.bed | \
 awk -F"\t" '
 BEGIN{OFS="\t"}
