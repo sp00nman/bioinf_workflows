@@ -256,3 +256,8 @@ The output file with the following extension ${SCREEN}.mutagenic.genome_browser.
 + [Create publication ready circos plots](../doc/circos_plots.md)
 
 
+###TODOs
++ automate bubble plots
++ implement bash script to a python workflow
++ script for submitting jobs to SLURM
++ gene lists of highly gene-trapped genes (?)
