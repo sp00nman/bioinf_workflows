@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="686.18671"
+   height="261.68161"
+   id="svg8155"
+   version="1.1"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="overlapping.svg"
+   inkscape:export-filename="/home/fschischlik/src/bioinf_workflows/img/overlapping_1.png"
+   inkscape:export-xdpi="78.695786"
+   inkscape:export-ydpi="78.695786">
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="347.95955"
+     inkscape:cy="162.89645"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1855"
+     inkscape:window-height="1056"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <defs
+     id="defs8157">
+    <marker
+       style="overflow:visible"
+       id="TriangleOutL"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="TriangleOutL">
+      <path
+         transform="scale(0.8)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         id="path3959" />
+    </marker>
+    <marker
+       style="overflow:visible;"
+       id="Arrow2Mend"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow2Mend">
+      <path
+         transform="scale(0.6) rotate(180) translate(0,0)"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         style="fill-rule:evenodd;stroke-width:0.62500000;stroke-linejoin:round;"
+         id="path3844" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker5793"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lend">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         id="path5795" />
+    </marker>
+    <inkscape:path-effect
+       is_visible="true"
+       id="path-effect10142"
+       effect="spiro" />
+    <marker
+       style="overflow:visible"
+       id="TriangleOutLN"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="TriangleOutLN">
+      <path
+         transform="scale(0.8)"
+         style="stroke:#f80707;stroke-width:1.0pt;fill:#f80707;fill-rule:evenodd"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         id="path4457" />
+    </marker>
+  </defs>
+  <metadata
+     id="metadata8160">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(-28.332917,-764.37849)"
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Layer 1">
+    <g
+       style="stroke-width:1.64770281;stroke-miterlimit:10;stroke-dasharray:none"
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       transform="matrix(1.4038154,0,0,-2.2669649,31.219227,874.80331)"
+       id="g257908">
+      <path
+         inkscape:connector-curvature="0"
+         id="path257910"
+         style="fill:none;stroke:#231f20;stroke-width:1.64770281;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
+         d="M 0,0 486.347,0" />
+    </g>
+    <text
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       style="font-size:27.20357895px;font-weight:normal;text-align:left;fill:#000000;font-family:'Helvetica, Arial, sans-serif'"
+       y="870.03278"
+       x="35.18903"
+       id="text257920">
+      <tspan
+         y="870.03278"
+         x="35.18903"
+         id="tspan257924"
+         sodipodi:role="line"
+         style="font-size:19.64438248px;font-variant:normal;font-weight:500;font-stretch:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Gotham;-inkscape-font-specification:Gotham">-</tspan>
+    </text>
+    <text
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       style="font-size:27.20357895px;font-weight:normal;text-align:left;fill:#000000;font-family:'Helvetica, Arial, sans-serif'"
+       y="860.54504"
+       x="385.3299"
+       id="text257942">
+      <tspan
+         y="860.54504"
+         id="tspan257944"
+         sodipodi:role="line"
+         x="385.3299"
+         style="font-size:24.55531311px;font-style:italic;font-variant:normal;font-weight:500;font-stretch:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Gotham;-inkscape-font-specification:Gotham Italic">GENE B</tspan>
+    </text>
+    <g
+       style="stroke-width:4.55345488;stroke-miterlimit:4;stroke-dasharray:none"
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       transform="matrix(-3.5955042,0,0,2.2669649,484.14128,874.89582)"
+       id="g257946">
+      <path
+         inkscape:connector-curvature="0"
+         id="path257948"
+         style="fill:none;stroke:#d87e75;stroke-width:4.55345488;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         d="M 0,0 83.214,0" />
+    </g>
+    <g
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       transform="matrix(-2.2669649,0,0,2.2669649,188.5273,862.71969)"
+       id="g257950">
+      <path
+         inkscape:connector-curvature="0"
+         id="path257952"
+         style="fill:#d87e75;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         d="M 0,0 9.354,5.4 0,10.801 0,0 z" />
+    </g>
+    <g
+       style="stroke-width:0.77679133;stroke-miterlimit:10;stroke-dasharray:none"
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       transform="matrix(-4.569056,0,0,2.2669649,473.33927,969.10293)"
+       id="g258042">
+      <path
+         inkscape:connector-curvature="0"
+         id="path258044"
+         style="fill:none;stroke:#231f20;stroke-width:0.77679133;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
+         d="M 0,0 67.355,0" />
+    </g>
+    <path
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       inkscape:connector-curvature="0"
+       id="path258048"
+       style="fill:#d87e75;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       d="m 247.61356,955.07073 28.065,0 0,28.0627 -28.065,0 0,-28.0627 z" />
+    <path
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       inkscape:connector-curvature="0"
+       id="path258054"
+       style="fill:#d87e75;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       d="m 182.42633,955.07073 28.06287,0 0,28.0627 -28.06287,0 0,-28.0627 z" />
+    <path
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       inkscape:connector-curvature="0"
+       id="path258060"
+       style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       d="m 159.85658,970.86923 -3.57963,0 0,-3.5388 3.57963,0 0,3.5388 z" />
+    <path
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       inkscape:connector-curvature="0"
+       id="path258062"
+       style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       d="m 153.53395,970.86923 -3.57962,0 0,-3.5388 3.57962,0 0,3.5388 z" />
+    <path
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       inkscape:connector-curvature="0"
+       id="path258064"
+       style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       d="m 147.21358,970.86923 -3.57938,0 0,-3.5388 3.57938,0 0,3.5388 z" />
+    <text
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       style="font-size:27.20357895px;font-weight:normal;text-align:left;fill:#000000;font-family:'Helvetica, Arial, sans-serif'"
+       y="803.86188"
+       x="281.24741"
+       id="text257942-5">
+      <tspan
+         y="803.86188"
+         id="tspan257944-6"
+         sodipodi:role="line"
+         x="281.24741"
+         style="font-size:24.55531311px;font-style:italic;font-variant:normal;font-weight:500;font-stretch:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Gotham;-inkscape-font-specification:Gotham Italic">GENE A</tspan>
+    </text>
+    <text
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       style="font-size:27.20357895px;font-weight:normal;text-align:left;fill:#000000;font-family:'Helvetica, Arial, sans-serif'"
+       y="978.10486"
+       x="252.5946"
+       id="text258020-1-5-6">
+      <tspan
+         id="tspan258022-3-4-7"
+         y="978.10486"
+         x="252.5946"
+         style="font-size:24.55531311px;font-variant:normal;font-weight:bold;font-stretch:normal;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Gotham;-inkscape-font-specification:Gotham">3</tspan>
+    </text>
+    <text
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       style="font-size:27.20357895px;font-weight:normal;text-align:left;fill:#000000;font-family:'Helvetica, Arial, sans-serif'"
+       y="977.60693"
+       x="187.32065"
+       id="text258020-1-5-7">
+      <tspan
+         id="tspan258022-3-4-79"
+         y="977.60693"
+         x="187.32065"
+         style="font-size:24.55531311px;font-variant:normal;font-weight:bold;font-stretch:normal;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Gotham;-inkscape-font-specification:Gotham">4</tspan>
+    </text>
+    <g
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       style="stroke-width:0.67522073;stroke-miterlimit:10;stroke-dasharray:none"
+       transform="matrix(-6.0470522,0,0,2.2669649,278.82371,922.32215)"
+       id="g258026-7">
+      <path
+         inkscape:connector-curvature="0"
+         id="path258028-8"
+         style="fill:none;stroke:#231f20;stroke-width:0.67522073;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
+         d="M 0,0 -67.355,0" />
+    </g>
+    <path
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       inkscape:connector-curvature="0"
+       id="path258036-3"
+       style="fill:#629cc6;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       d="m 306.67531,936.35265 -28.0651,0 0,-28.0627 28.0651,0 0,28.0627 z" />
+    <path
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       inkscape:connector-curvature="0"
+       id="path258072-3"
+       style="fill:#231f20;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       d="m 274.48901,915.31755 4.3343,0 0,14.0054 -4.3343,0 0,-14.0054 z" />
+    <text
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       style="font-size:27.20357895px;font-weight:normal;text-align:left;fill:#000000;font-family:'Helvetica, Arial, sans-serif'"
+       y="931.78107"
+       x="287.19266"
+       id="text258008-1">
+      <tspan
+         id="tspan258010-8"
+         y="931.78107"
+         x="287.19266"
+         style="font-size:24.55531311px;font-variant:normal;font-weight:bold;font-stretch:normal;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Gotham;-inkscape-font-specification:Gotham">1</tspan>
+    </text>
+    <path
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       inkscape:connector-curvature="0"
+       id="path258036"
+       style="fill:#629cc6;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       d="m 662.61091,908.41908 28.0651,0 0,28.0627 -28.0651,0 0,-28.0627 z" />
+    <path
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       inkscape:connector-curvature="0"
+       id="path258038"
+       style="fill:#629cc6;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       d="m 566.60951,908.41908 28.0629,0 0,28.0627 -28.0629,0 0,-28.0627 z" />
+    <path
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       inkscape:connector-curvature="0"
+       id="path258040"
+       style="fill:#629cc6;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       d="m 468.60601,908.41908 28.065,0 0,28.0627 -28.065,0 0,-28.0627 z" />
+    <path
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       inkscape:connector-curvature="0"
+       id="path258072"
+       style="fill:#231f20;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       d="m 694.79731,929.45418 -4.3344,0 0,-14.0054 4.3344,0 0,14.0054 z" />
+    <text
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       style="font-size:27.20357895px;font-weight:normal;text-align:left;fill:#000000;font-family:'Helvetica, Arial, sans-serif'"
+       y="931.48108"
+       x="669.97473"
+       id="text258014-0-6">
+      <tspan
+         id="tspan258016-2-2"
+         y="931.48108"
+         x="669.97473"
+         style="font-size:24.55531311px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Gotham;-inkscape-font-specification:Gotham Bold">4</tspan>
+    </text>
+    <text
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       style="font-size:27.20357895px;font-weight:normal;text-align:left;fill:#000000;font-family:'Helvetica, Arial, sans-serif'"
+       y="931.13483"
+       x="573.1084"
+       id="text258014-0-3">
+      <tspan
+         id="tspan258016-2-0"
+         y="931.13483"
+         x="573.1084"
+         style="font-size:24.55531311px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Gotham;-inkscape-font-specification:Gotham Bold">3</tspan>
+    </text>
+    <text
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       style="font-size:27.20357895px;font-weight:normal;text-align:left;fill:#000000;font-family:'Helvetica, Arial, sans-serif'"
+       y="931.91693"
+       x="475.20337"
+       id="text258014-0-39">
+      <tspan
+         id="tspan258016-2-6"
+         y="931.91693"
+         x="475.20337"
+         style="font-size:24.55531311px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Gotham;-inkscape-font-specification:Gotham Bold">2</tspan>
+    </text>
+    <path
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       inkscape:connector-curvature="0"
+       id="path258046-1"
+       style="fill:#d87e75;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       d="m 452.46643,955.07073 28.0606,0 0,28.0627 -28.0606,0 0,-28.0627 z" />
+    <text
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       style="font-size:27.20357895px;font-weight:normal;text-align:left;fill:#000000;font-family:'Helvetica, Arial, sans-serif'"
+       y="978.10486"
+       x="460.56406"
+       id="text258020-1-5-5">
+      <tspan
+         id="tspan258022-3-4-8"
+         y="978.10486"
+         x="460.56406"
+         style="font-size:24.55531311px;font-variant:normal;font-weight:bold;font-stretch:normal;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Gotham;-inkscape-font-specification:Gotham">1</tspan>
+    </text>
+    <path
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       inkscape:connector-curvature="0"
+       id="path258072-3-6"
+       style="fill:#231f20;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       d="m 480.15414,961.81793 4.3343,0 0,14.0054 -4.3343,0 0,-14.0054 z" />
+    <g
+       style="stroke-width:1.64570725;stroke-miterlimit:10;stroke-dasharray:none"
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       transform="matrix(1.4109089,0,0,-2.2669649,28.332917,816.77081)"
+       id="g257908-6">
+      <path
+         inkscape:connector-curvature="0"
+         id="path257910-5"
+         style="fill:none;stroke:#231f20;stroke-width:1.64570725;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
+         d="M 0,0 486.347,0" />
+    </g>
+    <text
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       style="font-size:27.20357895px;font-weight:normal;text-align:left;fill:#000000;font-family:'Helvetica, Arial, sans-serif'"
+       y="811.7381"
+       x="30.565769"
+       id="text257920-9">
+      <tspan
+         y="811.7381"
+         x="30.565769"
+         id="tspan257924-9"
+         sodipodi:role="line"
+         style="font-size:19.64438248px;font-variant:normal;font-weight:500;font-stretch:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Gotham;-inkscape-font-specification:Gotham">+</tspan>
+    </text>
+    <path
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       inkscape:connector-curvature="0"
+       inkscape:original-d="m 343.14811,814.99925 0,179.30731"
+       inkscape:path-effect="#path-effect10142"
+       id="path10140"
+       d="m 343.14811,814.99925 0,179.30731"
+       style="fill:#ff001c;fill-opacity:1;stroke:#f80707;stroke-width:1.155;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:none;marker-mid:none;marker-end:url(#TriangleOutLN)" />
+    <text
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       style="font-size:27.20357895px;font-weight:normal;text-align:left;fill:#000000;font-family:'Helvetica, Arial, sans-serif'"
+       y="1023.2117"
+       x="269.23645"
+       id="text257920-7">
+      <tspan
+         y="1023.2117"
+         x="269.23645"
+         id="tspan257924-92"
+         sodipodi:role="line"
+         style="font-size:19.64438248px;font-variant:normal;font-weight:500;font-stretch:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Gotham;-inkscape-font-specification:Gotham">chr 1:4,389,753</tspan>
+    </text>
+    <g
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       transform="matrix(-2.2669649,0,0,2.2669649,678.66846,829.16388)"
+       id="g257958">
+      <path
+         inkscape:connector-curvature="0"
+         id="path257960"
+         style="fill:#639bca;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         d="M 0,0 -9.354,-5.4 0,-10.801 0,0 z" />
+    </g>
+    <g
+       style="stroke-width:3.92729187;stroke-miterlimit:4;stroke-dasharray:none"
+       inkscape:export-ydpi="300"
+       inkscape:export-xdpi="300"
+       inkscape:export-filename="/home/fschischlik/Dropbox/src_code/bioinf_workflows/img/overlapping.png"
+       transform="matrix(-4.8334313,0,0,2.2669649,277.60536,816.98776)"
+       id="g257954">
+      <path
+         inkscape:connector-curvature="0"
+         id="path257956"
+         style="fill:none;stroke:#639bca;stroke-width:3.92729187;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         d="M 0,0 -83.215,0" />
+    </g>
+  </g>
+</svg>
