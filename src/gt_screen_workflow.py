@@ -73,6 +73,26 @@ def alignment(genome_version,
     return msg, cmd
 
 
+def sort_bam():
+
+    msg = "Sort bam file (by coordinate"
+    cmd = "java -jar $PICARD_TOOLS/SortSam.jar \
+                INPUT=${SCREEN}.filt.sam \
+                OUTPUT=${SCREEN}.filt.sorted.sam \
+                SORT_ORDER=coordinate"
+    return msg, cmd
+
+def remove_duplicates():
+
+    msg = "Remove duplicate reads. "
+    cmd = "java -jar /fast/opt/software/picard-tools-1.111/MarkDuplicates.jar \
+                INPUT=${SCREEN}.filt.sorted.sam \
+                OUTPUT=${SCREEN}.filt.sorted.rem_dupl.sam \
+                METRICS_FILE=${SCREEN}.rem_dupl.metrics.txt \
+                REMOVE_DUPLICATES=true"
+    return msg, cmd
+
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Genetic screen workflow 0.0.1')
