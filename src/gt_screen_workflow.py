@@ -17,9 +17,11 @@ from os.path import (split, splitext, join, exists)
 def run_cmd(msg, cmd):
     logging.info(msg)
     logging.debug(cmd)
-    status = system(cmd)
-    if status != 0:
-        logging.warning("command '%s' returned non-zero "
+    status = 0
+    if not args.debug:
+        status = system(cmd)
+        if status != 0:
+            logging.warning("command '%s' returned non-zero "
                         "status: %d'" % (cmd, status))
     return status
 
@@ -55,15 +57,18 @@ def create_output_dir(output_dir, project_name):
 
 def alignment(genome_version,
               genomes,
+              sequence_dir,
+              project_dir,
               sample_file,
               output_dir,
               num_cpus):
 
     genome_path = genomes + "/" + genome_version
+    sample_path_file = sequences_dir + "/" + project_dir + "/" + sample_file
     msg = "Mapping reads to genome " + genome_version
     cmd = "bowtie2 -p %s --end-to-end --sensitive -x %s -U %s " \
           "--un %s --al %s --met-file %s" \
-            % (num_cpus, genome_path, sample_file,
+            % (num_cpus, genome_path, sample_path_file,
                output_dir, output_dir, output_dir)
     return msg, cmd
 
@@ -137,9 +142,9 @@ if __name__ == '__main__':
     if not args.debug:
         create_output_dir(output_dir, project_name)
 
-    if re.search(r"all|alignment",args.stage):
-        (msg, cmd) = alignment(genome_version, genomes, sample_file,
-                               output_dir, num_cpus)
+    if re.search(r"all|alignment", args.stage):
+        (msg, cmd) = alignment(genome_version, genomes, sequences_dir,
+                               project_dir, sample_file, output_dir, num_cpus)
         status = run_cmd(msg, cmd)
 
 
