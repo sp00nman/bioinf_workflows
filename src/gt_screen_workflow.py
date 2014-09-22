@@ -73,24 +73,25 @@ def alignment(genome_version,
     return msg, cmd
 
 
-def sort_bam():
-
-    msg = "Sort bam file (by coordinate"
-    cmd = "java -jar $PICARD_TOOLS/SortSam.jar \
-                INPUT=${SCREEN}.filt.sam \
-                OUTPUT=${SCREEN}.filt.sorted.sam \
-                SORT_ORDER=coordinate"
-    return msg, cmd
-
-def remove_duplicates():
-
-    msg = "Remove duplicate reads. "
-    cmd = "java -jar /fast/opt/software/picard-tools-1.111/MarkDuplicates.jar \
-                INPUT=${SCREEN}.filt.sorted.sam \
-                OUTPUT=${SCREEN}.filt.sorted.rem_dupl.sam \
-                METRICS_FILE=${SCREEN}.rem_dupl.metrics.txt \
-                REMOVE_DUPLICATES=true"
-    return msg, cmd
+# def sort_bam():
+#
+#     msg = "Sort bam file (by coordinate)"
+#     cmd = "java -jar $NGS_PICARD/SortSam.jar \
+#                 INPUT=%s.filt.sam \
+#                 OUTPUT=%s.filt.sorted.sam \
+#                 SORT_ORDER=coordinate" % ()
+#     return msg, cmd
+#
+#
+# def remove_duplicates():
+#
+#     msg = "Remove duplicate reads. "
+#     cmd = "java -jar $NGS_PICARD/MarkDuplicates.jar \
+#                 INPUT=%s.filt.sorted.sam \
+#                 OUTPUT=%s.filt.sorted.rem_dupl.sam \
+#                 METRICS_FILE=%s.rem_dupl.metrics.txt \
+#                 REMOVE_DUPLICATES=true"
+#     return msg, cmd
 
 
 if __name__ == '__main__':
@@ -146,6 +147,11 @@ if __name__ == '__main__':
                    + "indices of bowtie2:" + bowtie2 + ", " \
                    + "number of cpus:" + num_cpus + "]"
 
+    # file_extensions
+    file_extension = {'alignment': 'bam',
+                      'duplicates': 'dup',
+                      'sort': 'sorted'}
+
     # create log file
     logfile_name = project_name + ".log"
     logging.basicConfig(filename=logfile_name,
@@ -167,6 +173,12 @@ if __name__ == '__main__':
                                project_dir, sample_file, output_dir, num_cpus)
         status = run_cmd(msg, cmd)
 
+    #if re.search(r"all|duplicates", args.stage):
+    #    (msg, cmd) = sort_bam(genome_version, genomes, sequences_dir,
+    #                           project_dir, sample_file, output_dir, num_cpus)
+    #    status = run_cmd(msg, cmd)
+    #    (msg, cmd) = remove_duplicates(genome_version, genomes, sequences_dir,
+    #                           project_dir, sample_file, output_dir, num_cpus)
 
 
 
