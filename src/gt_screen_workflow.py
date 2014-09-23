@@ -22,7 +22,7 @@ def run_cmd(msg, cmd):
         status = system(cmd)
         if status != 0:
             logging.warning("command '%s' returned non-zero "
-                        "status: %d'" % (cmd, status))
+                            "status: %d'" % (cmd, status))
     return status
 
 
@@ -46,7 +46,8 @@ def config_section_map(section):
     return dict_param
 
 
-def create_output_dir(output_dir, project_name):
+def create_output_dir(output_dir,
+                      project_name):
     if not exists(output_dir + "/" + project_name):
         logging.info('Create folder %s' % output_dir)
         try:
@@ -55,22 +56,64 @@ def create_output_dir(output_dir, project_name):
             exit('%s\nFailed to create directory', (e, output_dir))
 
 
+def bam2fastq(sequences_dir,
+              project_dir,
+              sample_file,
+              project_name,
+              output_dir):
+    """
+    Converts bam file to fastq files with PICARD
+    :param sequences_dir: Sub-directory for processed sequences in
+                          Illumina2bam format
+    :param project_dir:project sub-directory name
+    :param sample_file: sample file name
+    :param project_name: name of the project (given by user)
+    :return: message to be logged & command to be executed; type str
+    """
+
+    input_file = sequences_dir + "/" + project_dir + "/" + sample_file
+    msg_bam2fastq = "Convert bam to fastq."
+    cmd_bam2fastq = "java -jar $NGS_PICARD/SamToFastq.jar " \
+                    "INPUT=%s " \
+                    "FASTQ=%s/%s.bam" % (input_file, output_dir, project_name)
+    return msg_bam2fastq, cmd_bam2fastq
+
+
 def alignment(genome_version,
               genomes,
-              sequence_dir,
+              project_name,
+              sequences_dir,
               project_dir,
               sample_file,
               output_dir,
               num_cpus):
 
+    """
+    Aligns fastq reads to the reference genome with bowtie2
+    :param genome_version: version of the genome, eg [hg19, mm10]
+    :param genomes: path of the genomes file
+    :param project_name: name of the project (given by user)
+    :param sequences_dir: Sub-directory for processed sequences in
+                          Illumina2bam format
+    :param project_dir:project sub-directory name
+    :param sample_file: sample file name
+    :param output_dir: where the output files should be written
+    :param num_cpus: for multi-threading purposes (-p option; bowtie2)
+    :return: message to be logged & command to be executed; type str
+    """
+
     genome_path = genomes + "/" + genome_version
     sample_path_file = sequences_dir + "/" + project_dir + "/" + sample_file
-    msg = "Mapping reads to genome " + genome_version
-    cmd = "bowtie2 -p %s --end-to-end --sensitive -x %s -U %s " \
-          "--un %s --al %s --met-file %s" \
-            % (num_cpus, genome_path, sample_path_file,
-               output_dir, output_dir, output_dir)
-    return msg, cmd
+    out_file_unaligned = output_dir + "/" + project_name + ".unaligned.sam"
+    out_file_aligned = output_dir + "/" + project_name + ".aligned.sam"
+    out_file_metrics = output_dir + "/" + project_name + ".align.metrics.txt"
+
+    msg_align = "Mapping reads to genome " + genome_version
+    cmd_align = "bowtie2 -p %s --end-to-end --sensitive -x %s -U %s " \
+                "--un %s --al %s --met-file %s" \
+                % (num_cpus, genome_path, sample_path_file,
+                   out_file_unaligned, out_file_aligned, out_file_metrics)
+    return msg_align, cmd_align
 
 
 # def sort_bam():
@@ -159,18 +202,25 @@ if __name__ == '__main__':
                         datefmt='%m/%d/%Y %I:%M:%S %p',
                         level=logging.DEBUG)
 
-    # start analysis workflow
+    # start analysis workflow & logging
     logging.info("Genetic screen workflow 0.0.1")
-
-    if args.debug:
-        logging.debug(config_param)
 
     if not args.debug:
         create_output_dir(output_dir, project_name)
 
+    if args.debug:
+        logging.debug(config_param)
+
+    # check for file format, if *bam convert to fastq
+    if re.search(r".bam", sample_file):
+        (msg, cmd) = bam2fastq(sequences_dir, project_dir,
+                               sample_file, project_name,output_dir)
+        status = run_cmd(msg, cmd)
+
     if re.search(r"all|alignment", args.stage):
-        (msg, cmd) = alignment(genome_version, genomes, sequences_dir,
-                               project_dir, sample_file, output_dir, num_cpus)
+        (msg, cmd) = alignment(genome_version, genomes, project_name,
+                               sequences_dir, project_dir, sample_file,
+                               output_dir, num_cpus)
         status = run_cmd(msg, cmd)
 
     #if re.search(r"all|duplicates", args.stage):
