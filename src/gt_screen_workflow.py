@@ -116,25 +116,43 @@ def alignment(genome_version,
     return msg_align, cmd_align
 
 
-# def sort_bam():
-#
-#     msg = "Sort bam file (by coordinate)"
-#     cmd = "java -jar $NGS_PICARD/SortSam.jar \
-#                 INPUT=%s.filt.sam \
-#                 OUTPUT=%s.filt.sorted.sam \
-#                 SORT_ORDER=coordinate" % ()
-#     return msg, cmd
-#
-#
-# def remove_duplicates():
-#
-#     msg = "Remove duplicate reads. "
-#     cmd = "java -jar $NGS_PICARD/MarkDuplicates.jar \
-#                 INPUT=%s.filt.sorted.sam \
-#                 OUTPUT=%s.filt.sorted.rem_dupl.sam \
-#                 METRICS_FILE=%s.rem_dupl.metrics.txt \
-#                 REMOVE_DUPLICATES=true"
-#     return msg, cmd
+def sort_bam(project_name,
+             output_dir):
+    """
+    Sort sam ? bam file by coordinate.
+    :param project_name: name of project (given by user)
+    :param output_dir: where the output files should be written
+    :return: message to be logged & command to be executed; type str
+    """
+
+    input_file = output_dir + "/" + project_name + ".sam"
+    output_file = output_dir + "/" + project_name + ".sorted.sam"
+    msg_sort = "Sort bam file (by coordinate)."
+    cmd_sort = "java -jar $NGS_PICARD/SortSam.jar " \
+               "INPUT=%s " \
+               "OUTPUT=%s " \
+               "SORT_ORDER=coordinate" % (input_file, output_file)
+    return msg_sort, cmd_sort
+
+
+def remove_duplicates(project_name,
+                      output_dir):
+    """
+    Remove duplicate reads.
+    :param project_name: name of project (given by user)
+    :param output_dir: where the output files should be written
+    :return: message to be logged & command to be executed; type str
+    """
+
+    input_file = output_dir + "/" + project_name + "sorted.sam"
+    output_file = output_dir + "/" + project_name + "rm_dupl.sorted.sam"
+    msg_rmdup = "Remove duplicate reads. "
+    cmd_rmdup = "java -jar $NGS_PICARD/MarkDuplicates.jar " \
+                "INPUT=%s " \
+                "OUTPUT=%s " \
+                "METRICS_FILE=%s.duplicates.metrics.txt " \
+                "REMOVE_DUPLICATES=true" % (input_file, output_file, project_name)
+    return msg_rmdup, cmd_rmdup
 
 
 if __name__ == '__main__':
@@ -223,12 +241,10 @@ if __name__ == '__main__':
                                output_dir, num_cpus)
         status = run_cmd(msg, cmd)
 
-    #if re.search(r"all|duplicates", args.stage):
-    #    (msg, cmd) = sort_bam(genome_version, genomes, sequences_dir,
-    #                           project_dir, sample_file, output_dir, num_cpus)
-    #    status = run_cmd(msg, cmd)
-    #    (msg, cmd) = remove_duplicates(genome_version, genomes, sequences_dir,
-    #                           project_dir, sample_file, output_dir, num_cpus)
-
+    if re.search(r"all|duplicates", args.stage):
+        (msg, cmd) = sort_bam(project_name,output_dir)
+        status = run_cmd(msg, cmd)
+        (msg, cmd) = remove_duplicates(project_name, output_dir)
+        status = run_cmd(msg, cmd)
 
 
