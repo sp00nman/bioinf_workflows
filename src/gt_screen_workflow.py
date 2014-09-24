@@ -51,7 +51,7 @@ def create_output_dir(output_dir,
     if not exists(output_dir + "/" + project_name):
         logging.info('Create folder %s' % output_dir)
         try:
-            mkdir(output_dir, '0777')
+            mkdir(output_dir + "/" + project_name, 0777)
         except IOError, e:
             exit('%s\nFailed to create directory', (e, output_dir))
 
@@ -155,6 +155,8 @@ def remove_duplicates(project_name,
     return msg_rmdup, cmd_rmdup
 
 
+
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Genetic screen workflow 0.0.1')
@@ -246,5 +248,4 @@ if __name__ == '__main__':
         status = run_cmd(msg, cmd)
         (msg, cmd) = remove_duplicates(project_name, output_dir)
         status = run_cmd(msg, cmd)
-
 
