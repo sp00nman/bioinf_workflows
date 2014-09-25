@@ -103,7 +103,8 @@ def alignment(genome_version,
     """
 
     genome_path = genomes + "/" + genome_version
-    sample_path_file = sequences_dir + "/" + project_dir + "/" + sample_file
+    sample_path_file = sequences_dir + "/" + project_dir + "/" \
+                       + project_name + ".fastq"
     out_file_unaligned = output_dir + "/" + project_name + ".unaligned.sam"
     out_file_aligned = output_dir + "/" + project_name + ".aligned.sam"
     out_file_metrics = output_dir + "/" + project_name + ".align.metrics.txt"
