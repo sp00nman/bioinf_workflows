@@ -125,7 +125,7 @@ def sort_bam(project_name,
     :return: message to be logged & command to be executed; type str
     """
 
-    input_file = output_dir + "/" + project_name + "aligned.sam"
+    input_file = output_dir + "/" + project_name + ".aligned.sam"
     output_file = output_dir + "/" + project_name + ".sorted.sam"
     msg_sort = "Sort bam file (by coordinate)."
     cmd_sort = "java -jar $NGS_PICARD/SortSam.jar " \
@@ -144,8 +144,8 @@ def remove_duplicates(project_name,
     :return: message to be logged & command to be executed; type str
     """
 
-    input_file = output_dir + "/" + project_name + "sorted.sam"
-    output_file = output_dir + "/" + project_name + "rm_dupl.sorted.sam"
+    input_file = output_dir + "/" + project_name + ".sorted.sam"
+    output_file = output_dir + "/" + project_name + ".rm_dupl.sorted.sam"
     msg_rmdup = "Remove duplicate reads. "
     cmd_rmdup = "java -jar $NGS_PICARD/MarkDuplicates.jar " \
                 "INPUT=%s " \
