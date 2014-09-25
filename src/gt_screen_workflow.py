@@ -105,15 +105,14 @@ def alignment(genome_version,
     genome_path = genomes + "/" + genome_version
     sample_path_file = sequences_dir + "/" + project_dir + "/" \
                        + project_name + ".fastq"
-    out_file_unaligned = output_dir + "/" + project_name + ".unaligned.sam"
-    out_file_aligned = output_dir + "/" + project_name + ".aligned.sam"
+    out_file = output_dir + "/" + project_name + ".aligned.sam"
     out_file_metrics = output_dir + "/" + project_name + ".align.metrics.txt"
 
     msg_align = "Mapping reads to genome " + genome_version
     cmd_align = "bowtie2 -p %s --end-to-end --sensitive -x %s -U %s " \
-                "--un %s --al %s --met-file %s" \
+                "-S %s --met-file %s" \
                 % (num_cpus, genome_path, sample_path_file,
-                   out_file_unaligned, out_file_aligned, out_file_metrics)
+                   out_file, out_file_metrics)
     return msg_align, cmd_align
 
 
@@ -126,7 +125,7 @@ def sort_bam(project_name,
     :return: message to be logged & command to be executed; type str
     """
 
-    input_file = output_dir + "/" + project_name + ".sam"
+    input_file = output_dir + "/" + project_name + "aligned.sam"
     output_file = output_dir + "/" + project_name + ".sorted.sam"
     msg_sort = "Sort bam file (by coordinate)."
     cmd_sort = "java -jar $NGS_PICARD/SortSam.jar " \
