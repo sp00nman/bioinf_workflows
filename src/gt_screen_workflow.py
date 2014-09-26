@@ -84,7 +84,6 @@ def alignment(genome_version,
               project_name,
               sequences_dir,
               project_dir,
-              sample_file,
               output_dir,
               num_cpus):
 
@@ -114,6 +113,23 @@ def alignment(genome_version,
                 % (num_cpus, genome_path, sample_path_file,
                    out_file, out_file_metrics)
     return msg_align, cmd_align
+
+
+def filter_reads(project_name,
+                 output_dir,
+                 mapq):
+    """
+    Filter read based on
+    :param project_name: name of the project (given by user)
+    :param output_dir: where the output files should be written
+    :param mapq: mapping quality, user defined
+    :return: message to be logged & command to be executed; type str
+    """
+
+    out_file = output_dir + "/" + project_name + ".aligned.sam"
+    msg_filter = "Filter reads with MAPQ< " + mapq + "& non-unique reads."
+    cmd_filter = "samtools view -S -q %s -F 4 %s" % (mapq, out_file)
+    return msg_filter, cmd_filter
 
 
 def sort_bam(project_name,
@@ -243,9 +259,15 @@ if __name__ == '__main__':
                                output_dir, num_cpus)
         status = run_cmd(msg, cmd)
 
+    if re.search(r"all|filter", args.stage):
+        (msg, cmd) = filter_reads(project_name, output_dir, mapq)
+        status = run_cmd(msg, cmd)
+
     if re.search(r"all|duplicates", args.stage):
         (msg, cmd) = sort_bam(project_name,output_dir)
         status = run_cmd(msg, cmd)
         (msg, cmd) = remove_duplicates(project_name, output_dir)
         status = run_cmd(msg, cmd)
+
+
 
