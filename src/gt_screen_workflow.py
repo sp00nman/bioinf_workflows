@@ -12,7 +12,7 @@ import logging
 from sys import exit
 from os import (system, remove, mkdir)
 from os.path import (split, splitext, join, exists)
-
+import os
 
 def run_cmd(msg, cmd):
     logging.info(msg)
@@ -48,6 +48,11 @@ def config_section_map(section):
 
 def create_output_dir(output_dir,
                       project_name):
+    """
+    :param output_dir:
+    :param project_name:
+    :return:
+    """
     if not exists(output_dir + "/" + project_name):
         logging.info('Create folder %s' % output_dir)
         try:
@@ -126,9 +131,10 @@ def filter_reads(project_name,
     :return: message to be logged & command to be executed; type str
     """
 
-    out_file = output_dir + "/" + project_name + ".aligned.sam"
+    in_file = output_dir + "/" + project_name + ".aligned.sam"
+    out_file = output_dir + "/" + project_name + ".filt.aligned.sam"
     msg_filter = "Filter reads with MAPQ< " + mapq + "& non-unique reads."
-    cmd_filter = "samtools view -S -q %s -F 4 %s" % (mapq, out_file)
+    cmd_filter = "samtools view -S -q %s -F 4 %s " % (mapq, in_file)
     return msg_filter, cmd_filter
 
 
@@ -141,8 +147,8 @@ def sort_bam(project_name,
     :return: message to be logged & command to be executed; type str
     """
 
-    input_file = output_dir + "/" + project_name + ".aligned.sam"
-    output_file = output_dir + "/" + project_name + ".sorted.sam"
+    input_file = output_dir + "/" + project_name + ".filt.aligned.sam"
+    output_file = output_dir + "/" + project_name + ".sorted.filt.aligned.sam"
     msg_sort = "Sort bam file (by coordinate)."
     cmd_sort = "java -jar $NGS_PICARD/SortSam.jar " \
                "INPUT=%s " \
@@ -160,8 +166,8 @@ def remove_duplicates(project_name,
     :return: message to be logged & command to be executed; type str
     """
 
-    input_file = output_dir + "/" + project_name + ".sorted.sam"
-    output_file = output_dir + "/" + project_name + ".rm_dupl.sorted.sam"
+    input_file = output_dir + "/" + project_name + ".sorted.filt.aligned.sam"
+    output_file = output_dir + "/" + project_name + ".rm_dupl.sorted.filt.aligned.sam"
     msg_rmdup = "Remove duplicate reads. "
     cmd_rmdup = "java -jar $NGS_PICARD/MarkDuplicates.jar " \
                 "INPUT=%s " \
@@ -171,6 +177,29 @@ def remove_duplicates(project_name,
     return msg_rmdup, cmd_rmdup
 
 
+def print_config_param(project_name,
+                       home_dir,
+                       output_dir,
+                       sequences_dir,
+                       project_dir,
+                       sample_file,
+                       genomes,
+                       genome_version,
+                       bowtie2,
+                       num_cpus):
+
+    config_param = "[project name:" + project_name + ", " \
+                   + "home directory:" + home_dir + ", " \
+                   + "output directory:" + output_dir + ", " \
+                   + "sequence directory:" + sequences_dir + ", " \
+                   + "project directory:" + project_dir + ", " \
+                   + "sample file name:" + sample_file + ", " \
+                   + "genome directory:" + genomes + ", " \
+                   + "genome version:" + genome_version + ", " \
+                   + "indices of bowtie2:" + bowtie2 + ", " \
+                   + "number of cpus:" + num_cpus + "]"
+
+    return config_param
 
 
 if __name__ == '__main__':
@@ -183,48 +212,71 @@ if __name__ == '__main__':
                              'Analysis stage. '
                              '[all,alignment,filter,duplicates,insertions,'
                              'annotate, grouping, count, plot]')
+    parser.add_argument('--project_name', dest='project_name', required=False,
+                        help='Name of project directory.')
+    parser.add_argument('--output_dir', dest='output_dir', required=False,
+                        help='Name of output directory.')
+    parser.add_argument('--sequences_dir', dest='sequence_dir', required=False,
+                        help='Directory of sequence files.')
+    parser.add_argument('--sample_file', dest='sample_file', required=False,
+                        help='Input filename.')
+    parser.add_argument('--genomes', dest='genomes', required=False,
+                        help='Path to genome.')
+    parser.add_argument('--genome_version', dest='genome_version', required=False,
+                        help='Genome version')
+    parser.add_argument('--bowtie2', dest='bowtie2', required=False,
+                        help='Path to bowtie2 indices')
+    parser.add_argument('--num_cpus', dest='num_cpus', required=False,
+                        help='Number of cpus.')
     parser.add_argument('--configuration', dest='configuration',
-                        required=True, type=str, help='Configuration file (*.ini)')
+                        required=False, type=str, help='Configuration file (*.ini)')
+
     args = parser.parse_args()
-    config = ConfigParser.ConfigParser()
-    config.read(args.configuration)
 
-    # print config file input
-    project_name = config_section_map("project")['project_name']
-    home_dir = config_section_map("directories")['home_dir']
-    output_dir = config_section_map("directories")['output_dir']
-    sequences_dir = config_section_map("directories")['sequences_dir']
-    project_dir = config_section_map("directories")['project_dir']
-    sample_file = config_section_map("directories")['sample_file']
-    genomes = config_section_map("directories")['genomes']
-    genome_version = config_section_map("directories")['genome_version']
-    bowtie2 = config_section_map("indices")['bowtie2']
-    num_cpus = config_section_map("cluster")['num_cpus']
+    # set defaults
+    home_dir = os.getenv("HOME")
+    if not args.stage:
+        arg.stage = "all"
+    if not args.project_name:
+        args.project_name = "SAMPLE_"
+    if not args.output_dir:
+        args.output_dir = os.getcwd()
+    if not args.sequences_dir:
+        args.sequences_dir = os.getcwd()
+    if not args.genomes:
+        args.genomes = home_dir + "/ref_genome"
+    if not args.genome_version:
+        args.genome_version = "hg19"
+    if not args.bowtie2:
+        args.bowtie2 = ""
 
-    # set defaults for debugging purposes
-    # TODO: set default if debug
-    #if args.debug:
-            #project_name = "SCREEN"
-            #home_dir =
-            #output_dir =
-            #sequences_dir =
-            #project_dir =
-            #sample_file =
-            #genomes =
-            #genome_version =
-            #bowtie2 =
-            #num_cpus =
+    # set variables
+    project_name = args.project_name
+    home_dir = args.home_dir
+    output_dir = args.output_dir
+    sequences_dir = args.sequences_dir
+    sample_file = args.sample_file
+    genomes = args.genomes
+    genome_version = args.genome_version
+    bowtie2 = args.bowtie2
+    num_cpus = args.num_cpus
 
-    config_param = "[project name:" + project_name + ", " \
-                   + "home directory:" + home_dir + ", " \
-                   + "output directory:" + output_dir + ", " \
-                   + "sequence directory:" + sequences_dir + ", " \
-                   + "project directory:" + project_dir + ", " \
-                   + "sample file name:" + sample_file + ", " \
-                   + "genome directory:" + genomes + ", " \
-                   + "genome version:" + genome_version + ", " \
-                   + "indices of bowtie2:" + bowtie2 + ", " \
-                   + "number of cpus:" + num_cpus + "]"
+    # alternatively read in configuration file
+    if args.configuration:
+        config = ConfigParser.ConfigParser()
+        config.read(args.configuration)
+
+        project_name = config_section_map("project")['project_name']
+        home_dir = config_section_map("directories")['home_dir']
+        output_dir = config_section_map("directories")['output_dir']
+        sequences_dir = config_section_map("directories")['sequences_dir']
+        project_dir = config_section_map("directories")['project_dir']
+        sample_file = config_section_map("directories")['sample_file']
+        genomes = config_section_map("directories")['genomes']
+        genome_version = config_section_map("directories")['genome_version']
+        bowtie2 = config_section_map("indices")['bowtie2']
+        num_cpus = config_section_map("cluster")['num_cpus']
+
 
     # file_extensions
     file_extension = {'alignment': 'bam',
@@ -247,10 +299,9 @@ if __name__ == '__main__':
     if args.debug:
         logging.debug(config_param)
 
-    # check for file format, if *bam convert to fastq
     if re.search(r".bam", sample_file):
         (msg, cmd) = bam2fastq(sequences_dir, project_dir,
-                               sample_file, project_name,output_dir)
+                               sample_file, project_name, output_dir)
         status = run_cmd(msg, cmd)
 
     if re.search(r"all|alignment", args.stage):
