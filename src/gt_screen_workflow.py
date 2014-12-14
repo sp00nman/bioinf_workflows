@@ -284,7 +284,7 @@ if __name__ == '__main__':
 
 
     # create log file
-    logfile_name = project_name + ".log"
+    logfile_name = project_dir + "/" + project_name + ".log"
     logging.basicConfig(filename=logfile_name,
                         format='%(levelname)s: %(asctime)s %(message)s',
                         datefmt='%m/%d/%Y %I:%M:%S %p',
@@ -316,15 +316,16 @@ if __name__ == '__main__':
         sample_file = project_dir + "/" + project_name + ".aligned.sam"
 
     if re.search(r"all|filter", args.stage):
-        (msg, cmd) = filter_reads(project_name, project_dir, mapq="20")
+        (msg, cmd) = filter_reads(project_name, project_dir, sample_file,
+                                  mapq="20")
         status = run_cmd(msg, cmd)
         sample_file = project_dir + "/" + project_name + ".filt.aligned.sam"
 
     if re.search(r"all|duplicates", args.stage):
-        (msg, cmd) = sort_bam(project_name, project_dir)
+        (msg, cmd) = sort_bam(project_name, project_dir, sample_file)
         status = run_cmd(msg, cmd)
         sample_file = project_dir + "/" + project_name + ".sorted.filt.aligned.sam"
-        (msg, cmd) = remove_duplicates(project_name, output_dir)
+        (msg, cmd) = remove_duplicates(project_name, output_dir, sample_file)
         status = run_cmd(msg, cmd)
 
 
