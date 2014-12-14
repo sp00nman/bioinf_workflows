@@ -256,6 +256,7 @@ if __name__ == '__main__':
     project_name = args.project_name
     output_dir = args.output_dir
     sequences_dir = args.sequences_dir
+    project_dir = output_dir + "/" + project_name
     sample_file = args.sample_file
     genomes = args.genomes
     genome_version = args.genome_version
