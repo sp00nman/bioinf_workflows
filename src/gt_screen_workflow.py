@@ -216,7 +216,7 @@ if __name__ == '__main__':
                         help='Name of project directory.')
     parser.add_argument('--output_dir', dest='output_dir', required=False,
                         help='Name of output directory.')
-    parser.add_argument('--sequences_dir', dest='sequence_dir', required=False,
+    parser.add_argument('--sequences_dir', dest='sequences_dir', required=False,
                         help='Directory of sequence files.')
     parser.add_argument('--sample_file', dest='sample_file', required=False,
                         help='Input filename.')
@@ -236,7 +236,7 @@ if __name__ == '__main__':
     # set defaults
     home_dir = os.getenv("HOME")
     if not args.stage:
-        arg.stage = "all"
+        args.stage = "all"
     if not args.project_name:
         args.project_name = "SAMPLE_"
     if not args.output_dir:
@@ -248,7 +248,9 @@ if __name__ == '__main__':
     if not args.genome_version:
         args.genome_version = "hg19"
     if not args.bowtie2:
-        args.bowtie2 = ""
+        args.bowtie2 = "forBowtie2"
+    if not args.num_cpus:
+        args.num_cpus = "4"
 
     # set variables
     project_name = args.project_name
@@ -297,6 +299,10 @@ if __name__ == '__main__':
         create_output_dir(output_dir, project_name)
 
     if args.debug:
+        config_param = print_config_param(project_name,home_dir,output_dir,sequences_dir,
+                           project_dir, sample_file, genomes, genome_version,
+                           bowtie2, num_cpus)
+        print config_param
         logging.debug(config_param)
 
     if re.search(r".bam", sample_file):
