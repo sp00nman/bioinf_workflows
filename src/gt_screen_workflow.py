@@ -14,6 +14,7 @@ from os import (system, remove, mkdir)
 from os.path import (split, splitext, join, exists)
 import os
 
+
 def run_cmd(msg, cmd):
     logging.info(msg)
     logging.debug(cmd)
@@ -87,8 +88,6 @@ def bam2fastq(sequences_dir,
 def alignment(genome_version,
               genomes,
               project_name,
-              sequences_dir,
-              project_dir,
               sample_file,
               output_dir,
               num_cpus):
@@ -108,8 +107,7 @@ def alignment(genome_version,
     """
 
     genome_path = genomes + "/" + genome_version
-    sample_path_file = sequences_dir + "/" + project_dir + "/" \
-                       + project_name + ".fastq"
+    sample_path_file = sample_file
     out_file = output_dir + "/" + project_name + ".aligned.sam"
     out_file_metrics = output_dir + "/" + project_name + ".align.metrics.txt"
 
@@ -175,6 +173,7 @@ def remove_duplicates(project_name,
                 "OUTPUT=%s " \
                 "METRICS_FILE=%s.duplicates.metrics.txt " \
                 "REMOVE_DUPLICATES=true" % (input_file, output_file, project_name)
+
     return msg_rmdup, cmd_rmdup
 
 
@@ -211,7 +210,7 @@ if __name__ == '__main__':
     parser.add_argument('--stage', dest='stage', required=False,
                         help='Limit job submission to a particular '
                              'Analysis stage. '
-                             '[all,alignment,filter,duplicates,insertions,'
+                             '[all,alignment,filter, sort, duplicates,insertions,'
                              'annotate, grouping, count, plot]')
     parser.add_argument('--project_name', dest='project_name', required=False,
                         help='Name of project directory.')
@@ -281,11 +280,6 @@ if __name__ == '__main__':
         num_cpus = config_section_map("cluster")['num_cpus']
 
 
-    # file_extensions
-    file_extension = {'alignment': 'bam',
-                      'duplicates': 'dup',
-                      'sort': 'sorted'}
-
     # create log file
     logfile_name = project_name + ".log"
     logging.basicConfig(filename=logfile_name,
@@ -310,20 +304,24 @@ if __name__ == '__main__':
         (msg, cmd) = bam2fastq(sequences_dir, project_dir,
                                sample_file, project_name, output_dir)
         status = run_cmd(msg, cmd)
+        sample_file = project_dir + "/" + project_name + ".fastq"
 
     if re.search(r"all|alignment", args.stage):
         (msg, cmd) = alignment(genome_version, genomes, project_name,
                                sequences_dir, project_dir, sample_file,
                                output_dir, num_cpus)
         status = run_cmd(msg, cmd)
+        sample_file = project_dir + "/" + project_name + ".aligned.sam"
 
     if re.search(r"all|filter", args.stage):
         (msg, cmd) = filter_reads(project_name, output_dir, mapq="20")
         status = run_cmd(msg, cmd)
+        sample_file = project_dir + "/" + project_name + ".filt.aligned.sam"
 
     if re.search(r"all|duplicates", args.stage):
         (msg, cmd) = sort_bam(project_name,output_dir)
         status = run_cmd(msg, cmd)
+        sample_file = project_dir + "/" + project_name + ".sorted.filt.aligned.sam"
         (msg, cmd) = remove_duplicates(project_name, output_dir)
         status = run_cmd(msg, cmd)
 
