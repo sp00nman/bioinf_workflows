@@ -254,7 +254,6 @@ if __name__ == '__main__':
 
     # set variables
     project_name = args.project_name
-    home_dir = args.home_dir
     output_dir = args.output_dir
     sequences_dir = args.sequences_dir
     sample_file = args.sample_file
@@ -317,7 +316,7 @@ if __name__ == '__main__':
         status = run_cmd(msg, cmd)
 
     if re.search(r"all|filter", args.stage):
-        (msg, cmd) = filter_reads(project_name, output_dir, mapq)
+        (msg, cmd) = filter_reads(project_name, output_dir, mapq="20")
         status = run_cmd(msg, cmd)
 
     if re.search(r"all|duplicates", args.stage):
