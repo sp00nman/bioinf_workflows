@@ -89,7 +89,7 @@ def alignment(genome_version,
               genomes,
               project_name,
               sample_file,
-              output_dir,
+              project_dir,
               num_cpus):
 
     """
@@ -108,8 +108,8 @@ def alignment(genome_version,
 
     genome_path = genomes + "/" + genome_version
     sample_path_file = sample_file
-    out_file = output_dir + "/" + project_name + ".aligned.sam"
-    out_file_metrics = output_dir + "/" + project_name + ".align.metrics.txt"
+    out_file = project_dir + "/" + project_name + ".aligned.sam"
+    out_file_metrics = project_dir + "/" + project_name + ".align.metrics.txt"
 
     msg_align = "Mapping reads to genome " + genome_version
     cmd_align = "bowtie2 -p %s --end-to-end --sensitive -x %s -U %s " \
@@ -120,7 +120,8 @@ def alignment(genome_version,
 
 
 def filter_reads(project_name,
-                 output_dir,
+                 project_dir,
+                 sample_file,
                  mapq):
     """
     Filter read based on
@@ -130,15 +131,16 @@ def filter_reads(project_name,
     :return: message to be logged & command to be executed; type str
     """
 
-    in_file = output_dir + "/" + project_name + ".aligned.sam"
-    out_file = output_dir + "/" + project_name + ".filt.aligned.sam"
+    in_file = sample_file
+    out_file = project_dir + "/" + project_name + ".filt.aligned.sam"
     msg_filter = "Filter reads with MAPQ< " + mapq + "& non-unique reads."
-    cmd_filter = "samtools view -S -q %s -F 4 %s " % (mapq, in_file)
+    cmd_filter = "samtools view -S -q %s -F 4 %s >%s" % (mapq, in_file, out_file)
     return msg_filter, cmd_filter
 
 
 def sort_bam(project_name,
-             output_dir):
+             project_dir,
+             sample_file):
     """
     Sort sam ? bam file by coordinate.
     :param project_name: name of project (given by user)
@@ -146,8 +148,8 @@ def sort_bam(project_name,
     :return: message to be logged & command to be executed; type str
     """
 
-    input_file = output_dir + "/" + project_name + ".filt.aligned.sam"
-    output_file = output_dir + "/" + project_name + ".sorted.filt.aligned.sam"
+    input_file = sample_file
+    output_file = project_dir + "/" + project_name + ".sorted.filt.aligned.sam"
     msg_sort = "Sort bam file (by coordinate)."
     cmd_sort = "java -jar $NGS_PICARD/SortSam.jar " \
                "INPUT=%s " \
@@ -157,7 +159,8 @@ def sort_bam(project_name,
 
 
 def remove_duplicates(project_name,
-                      output_dir):
+                      project_dir,
+                      sample_file):
     """
     Remove duplicate reads.
     :param project_name: name of project (given by user)
@@ -165,8 +168,8 @@ def remove_duplicates(project_name,
     :return: message to be logged & command to be executed; type str
     """
 
-    input_file = output_dir + "/" + project_name + ".sorted.filt.aligned.sam"
-    output_file = output_dir + "/" + project_name + ".rm_dupl.sorted.filt.aligned.sam"
+    input_file = sample_file
+    output_file = project_dir + "/" + project_name + ".rm_dupl.sorted.filt.aligned.sam"
     msg_rmdup = "Remove duplicate reads. "
     cmd_rmdup = "java -jar $NGS_PICARD/MarkDuplicates.jar " \
                 "INPUT=%s " \
@@ -308,18 +311,17 @@ if __name__ == '__main__':
 
     if re.search(r"all|alignment", args.stage):
         (msg, cmd) = alignment(genome_version, genomes, project_name,
-                               sequences_dir, project_dir, sample_file,
-                               output_dir, num_cpus)
+                               sample_file, project_dir, num_cpus)
         status = run_cmd(msg, cmd)
         sample_file = project_dir + "/" + project_name + ".aligned.sam"
 
     if re.search(r"all|filter", args.stage):
-        (msg, cmd) = filter_reads(project_name, output_dir, mapq="20")
+        (msg, cmd) = filter_reads(project_name, project_dir, mapq="20")
         status = run_cmd(msg, cmd)
         sample_file = project_dir + "/" + project_name + ".filt.aligned.sam"
 
     if re.search(r"all|duplicates", args.stage):
-        (msg, cmd) = sort_bam(project_name,output_dir)
+        (msg, cmd) = sort_bam(project_name, project_dir)
         status = run_cmd(msg, cmd)
         sample_file = project_dir + "/" + project_name + ".sorted.filt.aligned.sam"
         (msg, cmd) = remove_duplicates(project_name, output_dir)
