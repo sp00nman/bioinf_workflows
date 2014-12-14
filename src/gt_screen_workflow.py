@@ -76,11 +76,11 @@ def bam2fastq(sequences_dir,
     :return: message to be logged & command to be executed; type str
     """
 
-    input_file = sequences_dir + "/" + project_dir + "/" + sample_file
+    input_file = sequences_dir + "/" + sample_file
     msg_bam2fastq = "Convert bam to fastq."
     cmd_bam2fastq = "java -jar $NGS_PICARD/SamToFastq.jar " \
                     "INPUT=%s " \
-                    "FASTQ=%s/%s.fastq" % (input_file, output_dir, project_name)
+                    "FASTQ=%s/%s.fastq" % (input_file, project_dir, project_name)
     return msg_bam2fastq, cmd_bam2fastq
 
 
@@ -89,6 +89,7 @@ def alignment(genome_version,
               project_name,
               sequences_dir,
               project_dir,
+              sample_file,
               output_dir,
               num_cpus):
 
