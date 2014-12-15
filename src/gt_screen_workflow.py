@@ -119,6 +119,17 @@ def alignment(genome_version,
     return msg_align, cmd_align
 
 
+def sam2bam(project_name,
+            project_dir,
+            sample_file):
+
+    in_file = sample_file
+    out_file = project_dir + "/" + project_name + ".bam"
+    msg_sam2bam = "Convert sam to bam format."
+    cmd_sam2bam = "samtools view -S -b %s >%s" % (in_file, out_file)
+    return msg_sam2bam, cmd_sam2bam
+
+
 def filter_reads(project_name,
                  project_dir,
                  sample_file,
@@ -132,9 +143,9 @@ def filter_reads(project_name,
     """
 
     in_file = sample_file
-    out_file = project_dir + "/" + project_name + ".filt.aligned.sam"
+    out_file = project_dir + "/" + project_name + ".filt.aligned.bam"
     msg_filter = "Filter reads with MAPQ< " + mapq + "& non-unique reads."
-    cmd_filter = "samtools view -S -q %s -F 4 %s >%s" % (mapq, in_file, out_file)
+    cmd_filter = "samtools view -q %s -F 4 %s >%s" % (mapq, in_file, out_file)
     return msg_filter, cmd_filter
 
 
@@ -149,7 +160,7 @@ def sort_bam(project_name,
     """
 
     input_file = sample_file
-    output_file = project_dir + "/" + project_name + ".sorted.filt.aligned.sam"
+    output_file = project_dir + "/" + project_name + ".sorted.filt.aligned.bam"
     msg_sort = "Sort bam file (by coordinate)."
     cmd_sort = "java -jar $NGS_PICARD/SortSam.jar " \
                "INPUT=%s " \
@@ -316,10 +327,13 @@ if __name__ == '__main__':
         sample_file = project_dir + "/" + project_name + ".aligned.sam"
 
     if re.search(r"all|filter", args.stage):
+        (msg, cmd) = sam2bam(project_name, project_dir, sample_file)
+        status = run_cmd(msg,cmd)
+        sample_file = project_dir + "/" + project_name + ".bam"
         (msg, cmd) = filter_reads(project_name, project_dir, sample_file,
                                   mapq="20")
         status = run_cmd(msg, cmd)
-        sample_file = project_dir + "/" + project_name + ".filt.aligned.sam"
+        sample_file = project_dir + "/" + project_name + ".filt.aligned.bam"
 
     if re.search(r"all|duplicates", args.stage):
         (msg, cmd) = sort_bam(project_name, project_dir, sample_file)
