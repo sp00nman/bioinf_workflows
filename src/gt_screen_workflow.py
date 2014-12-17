@@ -180,7 +180,7 @@ def reorder_sam(project_name,
     cmd_reorder = "java -jar $NGS_PICARD/ReorderSam.jar " \
                   "INPUT=%s " \
                   "OUTPUT=%s " \
-                  "REFERENCE=%s.hg19.fa" % (input_file, output_file, genomes)
+                  "REFERENCE=%s/hg19.fa" % (input_file, output_file, genomes)
     return msg_reorder, cmd_reorder
 
 
