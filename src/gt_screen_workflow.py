@@ -195,7 +195,7 @@ def remove_duplicates(project_name,
     """
 
     input_file = sample_file
-    output_file = project_dir + "/" + project_name + ".rm_dupl.sorted.filt.aligned.sam"
+    output_file = project_dir + "/" + project_name + ".rm_dupl.sorted.filt.aligned.bam"
     msg_rmdup = "Remove duplicate reads. "
     cmd_rmdup = "java -jar $NGS_PICARD/MarkDuplicates.jar " \
                 "INPUT=%s " \
@@ -352,7 +352,7 @@ if __name__ == '__main__':
     if re.search(r"all|duplicates", args.stage):
         (msg, cmd) = sort_bam(project_name, project_dir, sample_file)
         status = run_cmd(msg, cmd)
-        sample_file = project_dir + "/" + project_name + ".sorted.filt.aligned.sam"
+        sample_file = project_dir + "/" + project_name + ".sorted.filt.aligned.bam"
         (msg, cmd) = reorder_sam(project_name, project_dir, sample_file, genomes)
         status = run_cmd(msg,cmd)
         sample_file = project_dir + "/" + project_name + ".reorder.bam"
