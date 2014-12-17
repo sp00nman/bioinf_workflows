@@ -145,7 +145,7 @@ def filter_reads(project_name,
     in_file = sample_file
     out_file = project_dir + "/" + project_name + ".filt.aligned.bam"
     msg_filter = "Filter reads with MAPQ< " + mapq + "& non-unique reads."
-    cmd_filter = "samtools view -q %s -F 4 %s >%s" % (mapq, in_file, out_file)
+    cmd_filter = "samtools view -b -q %s -F 4 %s >%s" % (mapq, in_file, out_file)
     return msg_filter, cmd_filter
 
 
@@ -169,6 +169,21 @@ def sort_bam(project_name,
     return msg_sort, cmd_sort
 
 
+def reorder_sam(project_name,
+                project_dir,
+                sample_file,
+                genomes):
+
+    input_file = sample_file
+    output_file = project_dir + "/" + project_name + ".reorder.bam"
+    msg_reorder = "Reorder bam file."
+    cmd_reorder = "java -jar $NGS_PICARD/ReorderSam.jar " \
+                  "INPUT=%s " \
+                  "OUTPUT=%s " \
+                  "REFERENCE=%s.hg19.fa" % (input_file, output_file, genomes)
+    return msg_reorder, cmd_reorder
+
+
 def remove_duplicates(project_name,
                       project_dir,
                       sample_file):
@@ -187,7 +202,6 @@ def remove_duplicates(project_name,
                 "OUTPUT=%s " \
                 "METRICS_FILE=%s.duplicates.metrics.txt " \
                 "REMOVE_DUPLICATES=true" % (input_file, output_file, project_name)
-
     return msg_rmdup, cmd_rmdup
 
 
@@ -339,6 +353,9 @@ if __name__ == '__main__':
         (msg, cmd) = sort_bam(project_name, project_dir, sample_file)
         status = run_cmd(msg, cmd)
         sample_file = project_dir + "/" + project_name + ".sorted.filt.aligned.sam"
+        (msg, cmd) = reorder_sam(project_name, project_dir, sample_file, genomes)
+        status = run_cmd(msg,cmd)
+        sample_file = project_dir + "/" + project_name + ".reorder.bam"
         (msg, cmd) = remove_duplicates(project_name, output_dir, sample_file)
         status = run_cmd(msg, cmd)
 
