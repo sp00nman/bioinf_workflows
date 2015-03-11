@@ -8,5 +8,5 @@ Table of contents
 =================
 
 1. [Genetrap virus screen workflow](doc/gtvs_workflow.md)
-2. [How to submit to the cluster]()
+2. [How to submit to the cluster](https://github.com/sp00nman/slurm-sbatch/blob/master/slurm_gt_screens_rk-lab.py)
 
