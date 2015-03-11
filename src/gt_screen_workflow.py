@@ -258,8 +258,6 @@ if __name__ == '__main__':
                         help='Path to bowtie2 indices')
     parser.add_argument('--num_cpus', dest='num_cpus', required=False,
                         help='Number of cpus.')
-    parser.add_argument('--configuration', dest='configuration',
-                        required=False, type=str, help='Configuration file (*.ini)')
 
     args = parser.parse_args()
 
@@ -282,36 +280,14 @@ if __name__ == '__main__':
     if not args.num_cpus:
         args.num_cpus = "4"
 
-    # set variables
-    project_name = args.project_name
-    output_dir = args.output_dir
-    sequences_dir = args.sequences_dir
-    project_dir = output_dir + "/" + project_name
-    sample_file = args.sample_file
-    genomes = args.genomes
-    genome_version = args.genome_version
-    bowtie2 = args.bowtie2
-    num_cpus = args.num_cpus
+    # set project directory
+    project_dir = args.output_dir + "/" + args.project_name
 
-    # alternatively read in configuration file
-    if args.configuration:
-        config = ConfigParser.ConfigParser()
-        config.read(args.configuration)
-
-        project_name = config_section_map("project")['project_name']
-        home_dir = config_section_map("directories")['home_dir']
-        output_dir = config_section_map("directories")['output_dir']
-        sequences_dir = config_section_map("directories")['sequences_dir']
-        project_dir = config_section_map("directories")['project_dir']
-        sample_file = config_section_map("directories")['sample_file']
-        genomes = config_section_map("directories")['genomes']
-        genome_version = config_section_map("directories")['genome_version']
-        bowtie2 = config_section_map("indices")['bowtie2']
-        num_cpus = config_section_map("cluster")['num_cpus']
-
+    # creat project directory
+    create_output_dir(args.output_dir, args.project_name)
 
     # create log file
-    logfile_name = project_dir + "/" + project_name + ".log"
+    logfile_name = project_dir + "/" + args.project_name + ".log"
     logging.basicConfig(filename=logfile_name,
                         format='%(levelname)s: %(asctime)s %(message)s',
                         datefmt='%m/%d/%Y %I:%M:%S %p',
@@ -320,46 +296,47 @@ if __name__ == '__main__':
     # start analysis workflow & logging
     logging.info("Genetic screen workflow 0.0.1")
 
-    if not args.debug:
-        create_output_dir(output_dir, project_name)
-
+    # print command line arguments (if debug)
     if args.debug:
-        config_param = print_config_param(project_name,home_dir,output_dir,sequences_dir,
-                           project_dir, sample_file, genomes, genome_version,
-                           bowtie2, num_cpus)
-        print config_param
-        logging.debug(config_param)
-
-    if re.search(r".bam", sample_file):
-        (msg, cmd) = bam2fastq(sequences_dir, project_dir,
-                               sample_file, project_name, output_dir)
+        config_param = print_config_param(args.project_name,home_dir, args.output_dir,
+                                            args.sequences_dir, project_dir, 
+                                            args.sample_file, args.genomes, 
+                                            args.genome_version, args.bowtie2, 
+                                            str(args.num_cpus)) 
+    # start workflow
+    if re.search(r".bam", args.sample_file):
+        (msg, cmd) = bam2fastq(args.sequences_dir, project_dir,
+                               args.sample_file, args.project_name, 
+                               args.output_dir)
         status = run_cmd(msg, cmd)
-        sample_file = project_dir + "/" + project_name + ".fastq"
 
     if re.search(r"all|alignment", args.stage):
-        (msg, cmd) = alignment(genome_version, genomes, project_name,
-                               sample_file, project_dir, num_cpus)
+        if re.search(r".fastq", args.sample_file):
+            sample_file = args.sequences_dir + "/" + args.sample_file
+        else:
+            sample_file = project_dir + "/" + args.project_name + ".fastq"
+
+        (msg, cmd) = alignment(args.genome_version, args.genomes, 
+                                args.project_name, sample_file, 
+                                project_dir, str(args.num_cpus))
         status = run_cmd(msg, cmd)
-        sample_file = project_dir + "/" + project_name + ".aligned.sam"
+        sample_file = project_dir + "/" + args.project_name + ".aligned.sam"
 
     if re.search(r"all|filter", args.stage):
-        (msg, cmd) = sam2bam(project_name, project_dir, sample_file)
+        (msg, cmd) = sam2bam(args.project_name, project_dir, sample_file)
         status = run_cmd(msg,cmd)
-        sample_file = project_dir + "/" + project_name + ".bam"
-        (msg, cmd) = filter_reads(project_name, project_dir, sample_file,
+        sample_file = project_dir + "/" + args.project_name + ".bam"
+        (msg, cmd) = filter_reads(args.project_name, project_dir, sample_file,
                                   mapq="20")
         status = run_cmd(msg, cmd)
-        sample_file = project_dir + "/" + project_name + ".filt.aligned.bam"
+        sample_file = project_dir + "/" + args.project_name + ".filt.aligned.bam"
 
     if re.search(r"all|duplicates", args.stage):
-        (msg, cmd) = sort_bam(project_name, project_dir, sample_file)
+        (msg, cmd) = sort_bam(args.project_name, project_dir, sample_file)
         status = run_cmd(msg, cmd)
-        sample_file = project_dir + "/" + project_name + ".sorted.filt.aligned.bam"
-        (msg, cmd) = reorder_sam(project_name, project_dir, sample_file, genomes)
+        sample_file = project_dir + "/" + args.project_name + ".sorted.filt.aligned.bam"
+        (msg, cmd) = reorder_sam(args.project_name, project_dir, sample_file, args.genomes)
         status = run_cmd(msg,cmd)
-        sample_file = project_dir + "/" + project_name + ".reorder.bam"
-        (msg, cmd) = remove_duplicates(project_name, project_dir, sample_file)
+        sample_file = project_dir + "/" + args.project_name + ".reorder.bam"
+        (msg, cmd) = remove_duplicates(args.project_name, project_dir, sample_file)
         status = run_cmd(msg, cmd)
-
-
-
