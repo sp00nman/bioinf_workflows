@@ -183,6 +183,21 @@ def reorder_sam(project_name,
                   "REFERENCE=%s/hg19.fa" % (input_file, output_file, genomes)
     return msg_reorder, cmd_reorder
 
+def count_duplicates(project_name,
+                     project_dir,
+                     sample_file):
+
+    input_file = sample_file
+    output_file = project_dir + "/" + project_name + "."
+    msg_countdup = "Count duplicate reads for each position."
+    #TODO: don't hardcode executable files
+    cmd_countdup = "~/src/ngsutils/bin/bamutils pcrdup " \
+    "-frag " \
+    "-bam %s " \
+    "-counts %s " \
+
+
+
 
 def remove_duplicates(project_name,
                       project_dir,
