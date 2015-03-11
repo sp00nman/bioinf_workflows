@@ -15,6 +15,31 @@ from os.path import (split, splitext, join, exists)
 import os
 
 
+def print_config_param(project_name,
+                       home_dir,
+                       output_dir,
+                       sequences_dir,
+                       project_dir,
+                       sample_file,
+                       genomes,
+                       genome_version,
+                       bowtie2,
+                       num_cpus):
+
+    config_param = "[project name:" + project_name + ", " \
+                   + "home directory:" + home_dir + ", " \
+                   + "output directory:" + output_dir + ", " \
+                   + "sequence directory:" + sequences_dir + ", " \
+                   + "project directory:" + project_dir + ", " \
+                   + "sample file name:" + sample_file + ", " \
+                   + "genome directory:" + genomes + ", " \
+                   + "genome version:" + genome_version + ", " \
+                   + "indices of bowtie2:" + bowtie2 + ", " \
+                   + "number of cpus:" + num_cpus + "]"
+
+    return config_param
+
+
 def run_cmd(msg, cmd):
     logging.info(msg)
     logging.debug(cmd)
@@ -25,26 +50,6 @@ def run_cmd(msg, cmd):
             logging.warning("command '%s' returned non-zero "
                             "status: %d'" % (cmd, status))
     return status
-
-
-def config_section_map(section):
-    """
-    This function was taken from
-    https://wiki.python.org/moin/ConfigParserExamples
-    :param section:
-    :return: dictionary of options
-    """
-    dict_param = {}
-    options = config.options(section)
-    for option in options:
-        try:
-            dict_param[option] = config.get(section, option)
-            if dict_param[option] == -1:
-                print("skip: %s" % option)
-        except:
-            print("exception on %s!" % option)
-            dict_param[option] = None
-    return dict_param
 
 
 def create_output_dir(output_dir,
@@ -183,6 +188,7 @@ def reorder_sam(project_name,
                   "REFERENCE=%s/hg19.fa" % (input_file, output_file, genomes)
     return msg_reorder, cmd_reorder
 
+
 def count_duplicates(project_name,
                      project_dir,
                      sample_file):
@@ -195,8 +201,6 @@ def count_duplicates(project_name,
     "-frag " \
     "-bam %s " \
     "-counts %s " \
-
-
 
 
 def remove_duplicates(project_name,
@@ -222,29 +226,19 @@ def remove_duplicates(project_name,
     return msg_rmdup, cmd_rmdup
 
 
-def print_config_param(project_name,
-                       home_dir,
-                       output_dir,
-                       sequences_dir,
-                       project_dir,
-                       sample_file,
-                       genomes,
-                       genome_version,
-                       bowtie2,
-                       num_cpus):
+def bam2bai(project_name,
+            project_dir,
+            sample_file):
 
-    config_param = "[project name:" + project_name + ", " \
-                   + "home directory:" + home_dir + ", " \
-                   + "output directory:" + output_dir + ", " \
-                   + "sequence directory:" + sequences_dir + ", " \
-                   + "project directory:" + project_dir + ", " \
-                   + "sample file name:" + sample_file + ", " \
-                   + "genome directory:" + genomes + ", " \
-                   + "genome version:" + genome_version + ", " \
-                   + "indices of bowtie2:" + bowtie2 + ", " \
-                   + "number of cpus:" + num_cpus + "]"
+    input_file = sample_file
+    output_file = project_dir + "/" + project_name + ".rm_dupl.sorted.filt.aligned.bam.bai"
+    msg_bam2bai = "Index bam file."
+    cmd_bam2bai = "samtools index %s %s" % (input_file, output_file)
 
-    return config_param
+    return msg_bam2bai, cmd_bam2bai
+
+
+
 
 
 if __name__ == '__main__':
@@ -255,8 +249,8 @@ if __name__ == '__main__':
     parser.add_argument('--stage', dest='stage', required=False,
                         help='Limit job submission to a particular '
                              'Analysis stage. '
-                             '[all,alignment,filter, sort, duplicates,insertions,'
-                             'annotate, grouping, count, plot]')
+                             '[all,alignment,filter, sort, duplicates, index,'
+                             'insertions, annotate, grouping, count, plot]')
     parser.add_argument('--project_name', dest='project_name', required=False,
                         help='Name of project directory.')
     parser.add_argument('--output_dir', dest='output_dir', required=False,
@@ -355,3 +349,8 @@ if __name__ == '__main__':
         sample_file = project_dir + "/" + args.project_name + ".reorder.bam"
         (msg, cmd) = remove_duplicates(args.project_name, project_dir, sample_file)
         status = run_cmd(msg, cmd)
+
+    if re.search(r"all|index", args.stage):
+        (msg, cmd) = bam2bai(args.project_name, project_dir, sample_file)
+        status = run_cmd(msg, cmd)
+        sample_file = project_dir + "/" + args.project_name + ".sorted.filt.aligned.bam.bai"
