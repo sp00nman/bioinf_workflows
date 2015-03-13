@@ -13,7 +13,7 @@ from sys import exit
 from os import (system, remove, mkdir)
 from os.path import (split, splitext, join, exists)
 import os
-
+import pysam
 
 def print_config_param(project_name,
                        home_dir,
@@ -237,8 +237,57 @@ def bam2bai(project_name,
 
     return msg_bam2bai, cmd_bam2bai
 
+def bam2sam(project_name,
+            project_dir,
+            sample_file):
+
+    input_file = sample_file
+    output_file = project_dir + "/" + project_name + ".rm_dupl.sorted.filt.aligned.sam"
+    msg_bam2bai = "Convert bam to sam."
+    cmd_bam2bai = "samtools view %s > %s" % (input_file, output_file)
+
+    return msg_bam2bai, cmd_bam2bai
 
 
+def load_files(filename):
+    """
+    read in files of the following structure
+    ID1\tID2\t? --> \t tab separated
+    could be 1 or more ids
+    """
+    file_obj = open(filename, 'r')
+    try:
+        all_content = [line.strip('\n').split('\t') for line in file_obj]
+    finally:
+        file_obj.close()
+    return all_content
+
+
+def remove2bpinsertions(project_name,
+                        project_dir,
+                        sample_file):
+
+    input_file = sample_file
+    output_file = project_dir + "/" + project_name + ".rm2bp_insertions.sam"
+
+    sam_file = load_files(input_file)
+    sam_out = open(output_file, 'w')
+
+    for index in range(len(sam_file)):
+        position = sam_file[index][1]
+
+        next_read = sam_file[index+1]
+        next_position = next_read[1]
+
+        # bpdis --> base pair distance
+        bp_dist = next_position-position
+
+        if not (bp_dist <= 2):
+            sam_out.writelines(sam_file[index])
+
+    sam_out.close()
+
+    return None
 
 
 if __name__ == '__main__':
@@ -353,4 +402,4 @@ if __name__ == '__main__':
     if re.search(r"all|index", args.stage):
         (msg, cmd) = bam2bai(args.project_name, project_dir, sample_file)
         status = run_cmd(msg, cmd)
-        sample_file = project_dir + "/" + args.project_name + ".sorted.filt.aligned.bam.bai"
+        sample_file = project_dir + "/" + args.project_name + ".sorted.filt.aligned.bam"
