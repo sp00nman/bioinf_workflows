@@ -13,6 +13,7 @@ from sys import exit
 from os import (system, remove, mkdir)
 from os.path import (split, splitext, join, exists)
 import os
+import pysam
 
 
 def run_cmd(msg, cmd):
