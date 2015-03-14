@@ -231,7 +231,8 @@ def bam2bai(project_name,
             sample_file):
 
     input_file = sample_file
-    output_file = project_dir + "/" + project_name + ".rm_dupl.sorted.filt.aligned.bam.bai"
+    output_file = project_dir + "/" + project_name \
+                  + ".rm_dupl.sorted.filt.aligned.bam.bai"
     msg_bam2bai = "Index bam file."
     cmd_bam2bai = "samtools index %s %s" % (input_file, output_file)
 
@@ -242,7 +243,8 @@ def bam2sam(project_name,
             sample_file):
 
     input_file = sample_file
-    output_file = project_dir + "/" + project_name + ".rm_dupl.sorted.filt.aligned.sam"
+    output_file = project_dir + "/" + project_name \
+                  + ".rm_dupl.sorted.filt.aligned.sam"
     msg_bam2bai = "Convert bam to sam."
     cmd_bam2bai = "samtools view %s > %s" % (input_file, output_file)
 
@@ -268,25 +270,35 @@ def remove2bpinsertions(project_name,
                         sample_file):
 
     input_file = sample_file
-    output_file = project_dir + "/" + project_name + ".rm2bp_insertions.sam"
+    output_file = project_dir + "/" + project_name \
+                  + ".rm2bp_insertions.sam"
 
     sam_file = load_files(input_file)
     sam_out = open(output_file, 'w')
 
     for index in range(len(sam_file)):
-        position = sam_file[index][1]
+        print index
+        if index == 0:
+            print '\t'.join(sam_file[index])
+            sam_out.writelines('\t'.join(sam_file[index-1]))
+            sam_out.writelines("\n")
+            continue
 
-        next_read = sam_file[index+1]
-        next_position = next_read[1]
+        # samfile chromosome position is column 4
+        position = int(sam_file[index-1][3])
+
+        next_read = sam_file[index]
+        next_position = int(next_read[3])
 
         # bpdis --> base pair distance
         bp_dist = next_position-position
 
         if not (bp_dist <= 2):
-            sam_out.writelines(sam_file[index])
+            print '\t'.join(sam_file[index])
+            sam_out.writelines('\t'.join(sam_file[index]))
+            sam_out.writelines("\n")
 
     sam_out.close()
-
     return None
 
 
@@ -403,3 +415,13 @@ if __name__ == '__main__':
         (msg, cmd) = bam2bai(args.project_name, project_dir, sample_file)
         status = run_cmd(msg, cmd)
         sample_file = project_dir + "/" + args.project_name + ".sorted.filt.aligned.bam"
+
+    if re.search(r"all|bam2sam", args.stage):
+        (msg, cmd) = bam2sam(args.project_name, project_dir, sample_file)
+        status = run_cmd(msg, cmd)
+        sample_file = project_dir + "/" + args.project_name + ".rm_dupl.sorted.filt.aligned.sam"
+
+    if re.search(r"all|insertions", args.stage):
+        (msg, cmd) = remove2bpinsertions(args.project_name, project_dir, sample_file)
+        status = run_cmd(msg, cmd)
+        sample_file = project_dir + "/" + args.project_name + ".rm2bp_insertions.sam"
