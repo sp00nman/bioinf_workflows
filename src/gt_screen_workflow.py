@@ -278,9 +278,9 @@ def remove2bpinsertions(project_name,
     sam_out = open(output_file, 'w')
 
     for index in range(len(sam_file)):
-        print index
+        #print index
         if index == 0:
-            print '\t'.join(sam_file[index])
+            #print '\t'.join(sam_file[index])
             sam_out.writelines('\t'.join(sam_file[index-1]))
             sam_out.writelines("\n")
             continue
@@ -292,10 +292,10 @@ def remove2bpinsertions(project_name,
         next_position = int(next_read[3])
 
         # bpdis --> base pair distance
-        bp_dist = next_position-position
+        bp_dist = abs(next_position-position)
 
         if not (bp_dist <= 2):
-            print '\t'.join(sam_file[index])
+            #print '\t'.join(sam_file[index])
             sam_out.writelines('\t'.join(sam_file[index]))
             sam_out.writelines("\n")
 
