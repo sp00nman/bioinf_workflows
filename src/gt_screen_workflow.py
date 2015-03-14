@@ -302,6 +302,90 @@ def remove2bpinsertions(project_name,
     sam_out.close()
     return msg_rm2bpins
 
+def getheader(project_name,
+              project_dir):
+
+    input_file = project_dir + "/" + project_name + ".bam"
+    output_file = project_name + "_header"
+
+    msg_getheader = "Get header."
+    cmd_getheader = "samtools view -H %s > %s" % (input_file, output_file)
+
+    return msg_getheader, cmd_getheader
+
+
+def cutheader(project_name,
+              project_dir,
+              sample_file):
+
+    input_file = sample_file
+    output_file = project_dir + "/" + project_name \
+                  + ".rm2bp_insertions_header.sam"
+    header = project_dir + "/" + project_name + "_header"
+
+    msg_cutheader = "Concatenate header & samfile."
+    cmd_cutheader = "cat %s %s >%s" % (header, input_file, output_file)
+
+    return msg_cutheader, cmd_cutheader
+
+
+def sam2bam(project_name,
+            project_dir,
+            sample_file):
+
+    input_file = sample_file
+    output_file = project_dir + "/" + project_name \
+                  + ".rm_dupl.sorted.filt.aligned.bam"
+    msg_bam2bai = "Convert sam to bam."
+    cmd_bam2bai = "samtools view %s > %s" % (input_file, output_file)
+
+    return msg_bam2bai, cmd_bam2bai
+
+
+def sam2bed(project_name,
+            project_dir,
+            sample_file):
+
+    input_file = sample_file
+    output_file = project_dir + "/" + project_name + \
+                  ".rm_dupl.sorted.filt.aligned.bed"
+
+    msg_sam2bed = "Convert samformat to bedformat."
+    cmd_sam2bed = "bamToBed -cigar -i %s >%s " % (input_file, output_file)
+
+    return msg_sam2bed, cmd_sam2bed
+
+
+def intersectbed(project_name,
+                 project_dir,
+                 sample_file,
+                 annotation_file,
+                 annotation_name):
+
+    input_file = sample_file
+    output_file = project_dir + "/" + project_name + ".insertions"
+    msg_intersect = "Intersect " + annotation_file
+    cmd_intersect = "intersectBed \ " \
+                    "-a %s " \
+                    "-b %s " \
+                    "-wo >%s_%s.bed" % (input_file, annotation_file,
+                                        output_file, annotation_name)
+
+    return msg_intersect, cmd_intersect
+
+
+#def count_insertions():
+    # maybe pandas would suit here...
+
+
+#def fisher_test():
+    # calculate significance
+    # if comparison file provided ...
+
+#def report_statistics():
+    # number of mapped reads...duplicates,..insertion count..
+
+#def plot_results():
 
 if __name__ == '__main__':
 
