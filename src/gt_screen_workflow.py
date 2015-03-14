@@ -300,7 +300,7 @@ def remove2bpinsertions(project_name,
             sam_out.writelines("\n")
 
     sam_out.close()
-    return None
+    return msg_rm2bpins
 
 
 if __name__ == '__main__':
@@ -423,6 +423,6 @@ if __name__ == '__main__':
         sample_file = project_dir + "/" + args.project_name + ".rm_dupl.sorted.filt.aligned.sam"
 
     if re.search(r"all|insertions", args.stage):
-        (msg, cmd) = remove2bpinsertions(args.project_name, project_dir, sample_file)
-        status = run_cmd(msg, cmd)
+        msg_rm2bpins = "Remove insertions 1 or 2 bp away."
+        remove2bpinsertions(args.project_name, project_dir, sample_file)
         sample_file = project_dir + "/" + args.project_name + ".rm2bp_insertions.sam"
