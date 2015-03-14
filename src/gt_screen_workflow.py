@@ -411,6 +411,10 @@ if __name__ == '__main__':
                         help='Genome version')
     parser.add_argument('--bowtie2', dest='bowtie2', required=False,
                         help='Path to bowtie2 indices')
+    parser.add_argument('--annotation_exon', dest='annotation_exon', required=False,
+                        help='Exon annotation file.')
+    parser.add_argument('--annotation_intron', dest='annotation_intron', required=False,
+                        help='Intron annotation file')
     parser.add_argument('--num_cpus', dest='num_cpus', required=False,
                         help='Number of cpus.')
 
@@ -432,6 +436,10 @@ if __name__ == '__main__':
         args.genome_version = "hg19"
     if not args.bowtie2:
         args.bowtie2 = "forBowtie2"
+    if not args.annotation_exon:
+        args.annotation_exon = home_dir + "hg19_exons.gtf"
+    if not args.annotation_intron:
+        args.annotation_intron = home_dir + "hg19_intron.gtf"
     if not args.num_cpus:
         args.num_cpus = "4"
 
@@ -510,3 +518,23 @@ if __name__ == '__main__':
         msg_rm2bpins = "Remove insertions 1 or 2 bp away."
         remove2bpinsertions(args.project_name, project_dir, sample_file)
         sample_file = project_dir + "/" + args.project_name + ".rm2bp_insertions.sam"
+
+    if re.search(r"all|annotate", args.stage):
+        msg_rm2bpins = "Annotate insertions."
+        (msg, cmd) = getheader(args.project_name, project_dir)
+        status = run_cmd(msg, cmd)
+        (msg, cmd) = cutheader(args.project_name, project_dir, sample_file)
+        status = run_cmd(msg, cmd)
+        sample_file = project_dir + "/" + args.project_name + ".rm2bp_insertions_header.sam"
+        (msg, cmd) = sam2bam(args.project_name, project_dir, sample_file)
+        status = run_cmd(msg, cmd)
+        sample_file = project_dir + "/" + args.project_name + ".rm2bp_insertions_header.bam"
+        (msg, cmd) = sam2bed(args.project_name, project_dir, sample_file)
+        status = run_cmd(msg, cmd)
+        sample_file = project_dir + "/" + args.project_name + ".rm2bp_insertions_header.bed"
+        (msg, cmd) = intersectbed(args.project_name, project_dir, sample_file,
+                                  args.annotation_exon, annotation_name="exon")
+        status = run_cmd(msg,cmd)
+        (msg, cmd) = intersectbed(args.project_name, project_dir, sample_file,
+                                  args.annotation_exon, annotation_name="intron")
+        status = run_cmd(msg,cmd)
