@@ -15,6 +15,7 @@ from os.path import (split, splitext, join, exists)
 import os
 import pysam
 
+
 def print_config_param(project_name,
                        home_dir,
                        output_dir,
