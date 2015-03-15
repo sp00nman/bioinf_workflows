@@ -72,7 +72,8 @@ def bam2fastq(sequences_dir,
               project_dir,
               sample_file,
               project_name,
-              output_dir):
+              output_dir,
+              file_ext):
     """
     Converts bam file to fastq files with PICARD
     :param sequences_dir: Sub-directory for processed sequences in
@@ -87,7 +88,8 @@ def bam2fastq(sequences_dir,
     msg_bam2fastq = "Convert bam to fastq."
     cmd_bam2fastq = "java -jar $NGS_PICARD/SamToFastq.jar " \
                     "INPUT=%s " \
-                    "FASTQ=%s/%s.fastq" % (input_file, project_dir, project_name)
+                    "FASTQ=%s/%s.%s" % (input_file, project_dir, 
+                                        project_name, file_ext)
     return msg_bam2fastq, cmd_bam2fastq
 
 
@@ -96,7 +98,8 @@ def alignment(genome_version,
               project_name,
               sample_file,
               project_dir,
-              num_cpus):
+              num_cpus,
+              file_ext):
 
     """
     Aligns fastq reads to the reference genome with bowtie2
@@ -114,9 +117,8 @@ def alignment(genome_version,
 
     genome_path = genomes + "/" + genome_version
     sample_path_file = sample_file
-    out_file = project_dir + "/" + project_name + ".aligned.sam"
+    out_file = project_dir + "/" + project_name + "." + file_ext
     out_file_metrics = project_dir + "/" + project_name + ".align.metrics.txt"
-
     msg_align = "Mapping reads to genome " + genome_version
     cmd_align = "bowtie2 -p %s --end-to-end --sensitive -x %s -U %s " \
                 "-S %s --met-file %s" \
@@ -127,10 +129,11 @@ def alignment(genome_version,
 
 def sam2bam(project_name,
             project_dir,
-            sample_file):
+            sample_file,
+            file_ext):
 
     in_file = sample_file
-    out_file = project_dir + "/" + project_name + ".bam"
+    out_file = project_dir + "/" + project_name + "." + file_ext
     msg_sam2bam = "Convert sam to bam format."
     cmd_sam2bam = "samtools view -S -b %s >%s" % (in_file, out_file)
     return msg_sam2bam, cmd_sam2bam
@@ -139,7 +142,8 @@ def sam2bam(project_name,
 def filter_reads(project_name,
                  project_dir,
                  sample_file,
-                 mapq):
+                 mapq,
+                 file_ext):
     """
     Filter read based on
     :param project_name: name of the project (given by user)
@@ -149,7 +153,7 @@ def filter_reads(project_name,
     """
 
     in_file = sample_file
-    out_file = project_dir + "/" + project_name + ".filt.aligned.bam"
+    out_file = project_dir + "/" + project_name + "." + file_ext
     msg_filter = "Filter reads with MAPQ< " + mapq + "& non-unique reads."
     cmd_filter = "samtools view -b -q %s -F 4 %s >%s" % (mapq, in_file, out_file)
     return msg_filter, cmd_filter
@@ -157,7 +161,8 @@ def filter_reads(project_name,
 
 def sort_bam(project_name,
              project_dir,
-             sample_file):
+             sample_file,
+             file_ext):
     """
     Sort sam ? bam file by coordinate.
     :param project_name: name of project (given by user)
@@ -166,7 +171,7 @@ def sort_bam(project_name,
     """
 
     input_file = sample_file
-    output_file = project_dir + "/" + project_name + ".sorted.filt.aligned.bam"
+    output_file = project_dir + "/" + project_name + "." + file_ext
     msg_sort = "Sort bam file (by coordinate)."
     cmd_sort = "java -jar $NGS_PICARD/SortSam.jar " \
                "INPUT=%s " \
@@ -178,10 +183,11 @@ def sort_bam(project_name,
 def reorder_sam(project_name,
                 project_dir,
                 sample_file,
-                genomes):
+                genomes,
+                file_ext):
 
     input_file = sample_file
-    output_file = project_dir + "/" + project_name + ".reorder.bam"
+    output_file = project_dir + "/" + project_name + "." + file_ext
     msg_reorder = "Reorder bam file."
     cmd_reorder = "java -jar $NGS_PICARD/ReorderSam.jar " \
                   "INPUT=%s " \
@@ -192,10 +198,11 @@ def reorder_sam(project_name,
 
 def count_duplicates(project_name,
                      project_dir,
-                     sample_file):
+                     sample_file,
+                     file_ext):
 
     input_file = sample_file
-    output_file = project_dir + "/" + project_name + "."
+    output_file = project_dir + "/" + project_name + "." + file_ext
     msg_countdup = "Count duplicate reads for each position."
     #TODO: don't hardcode executable files
     cmd_countdup = "~/src/ngsutils/bin/bamutils pcrdup " \
@@ -206,7 +213,8 @@ def count_duplicates(project_name,
 
 def remove_duplicates(project_name,
                       project_dir,
-                      sample_file):
+                      sample_file,
+                      file_ext):
     """
     Remove duplicate reads.
     :param project_name: name of project (given by user)
@@ -215,7 +223,7 @@ def remove_duplicates(project_name,
     """
 
     input_file = sample_file
-    output_file = project_dir + "/" + project_name + ".rm_dupl.sorted.filt.aligned.bam"
+    output_file = project_dir + "/" + project_name + "." + file_ext
     metrics_file = project_dir + "/" + project_name + ".duplicates.metrics.txt"
     msg_rmdup = "Remove duplicate reads. "
     cmd_rmdup = "java -jar $NGS_PICARD/MarkDuplicates.jar " \
@@ -229,11 +237,11 @@ def remove_duplicates(project_name,
 
 def bam2bai(project_name,
             project_dir,
-            sample_file):
+            sample_file,
+            file_ext):
 
     input_file = sample_file
-    output_file = project_dir + "/" + project_name \
-                  + ".rm_dupl.sorted.filt.aligned.bam.bai"
+    output_file = project_dir + "/" + project_name + "." + file_ext
     msg_bam2bai = "Index bam file."
     cmd_bam2bai = "samtools index %s %s" % (input_file, output_file)
 
@@ -241,11 +249,11 @@ def bam2bai(project_name,
 
 def bam2sam(project_name,
             project_dir,
-            sample_file):
+            sample_file,
+            file_ext):
 
     input_file = sample_file
-    output_file = project_dir + "/" + project_name \
-                  + ".rm_dupl.sorted.filt.aligned.sam"
+    output_file = project_dir + "/" + project_name + "." + file_ext
     msg_bam2bai = "Convert bam to sam."
     cmd_bam2bai = "samtools view %s > %s" % (input_file, output_file)
 
@@ -268,11 +276,11 @@ def load_files(filename):
 
 def remove2bpinsertions(project_name,
                         project_dir,
-                        sample_file):
+                        sample_file,
+                        file_ext):
 
     input_file = sample_file
-    output_file = project_dir + "/" + project_name \
-                  + ".rm2bp_insertions.sam"
+    output_file = project_dir + "/" + project_name + "." + file_ext
 
     sam_file = load_files(input_file)
     sam_out = open(output_file, 'w')
@@ -303,10 +311,11 @@ def remove2bpinsertions(project_name,
     return msg_rm2bpins
 
 def getheader(project_name,
-              project_dir):
+              project_dir,
+              file_ext):
 
-    input_file = project_dir + "/" + project_name + ".bam"
-    output_file = project_name + "_header"
+    input_file = project_dir + "/" + project_name + ".aligned.bam"
+    output_file = project_dir + "/" + project_name + "." + file_ext
 
     msg_getheader = "Get header."
     cmd_getheader = "samtools view -H %s > %s" % (input_file, output_file)
@@ -316,12 +325,12 @@ def getheader(project_name,
 
 def cutheader(project_name,
               project_dir,
-              sample_file):
+              sample_file,
+              file_ext):
 
     input_file = sample_file
-    output_file = project_dir + "/" + project_name \
-                  + ".rm2bp_insertions_header.sam"
-    header = project_dir + "/" + project_name + "_header"
+    output_file = project_dir + "/" + project_name + "." + file_ext
+    header = project_dir + "/" + project_name + ".header"
 
     msg_cutheader = "Concatenate header & samfile."
     cmd_cutheader = "cat %s %s >%s" % (header, input_file, output_file)
@@ -329,27 +338,13 @@ def cutheader(project_name,
     return msg_cutheader, cmd_cutheader
 
 
-def sam2bam(project_name,
-            project_dir,
-            sample_file):
-
-    input_file = sample_file
-    output_file = project_dir + "/" + project_name \
-                  + ".rm_dupl.sorted.filt.aligned.bam"
-    msg_bam2bai = "Convert sam to bam."
-    cmd_bam2bai = "samtools view %s > %s" % (input_file, output_file)
-
-    return msg_bam2bai, cmd_bam2bai
-
-
 def sam2bed(project_name,
             project_dir,
-            sample_file):
+            sample_file,
+            file_ext):
 
     input_file = sample_file
-    output_file = project_dir + "/" + project_name + \
-                  ".rm_dupl.sorted.filt.aligned.bed"
-
+    output_file = project_dir + "/" + project_name + "." + file_ext
     msg_sam2bed = "Convert samformat to bedformat."
     cmd_sam2bed = "bamToBed -cigar -i %s >%s " % (input_file, output_file)
 
@@ -360,16 +355,17 @@ def intersectbed(project_name,
                  project_dir,
                  sample_file,
                  annotation_file,
-                 annotation_name):
+                 annotation_name,
+                 file_ext):
 
     input_file = sample_file
-    output_file = project_dir + "/" + project_name + ".insertions"
+    output_file = project_dir + "/" + project_name + "." + file_ext + "." + annotation_name
     msg_intersect = "Intersect " + annotation_file
-    cmd_intersect = "intersectBed \ " \
+    cmd_intersect = "intersectBed " \
                     "-a %s " \
                     "-b %s " \
-                    "-wo >%s_%s.bed" % (input_file, annotation_file,
-                                        output_file, annotation_name)
+                    "-wo >%s.bed" % (input_file, annotation_file,
+                                        output_file)
 
     return msg_intersect, cmd_intersect
 
@@ -439,7 +435,7 @@ if __name__ == '__main__':
     if not args.annotation_exon:
         args.annotation_exon = home_dir + "hg19_exons.gtf"
     if not args.annotation_intron:
-        args.annotation_intron = home_dir + "hg19_intron.gtf"
+        args.annotation_intron = home_dir + "hg19_introns.gtf"
     if not args.num_cpus:
         args.num_cpus = "4"
 
@@ -470,7 +466,7 @@ if __name__ == '__main__':
     if re.search(r".bam", args.sample_file):
         (msg, cmd) = bam2fastq(args.sequences_dir, project_dir,
                                args.sample_file, args.project_name, 
-                               args.output_dir)
+                               args.output_dir, file_ext="fastq")
         status = run_cmd(msg, cmd)
 
     if re.search(r"all|alignment", args.stage):
@@ -481,60 +477,73 @@ if __name__ == '__main__':
 
         (msg, cmd) = alignment(args.genome_version, args.genomes, 
                                 args.project_name, sample_file, 
-                                project_dir, str(args.num_cpus))
+                                project_dir, str(args.num_cpus), 
+                                file_ext="aligned.sam")
         status = run_cmd(msg, cmd)
         sample_file = project_dir + "/" + args.project_name + ".aligned.sam"
 
     if re.search(r"all|filter", args.stage):
-        (msg, cmd) = sam2bam(args.project_name, project_dir, sample_file)
+        (msg, cmd) = sam2bam(args.project_name, project_dir, 
+                            sample_file, file_ext="aligned.bam")
         status = run_cmd(msg,cmd)
-        sample_file = project_dir + "/" + args.project_name + ".bam"
+        sample_file = project_dir + "/" + args.project_name + ".aligned.bam"
         (msg, cmd) = filter_reads(args.project_name, project_dir, sample_file,
-                                  mapq="20")
+                                  mapq="20", file_ext="filt.aligned.bam")
         status = run_cmd(msg, cmd)
         sample_file = project_dir + "/" + args.project_name + ".filt.aligned.bam"
 
     if re.search(r"all|duplicates", args.stage):
-        (msg, cmd) = sort_bam(args.project_name, project_dir, sample_file)
+        (msg, cmd) = sort_bam(args.project_name, project_dir, 
+                                sample_file, file_ext="sorted.filt.aligned.bam")
         status = run_cmd(msg, cmd)
         sample_file = project_dir + "/" + args.project_name + ".sorted.filt.aligned.bam"
-        (msg, cmd) = reorder_sam(args.project_name, project_dir, sample_file, args.genomes)
+        (msg, cmd) = reorder_sam(args.project_name, project_dir, 
+                                    sample_file, args.genomes, file_ext="reorder.bam")
         status = run_cmd(msg,cmd)
         sample_file = project_dir + "/" + args.project_name + ".reorder.bam"
-        (msg, cmd) = remove_duplicates(args.project_name, project_dir, sample_file)
+        (msg, cmd) = remove_duplicates(args.project_name, project_dir, 
+                                        sample_file, file_ext="rm_dupl.sorted.filt.aligned.bam")
         status = run_cmd(msg, cmd)
+        sample_file = project_dir + "/" + args.project_name + ".rm_dupl.sorted.filt.aligned.bam"
 
     if re.search(r"all|index", args.stage):
-        (msg, cmd) = bam2bai(args.project_name, project_dir, sample_file)
+        (msg, cmd) = bam2bai(args.project_name, project_dir, 
+                                sample_file, file_ext="rm_dupl.sorted.filt.aligned.bai")
         status = run_cmd(msg, cmd)
-        sample_file = project_dir + "/" + args.project_name + ".sorted.filt.aligned.bam"
 
     if re.search(r"all|bam2sam", args.stage):
-        (msg, cmd) = bam2sam(args.project_name, project_dir, sample_file)
+        (msg, cmd) = bam2sam(args.project_name, project_dir, 
+                                sample_file, file_ext="rm_dupl.sorted.filt.aligned.sam")
         status = run_cmd(msg, cmd)
         sample_file = project_dir + "/" + args.project_name + ".rm_dupl.sorted.filt.aligned.sam"
 
     if re.search(r"all|insertions", args.stage):
         msg_rm2bpins = "Remove insertions 1 or 2 bp away."
-        remove2bpinsertions(args.project_name, project_dir, sample_file)
+        remove2bpinsertions(args.project_name, project_dir, 
+                            sample_file, file_ext="rm2bp_insertions.sam")
         sample_file = project_dir + "/" + args.project_name + ".rm2bp_insertions.sam"
 
     if re.search(r"all|annotate", args.stage):
         msg_rm2bpins = "Annotate insertions."
-        (msg, cmd) = getheader(args.project_name, project_dir)
+        (msg, cmd) = getheader(args.project_name, project_dir, file_ext="header")
         status = run_cmd(msg, cmd)
-        (msg, cmd) = cutheader(args.project_name, project_dir, sample_file)
+        (msg, cmd) = cutheader(args.project_name, project_dir, 
+                                sample_file, file_ext="rm2bp_insertions_header.sam")
         status = run_cmd(msg, cmd)
         sample_file = project_dir + "/" + args.project_name + ".rm2bp_insertions_header.sam"
-        (msg, cmd) = sam2bam(args.project_name, project_dir, sample_file)
+        (msg, cmd) = sam2bam(args.project_name, project_dir, 
+                                sample_file, file_ext="rm2bp_insertions_header.bam")
         status = run_cmd(msg, cmd)
         sample_file = project_dir + "/" + args.project_name + ".rm2bp_insertions_header.bam"
-        (msg, cmd) = sam2bed(args.project_name, project_dir, sample_file)
+        (msg, cmd) = sam2bed(args.project_name, project_dir, 
+                                sample_file, file_ext="rm2bp_insertions_header.bed")
         status = run_cmd(msg, cmd)
         sample_file = project_dir + "/" + args.project_name + ".rm2bp_insertions_header.bed"
-        (msg, cmd) = intersectbed(args.project_name, project_dir, sample_file,
-                                  args.annotation_exon, annotation_name="exon")
+        (msg, cmd) = intersectbed(args.project_name, project_dir, 
+                                    sample_file, args.annotation_exon, 
+                                    annotation_name="exon", file_ext="insertions" )
         status = run_cmd(msg,cmd)
-        (msg, cmd) = intersectbed(args.project_name, project_dir, sample_file,
-                                  args.annotation_exon, annotation_name="intron")
+        (msg, cmd) = intersectbed(args.project_name, project_dir, 
+                                    sample_file, args.annotation_intron, 
+                                    annotation_name="intron", file_ext="insertions")
         status = run_cmd(msg,cmd)
