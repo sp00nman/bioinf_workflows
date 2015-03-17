@@ -13,7 +13,8 @@ from sys import exit
 from os import (system, remove, mkdir)
 from os.path import (split, splitext, join, exists)
 import os
-import pysam
+import pandas as pd
+import subprocess
 
 
 def print_config_param(project_name,
@@ -370,9 +371,20 @@ def intersectbed(project_name,
     return msg_intersect, cmd_intersect
 
 
-#def count_insertions():
-    # maybe pandas would suit here...
+def count_insertions(project_name,
+                     project_dir,
+                     file_ext):
 
+    exon = project_dir + "/" + project_name + "." + "insertions" + "." \
+           + "exon" + "." + "bed"
+    intron = project_dir + "/" + project_name + "." + "insertions" + "." \
+             + "intron" + "." + "bed"
+    output_file = project_dir + "/" + project_name + "." + file_ext
+
+    msg_count = "Count number of insertions."
+    cmd_count = "Rscript --vanilla %s %s %s" % (exon, intron, output_file)
+
+    return msg_count, cmd_count
 
 #def fisher_test():
     # calculate significance
@@ -392,7 +404,7 @@ if __name__ == '__main__':
                         help='Limit job submission to a particular '
                              'Analysis stage. '
                              '[all,alignment,filter, sort, duplicates, index,'
-                             'insertions, annotate, grouping, count, plot]')
+                             'insertions, annotate, count, plot]')
     parser.add_argument('--project_name', dest='project_name', required=False,
                         help='Name of project directory.')
     parser.add_argument('--output_dir', dest='output_dir', required=False,
@@ -547,3 +559,8 @@ if __name__ == '__main__':
                                     sample_file, args.annotation_intron, 
                                     annotation_name="intron", file_ext="insertions")
         status = run_cmd(msg,cmd)
+
+    if re.search(r"all|count", args.stage):
+        (msg, cmd) = count_insertions(args.project_name, project_dir,
+                                      file_ext="count_table.txt")
+        status = run_cmd(msg, cmd)
