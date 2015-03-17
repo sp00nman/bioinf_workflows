@@ -34,18 +34,19 @@ count.mutagenic.insertions <- function(count_exon, count_intron){
 
 write2file <- function(count_table, filename){
   fn_out <- filename
-  write.table(count_table, file=paste(path,fn_out,sep=""),
-              append=F, quote=F, 
-              row.names=T, col.names=T, 
+  write.table(count_table, file=paste(fn_out),
+              append=FALSE, quote=FALSE, 
+              row.names=FALSE, col.names=TRUE, 
               dec=".", sep="\t")
 }
 
 options <- commandArgs(trailingOnly=TRUE)
-print options
-#read.count.tables(options[1], options[2])
-file_out = "outfile_count_table"
-exon_f = "../../test/TEST.insertions.exon.bed"
-intron_f = "../../test/TEST.insertions.intron.bed"
+exon_f = options[1]
+intron_f = options[2]
+file_out = options[3]
+#file_out = "outfile_count_table"
+#exon_f = "../../test/TEST.insertions.exon.bed"
+#intron_f = "../../test/TEST.insertions.intron.bed"
 
 intron_insertions <- read.count.tables(intron_f)
 exon_insertions <- read.count.tables(exon_f)
@@ -53,5 +54,6 @@ exon_insertions <- read.count.tables(exon_f)
 orientation <- separate.silent.mutagenic.insertions(intron_insertions)
 mutagenic_intron <- orientation[[1]]
 count_table <- count.mutagenic.insertions(exon_insertions, mutagenic_intron)
-write2file(count.table, filename = file_out )
+colnames(count_table) <- c("genesymbol","num_insertions", "no_insertions")
+write2file(count_table, filename = file_out )
 
