@@ -15,6 +15,7 @@ from os.path import (split, splitext, join, exists)
 import os
 import pandas as pd
 import subprocess
+import os
 
 
 def print_config_param(project_name,
@@ -380,9 +381,10 @@ def count_insertions(project_name,
     intron = project_dir + "/" + project_name + "." + "insertions" + "." \
              + "intron" + "." + "bed"
     output_file = project_dir + "/" + project_name + "." + file_ext
-
+    
+    dn = os.path.dirname(os.path.realpath(__file__))
     msg_count = "Count number of insertions."
-    cmd_count = "Rscript --vanilla %s %s %s" % (exon, intron, output_file)
+    cmd_count = "Rscript --vanilla " + dn + "/Rscripts/count_insertions.R %s %s %s" % (exon, intron, output_file)
 
     return msg_count, cmd_count
 
@@ -554,11 +556,11 @@ if __name__ == '__main__':
         (msg, cmd) = intersectbed(args.project_name, project_dir, 
                                     sample_file, args.annotation_exon, 
                                     annotation_name="exon", file_ext="insertions" )
-        status = run_cmd(msg,cmd)
+        status = run_cmd(msg, cmd)
         (msg, cmd) = intersectbed(args.project_name, project_dir, 
                                     sample_file, args.annotation_intron, 
                                     annotation_name="intron", file_ext="insertions")
-        status = run_cmd(msg,cmd)
+        status = run_cmd(msg, cmd)
 
     if re.search(r"all|count", args.stage):
         (msg, cmd) = count_insertions(args.project_name, project_dir,
