@@ -386,8 +386,14 @@ def count_insertions(project_name,
 
     return msg_count, cmd_count
 
-#def fisher_test():
-    # calculate significance
+
+def fisher_test(project_name,
+                project_dir,
+                sample_file,
+                control_file,
+                file_ext):
+
+    msg_count = "Fisher test for differential number of insertions"
     # if comparison file provided ...
 
 #def report_statistics():
@@ -404,7 +410,7 @@ if __name__ == '__main__':
                         help='Limit job submission to a particular '
                              'Analysis stage. '
                              '[all,alignment,filter, sort, duplicates, index,'
-                             'insertions, annotate, count, plot]')
+                             'insertions, annotate, count, fisher, plot]')
     parser.add_argument('--project_name', dest='project_name', required=False,
                         help='Name of project directory.')
     parser.add_argument('--output_dir', dest='output_dir', required=False,
@@ -423,6 +429,8 @@ if __name__ == '__main__':
                         help='Exon annotation file.')
     parser.add_argument('--annotation_intron', dest='annotation_intron', required=False,
                         help='Intron annotation file')
+    parser.add_argument('--control_file', dest='control_file', required=False,
+                        help='Control file with insertions for fisher-test.')
     parser.add_argument('--num_cpus', dest='num_cpus', required=False,
                         help='Number of cpus.')
 
@@ -448,6 +456,8 @@ if __name__ == '__main__':
         args.annotation_exon = home_dir + "hg19_exons.gtf"
     if not args.annotation_intron:
         args.annotation_intron = home_dir + "hg19_introns.gtf"
+    if not args.control_file:
+        args.control_file = home_dir + "control_file.txt"
     if not args.num_cpus:
         args.num_cpus = "4"
 
@@ -564,3 +574,7 @@ if __name__ == '__main__':
         (msg, cmd) = count_insertions(args.project_name, project_dir,
                                       file_ext="count_table.txt")
         status = run_cmd(msg, cmd)
+
+    if re.search(r"all|fisher", args.stage):
+        (msg, cmd) = fisher_test(args.project_name, project_dir,
+                                 file_ext="fisher-test.txt")
