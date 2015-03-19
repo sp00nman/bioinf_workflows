@@ -394,6 +394,7 @@ def fisher_test(project_name,
                 sample_file,
                 control_file,
                 file_ext):
+
     input_file = sample_file
     output_file = project_dir + "/" + project_name + "." + file_ext
     dn = os.path.dirname(os.path.realpath(__file__))
