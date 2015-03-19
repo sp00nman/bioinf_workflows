@@ -398,7 +398,7 @@ def fisher_test(project_name,
     input_file = sample_file
     output_file = project_dir + "/" + project_name + "." + file_ext
     dn = os.path.dirname(os.path.realpath(__file__))
-    msg_count = "Fisher test for differential number of insertions"
+    msg_count = "Fisher-test for differential number of insertions."
     cmd_count = "Rscript --vanilla " + dn \
                 + "/Rscripts/fisher_test.R %s %s %s " % (input_file,
                                                          control_file,
@@ -410,7 +410,24 @@ def fisher_test(project_name,
     # number of mapped reads...duplicates,..insertion count..
 
 
-#def plot_results():
+def plot_results(project_name,
+                 project_dir,
+                 refseq_file,
+                 sample_file,
+                 file_ext):
+
+    input_file = sample_file
+    output_file = project_dir + "/" + project_name + "." + file_ext
+    dn = os.path.dirname(os.path.realpath(__file__))
+    msg_plot = "Create bubble plot for genetic screen results. "
+    cmd_plot = "Rscript --vanilla " + dn \
+               + "/Rscripts/plot_screen.R %s %s %s " % (refseq_file,
+                                                        input_file,
+                                                        output_file)
+    return msg_plot, cmd_plot
+
+
+#def write_tex_report(project_name,):
 
 
 if __name__ == '__main__':
@@ -443,6 +460,8 @@ if __name__ == '__main__':
                         help='Intron annotation file')
     parser.add_argument('--control_file', dest='control_file', required=False,
                         help='Control file with insertions for fisher-test.')
+    parser.add_argument('--refseq_file', dest='refseq_file', required=False,
+                        help='Refseq file with start & end position of gene.')
     parser.add_argument('--num_cpus', dest='num_cpus', required=False,
                         help='Number of cpus.')
 
@@ -470,6 +489,9 @@ if __name__ == '__main__':
         args.annotation_intron = home_dir + "hg19_introns.gtf"
     if not args.control_file:
         args.control_file = home_dir + "control_file.txt"
+    if not args.refseq_file:
+        #TODO: replace this file with newer version!!!
+        args.refseq_file = home_dir + "All_genes_data_ct_srt_sed.txt"
     if not args.num_cpus:
         args.num_cpus = "4"
 
@@ -591,4 +613,10 @@ if __name__ == '__main__':
     if re.search(r"all|fisher", args.stage):
         (msg, cmd) = fisher_test(args.project_name, project_dir, sample_file,
                                  args.control_file, file_ext="fisher_test.txt")
+        status = run_cmd(msg, cmd)
+        sample_file = project_dir + "/" + args.project_name + ".fisher_test.txt"
+
+    if re.search(r"all|plot", args.stage):
+        (msg, cmd) = plot_results(args.project_name, project_dir, args.refseq_file,
+                                  sample_file, file_ext="bubble_plot.pdf")
         status = run_cmd(msg, cmd)
