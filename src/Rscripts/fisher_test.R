@@ -1,44 +1,66 @@
-## Fisher's exact test
+## Merge count tables by genesymbol and perform fisher-test &
+## correct for multiple testing, FDR
 
-get_fisher <- function(df){
-  mat <- matrix(as.numeric(df[c(1:4)]), ncol=2)
-  f <- fisher.test(as.table(mat), alternative="greater")
-  return(c(df[1], df[2], df[3], df[4], f$p.value))
+read.input.control <- function(input){
+  file1 <- read.table(file=input, sep="\t")
+  colnames(file1) <- c("genesymbol", "num_insertions")
+  total_insertions <- sum(file1$num_insertions)
+  file1$no_insertions <- total_insertions - file1$num_insertions
+  return(file1)
 }
 
-path="path"
-fn1="f1"
-file1 <- read.table(file=paste(path,fn1,sep=""), sep="\t")
-colnames(file1) <- c("number_insertions","gene_symbol")
+read.input.screen <- function(input){
+  file1 <- read.table(file=input, sep="\t", header=TRUE)
+  return(file1)
+}
 
-fn2="f2"
-file2 <- read.table(file=paste(path,fn2,sep=""), sep="\t")
-colnames(file2) <- c("number_insertions","gene_symbol")
+merge.tables <- function(screen, control){
+  # merge files by genesymbol
+  merged_table <- merge(screen, control, all=TRUE, by="genesymbol")
+  # only use complete cases
+  complete_cases <- merged_table[complete.cases(merged_table),]
+  return(complete_cases)
+}
 
-# merge files by gene symbol
-# leave non-common gene names as 0
-merged.table <- merge(file1, file2, all=TRUE, by="gene_symbol")
-merged.table[is.na(merged.table)] <- 0
-total.x <- colSums(merged.table[2:3])[1]-merged.table$number.insertions.x
-total.y <- colSums(merged.table[2:3])[2]-merged.table$number.insertions.y
+cal.fisher <- function(merged_table){
+  
+.cal.fisher.test <- function(df){
+  mat <- matrix(as.numeric(df[c(2:5)]), ncol=2)
+  f <- fisher.test(as.table(mat), alternative="greater")
+  return(c(df[1], df[2], df[3], df[4], df[5], f$p.value))
+}
+  row.names(merged_table) <- merged_table$genesymbol
+  fisher_results <- apply(merged_table, 1, .cal.fisher.test)
+  trans.fisher.results <- t(fisher_results)
+  trans.fisher.results <- as.data.frame(trans.fisher.results, stringsAsFactors=FALSE)
+  colnames(trans.fisher.results) <- c("genesymbol", "num_insertions.x", 
+                                      "no_insertions.x", "num_insertions.y", 
+                                      "no_insertions.y", "pval")
+  trans.fisher.results$pval <- as.numeric(trans.fisher.results$pval)
+  sorted <- trans.fisher.results[order(trans.fisher.results$pval),]
+  # correct for multiple testing, benjamini-hochberg, fdr-correction
+  sorted$adj <- p.adjust(as.numeric(sorted[,6]), "fdr")
+  return(sorted)  
+}
 
-merged.table.counts <- cbind(number.insertions.y=merged.table$number.insertions.y,
-                             total.y,
-                             number.insertions.x=merged.table$number.insertions.x, 
-                             total.x)
-rownames(merged.table.counts) <- merged.table$gene_symbol
+write2file <- function(fisher_table, filename){
+  fn_out <- filename
+  write.table(fisher_table, file=paste(fn_out),
+              append=FALSE, quote=FALSE, 
+              row.names=FALSE, col.names=TRUE, 
+              dec=".", sep="\t")
+}
 
-fisher_results <- apply(merged.table.counts, 1,  get_fisher)
-trans.fisher.results <- t(fisher_results)
-colnames(trans.fisher.results) <- c("number_insertions.y", "total.y", "number_insertions.x", "total.x","pval")
-trans.fisher.results <- as.data.frame(trans.fisher.results)
-sorted <- trans.fisher.results[order(trans.fisher.results$pval),]
+options <- commandArgs(trailingOnly=TRUE)
+#screen_f = options[1]
+#control_f = options[2]
+#file_out = options[3]
+screen_f = "~/Dropbox/src_code/bioinf_workflows/data/TEST.count_table.txt"
+control_f = "~/Dropbox/src_code/bioinf_workflows/data/control_set_gene+screen_incorrect_count.txt"
+file_out = "~/Dropbox/src_code/bioinf_workflows/test/TEST.fisher_test.txt"
 
-#correct for multiple testing
-sorted$adj <- p.adjust(as.numeric(sorted[,5]), "fdr")
-
-fn_out="pval.count.table.txt_new"
-write.table(sorted, file=paste(path,fn_out,sep=""),
-            append=F, quote=F, 
-            row.names=T, col.names=T, 
-            dec=".", sep="\t")
+screen <- read.input.screen(screen_f)
+control <- read.input.control(control_f)
+merged_t <- merge.tables(screen, control)
+fisher_t <- cal.fisher(merged_t)
+write2file(fisher_t, file_out)
