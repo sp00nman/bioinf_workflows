@@ -52,12 +52,12 @@ write2file <- function(fisher_table, filename){
 }
 
 options <- commandArgs(trailingOnly=TRUE)
-#screen_f = options[1]
-#control_f = options[2]
-#file_out = options[3]
-screen_f = "~/Dropbox/src_code/bioinf_workflows/data/TEST.count_table.txt"
-control_f = "~/Dropbox/src_code/bioinf_workflows/data/control_set_gene+screen_incorrect_count.txt"
-file_out = "~/Dropbox/src_code/bioinf_workflows/test/TEST.fisher_test.txt"
+screen_f = options[1]
+control_f = options[2]
+file_out = options[3]
+#screen_f = "~/Dropbox/src_code/bioinf_workflows/data/TEST.count_table.txt"
+#control_f = "~/Dropbox/src_code/bioinf_workflows/data/control_set_gene+screen_incorrect_count.txt"
+#file_out = "~/Dropbox/src_code/bioinf_workflows/test/TEST.fisher_test.txt"
 
 screen <- read.input.screen(screen_f)
 control <- read.input.control(control_f)
