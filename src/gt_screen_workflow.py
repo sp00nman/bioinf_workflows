@@ -590,5 +590,5 @@ if __name__ == '__main__':
 
     if re.search(r"all|fisher", args.stage):
         (msg, cmd) = fisher_test(args.project_name, project_dir, sample_file,
-                                 args.control_file, file_ext="fisher-test.txt")
-        
+                                 args.control_file, file_ext="fisher_test.txt")
+        status = run_cmd(msg, cmd)
