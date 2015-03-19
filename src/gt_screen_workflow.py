@@ -12,7 +12,6 @@ import logging
 from sys import exit
 from os import (system, remove, mkdir)
 from os.path import (split, splitext, join, exists)
-import os
 import pandas as pd
 import subprocess
 import os
@@ -384,18 +383,34 @@ def count_insertions(project_name,
     
     dn = os.path.dirname(os.path.realpath(__file__))
     msg_count = "Count number of insertions."
-    cmd_count = "Rscript --vanilla " + dn + "/Rscripts/count_insertions.R %s %s %s" % (exon, intron, output_file)
-
+    cmd_count = "Rscript --vanilla " + dn \
+                + "/Rscripts/count_insertions.R %s %s %s" % (exon, intron,
+                                                             output_file)
     return msg_count, cmd_count
 
-#def fisher_test():
-    # calculate significance
-    # if comparison file provided ...
+
+def fisher_test(project_name,
+                project_dir,
+                sample_file,
+                control_file,
+                file_ext):
+    input_file = sample_file
+    output_file = project_dir + "/" + project_name + "." + file_ext
+    dn = os.path.dirname(os.path.realpath(__file__))
+    msg_count = "Fisher test for differential number of insertions"
+    cmd_count = "Rscript --vanilla " + dn \
+                + "/Rscripts/fisher_test.R %s %s %s " % (input_file,
+                                                         control_file,
+                                                         output_file)
+    return msg_count, cmd_count
+
 
 #def report_statistics():
     # number of mapped reads...duplicates,..insertion count..
 
+
 #def plot_results():
+
 
 if __name__ == '__main__':
 
@@ -404,9 +419,9 @@ if __name__ == '__main__':
                         help='Debug level')
     parser.add_argument('--stage', dest='stage', required=False,
                         help='Limit job submission to a particular '
-                             'Analysis stage. '
+                             'analysis stage. '
                              '[all,alignment,filter, sort, duplicates, index,'
-                             'insertions, annotate, count, plot]')
+                             'insertions, annotate, count, fisher, plot]')
     parser.add_argument('--project_name', dest='project_name', required=False,
                         help='Name of project directory.')
     parser.add_argument('--output_dir', dest='output_dir', required=False,
@@ -425,6 +440,8 @@ if __name__ == '__main__':
                         help='Exon annotation file.')
     parser.add_argument('--annotation_intron', dest='annotation_intron', required=False,
                         help='Intron annotation file')
+    parser.add_argument('--control_file', dest='control_file', required=False,
+                        help='Control file with insertions for fisher-test.')
     parser.add_argument('--num_cpus', dest='num_cpus', required=False,
                         help='Number of cpus.')
 
@@ -450,6 +467,8 @@ if __name__ == '__main__':
         args.annotation_exon = home_dir + "hg19_exons.gtf"
     if not args.annotation_intron:
         args.annotation_intron = home_dir + "hg19_introns.gtf"
+    if not args.control_file:
+        args.control_file = home_dir + "control_file.txt"
     if not args.num_cpus:
         args.num_cpus = "4"
 
@@ -566,3 +585,9 @@ if __name__ == '__main__':
         (msg, cmd) = count_insertions(args.project_name, project_dir,
                                       file_ext="count_table.txt")
         status = run_cmd(msg, cmd)
+        sample_file = project_dir + "/" + args.project_name + ".count_table.txt"
+
+    if re.search(r"all|fisher", args.stage):
+        (msg, cmd) = fisher_test(args.project_name, project_dir, sample_file,
+                                 args.control_file, file_ext="fisher-test.txt")
+        
