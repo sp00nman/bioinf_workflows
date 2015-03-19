@@ -33,13 +33,13 @@ cal.fisher <- function(merged_table){
   fisher_results <- apply(merged_table, 1, .cal.fisher.test)
   trans.fisher.results <- t(fisher_results)
   trans.fisher.results <- as.data.frame(trans.fisher.results, stringsAsFactors=FALSE)
-  colnames(trans.fisher.results) <- c("genesymbol", "num_insertions.x", 
-                                      "no_insertions.x", "num_insertions.y", 
-                                      "no_insertions.y", "pval")
+  colnames(trans.fisher.results) <- c("genesymbol", "num_insertions_screen", 
+                                      "no_insertions_screen", "num_insertions_control", 
+                                      "no_insertions_control", "pval")
   trans.fisher.results$pval <- as.numeric(trans.fisher.results$pval)
   sorted <- trans.fisher.results[order(trans.fisher.results$pval),]
   # correct for multiple testing, benjamini-hochberg, fdr-correction
-  sorted$adj <- p.adjust(as.numeric(sorted[,6]), "fdr")
+  sorted$adj_pval <- p.adjust(as.numeric(sorted[,6]), "fdr")
   return(sorted)  
 }
 
@@ -55,9 +55,6 @@ options <- commandArgs(trailingOnly=TRUE)
 screen_f = options[1]
 control_f = options[2]
 file_out = options[3]
-#screen_f = "~/Dropbox/src_code/bioinf_workflows/data/TEST.count_table.txt"
-#control_f = "~/Dropbox/src_code/bioinf_workflows/data/control_set_gene+screen_incorrect_count.txt"
-#file_out = "~/Dropbox/src_code/bioinf_workflows/test/TEST.fisher_test.txt"
 
 screen <- read.input.screen(screen_f)
 control <- read.input.control(control_f)
