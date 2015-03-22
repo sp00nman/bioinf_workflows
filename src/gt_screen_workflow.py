@@ -352,6 +352,19 @@ def sam2bed(project_name,
     return msg_sam2bed, cmd_sam2bed
 
 
+def fix_end_position(project_name,
+                     project_dir,
+                     sample_file,
+                     file_ext):
+
+    input_file = sample_file
+    output_file = project_dir + "/" + project_name + "." + file_ext
+    msg_fix = "Fix end position to be start+1."
+    cmd_fix = "awk 'BEGIN{OFS=\"\t\"}{end=$2+1; print $1,$2,end,$4,$5,$6,$7}' %s %s" % \
+                                 (input_file, output_file)
+    return msg_fix, cmd_fix
+
+
 def intersectbed(project_name,
                  project_dir,
                  sample_file,
@@ -406,10 +419,6 @@ def fisher_test(project_name,
     return msg_count, cmd_count
 
 
-#def report_statistics():
-    # number of mapped reads...duplicates,..insertion count..
-
-
 def plot_results(project_name,
                  project_dir,
                  refseq_file,
@@ -426,6 +435,8 @@ def plot_results(project_name,
                                                         output_file)
     return msg_plot, cmd_plot
 
+#def report_statistics():
+    # number of mapped reads...duplicates,..insertion count..
 
 #def write_tex_report(project_name,):
 
@@ -595,7 +606,13 @@ if __name__ == '__main__':
                                 sample_file, file_ext="rm2bp_insertions_header.bed")
         status = run_cmd(msg, cmd)
         sample_file = project_dir + "/" + args.project_name + ".rm2bp_insertions_header.bed"
-        (msg, cmd) = intersectbed(args.project_name, project_dir, 
+
+        (msg, cmd) = fix_end_position(args.project_name, project_dir,
+                                      sample_file, file_ext="rm2bp_insertions_header_fix.bed")
+        status = run_cmd(msg, cmd)
+        sample_file = project_dir + "/" + args.project_name + ".rm2bp_insertions_header_fix.bed"
+
+        (msg, cmd) = intersectbed(args.project_name, project_dir,
                                     sample_file, args.annotation_exon, 
                                     annotation_name="exon", file_ext="insertions" )
         status = run_cmd(msg, cmd)
