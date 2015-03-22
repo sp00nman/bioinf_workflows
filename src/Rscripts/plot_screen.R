@@ -55,15 +55,16 @@ load.process.data <-function(filename, inputRefgene){
     return(gentrap.screens.mult)   
 }
 
-subset.genes <-function(gentrap.screens.mult.add, num.genes=NULL, siglevel=NULL){
+subset.genes <-function(screen, num.genes=NULL, siglevel=NULL){
+  gene.list <- screen
   #subset gene list 
   if(!is.null(num.genes)){
-    gene.list <- gene.list[order(gene.list$adj_pval),]$gene[1:num.genes] 
+    gene.list <- gene.list[order(gene.list$adj_pval),]$genesymbol[1:num.genes] 
     gene.list <- as.character(gene.list)
     
   }
   else {
-    gene.list <- gene.list[gene.list$adj_pval<siglevel,]$gene
+    gene.list <- gene.list[gene.list$adj_pval<siglevel,]$genesymbol
     gene.list <- as.character(gene.list)
   }
   
@@ -74,7 +75,7 @@ subset.genes <-function(gentrap.screens.mult.add, num.genes=NULL, siglevel=NULL)
 #Creat plot#
 #############
 create.bubble.plot <- function(genetrap.screens, selection.list, upper.limit=0.1, 
-                               lower.limit=0.01, breaks, limits, range, 
+                               lower.limit=0.01, breaks, limits, max_s, 
                                scale_text_size=TRUE){
   
   #convert pvalues to -log10(pvalue)
@@ -129,7 +130,7 @@ create.bubble.plot <- function(genetrap.screens, selection.list, upper.limit=0.1
     g_obj = g_obj + geom_point(data=genetrap.screens[(genetrap.screens$genesymbol %in% selection.list),], 
                                aes(x=pos, y=mlog10Pval, fill=chrom), colour="black", pch=21)
     g_obj = g_obj + scale_fill_manual(values=cbPalette, name = "chromosome \ncolor")
-    g_obj = g_obj + scale_size(range = range, name = "number of \ninsertions")
+    g_obj = g_obj + scale_size_area(max_size = max_s, name = "number of \ninsertions")
     if (scale_text_size) g_obj = g_obj + geom_text(data = genetrap.screens[(genetrap.screens$genesymbol %in% selection.list),], 
                                                    aes(x=pos, y=mlog10Pval, label=genesymbol), colour="black", vjust=-0.5, hjust=1.1)
     else g_obj = g_obj + geom_text(data = genetrap.screens[(genetrap.screens$genesymbol %in% selection.list),], 
@@ -151,27 +152,61 @@ create.bubble.plot <- function(genetrap.screens, selection.list, upper.limit=0.1
   return(g_obj)
 } 
 
+optimize_limits <- function(adj_pval){
+  
+  y_high <- -log10(min(adj_pval)) # lowest pval
+  y_low <- -log10(max(adj_pval)) # highest pval
+  
+  breaks = NULL
+  break_p = NULL
+  seq_a = (-10:10)
+  
+  for(i in seq_a){
+    break_p <- 10^(i)
+    if (break_p > y_low){
+      seq_b <- (i-1):10
+      for(i in seq_b){
+        break_p <- 10^(i)
+        breaks <- cbind(breaks, break_p)
+        if (break_p > y_high){break}
+      }
+    break
+    }
+  }
+    
+  return(as.vector(breaks))
+}
+  
+print_plot <- function(filename, g_obj){
+  pdf(file=out_f, width=14, height=10, useDingbats=FALSE)
+  print(g_obj)
+  dev.off()
+}
+
+
 library("ggplot2")
 options <- commandArgs(trailingOnly=TRUE)
-#refseq_f = options[1]
-#in_f = options[2]
-#out_f = options[3]
+refseq_f = options[1]
+in_f = options[2]
+out_f = options[3]
 
-refseq_f = "~/Dropbox/src_code/bioinf_workflows/data/All_genes_data_ct_srt_sed.txt"
-in_f = "~/Dropbox/src_code/bioinf_workflows/data/TEST.fisher_test.txt"
-out_f = "~/Dropbox/src_code/bioinf_workflows/data/TEST.bubble_plot.txt"
+#refseq_f = "~/Dropbox/src_code/bioinf_workflows/data/All_genes_data_ct_srt_sed.txt"
+#in_f = "~/Dropbox/src_code/bioinf_workflows/data/TEST.fisher_test.txt"
+#out_f = "~/Dropbox/src_code/bioinf_workflows/data/TEST.bubble_plot.pdf"
 
-screen <- load.process.data(in_f, refseq_f)
-signif_genes <- subset.genes(screen, num.genes=NULL, siglevel=0.05,
-                             min.insertions=0)
-# calculate limits
-screen$mlog10Pval <- -log10(screen$adj_pval)
-
+screen <- load.process.data(in_f, 
+                            refseq_f)
+signif_genes <- subset.genes(screen, 
+                             num.genes=NULL, 
+                             siglevel=0.05)
+breaksforplot <- optimize_limits(screen$adj_pval)
 g_obj <- create.bubble.plot(screen, signif_genes, 
                             upper.limit=0.05,
                             lower.limit=0.05,
-                            breaks=c(0.01,0.1, 1, 10, 100),
-                            limits=c(0.01,100),
-                            range=c(1,25),
-                            scale_text_size=TRUE)
-
+                            breaks=breaksforplot,
+                            limits=c(breaksforplot[1], 
+                                     breaksforplot[length(breaksforplot)]),
+                            max_s=30,
+                            scale_text_size=FALSE)
+print_plot(out_f, 
+           g_obj)
