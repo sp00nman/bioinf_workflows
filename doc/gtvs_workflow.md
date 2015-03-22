@@ -15,29 +15,55 @@ Analysis workflow
 Set environment variables. [Reference genome hg19 ](http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/human/)
 
 ```bash
-export $REFERENCE="/path/to/reference"
-export $EXONS="/path/to/exons"
-export $INTRONS="/path/to/introns"
-export $SCREEN="name_of_your_screen"
+usage: gt_screen_workflow.py [-h] [--debug DEBUG] [--stage STAGE]
+                             [--project_name PROJECT_NAME]
+                             [--output_dir OUTPUT_DIR]
+                             [--sequences_dir SEQUENCES_DIR]
+                             [--sample_file SAMPLE_FILE] [--genomes GENOMES]
+                             [--genome_version GENOME_VERSION]
+                             [--bowtie2 BOWTIE2]
+                             [--annotation_exon ANNOTATION_EXON]
+                             [--annotation_intron ANNOTATION_INTRON]
+                             [--control_file CONTROL_FILE]
+                             [--refseq_file REFSEQ_FILE] [--num_cpus NUM_CPUS]
 
-export $BOWTIE2="/path/to/bowtie"
-export $NGS_PICARD="/path/to/picard"
-export $INTERSECTBED="path/to/bedtools"
-export $SAMTOOLS="path/to/samtools"
+Genetic screen workflow 0.0.1
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --debug DEBUG         Debug level
+  --stage STAGE         Limit job submission to a particular analysis stage.
+                        [all,alignment,filter, sort, duplicates,
+                        index, insertions, annotate, count, fisher, plot]
+  --project_name PROJECT_NAME
+                        Name of project directory.
+  --output_dir OUTPUT_DIR
+                        Name of output directory.
+  --sequences_dir SEQUENCES_DIR
+                        Directory of sequence files.
+  --sample_file SAMPLE_FILE
+                        Input filename.
+  --genomes GENOMES     Path to genome.
+  --genome_version GENOME_VERSION
+                        Genome version
+  --bowtie2 BOWTIE2     Path to bowtie2 indices
+  --annotation_exon ANNOTATION_EXON
+                        Exon annotation file.
+  --annotation_intron ANNOTATION_INTRON
+                        Intron annotation file
+  --control_file CONTROL_FILE
+                        Control file with insertions for fisher-test.
+  --refseq_file REFSEQ_FILE
+                        Refseq file with start & end position of gene.
+  --num_cpus NUM_CPUS   Number of cpus.
 
 ```
+
+### [alignment]
 
 Align data to reference genome hg19. Parameter ```--sensitive``` equals to ```-D 15 -R 2 -L 22 -i S,1,1.15``` 
 
-```bash
-$BOWTIE2 \
--p 2 \
---end-to-end \
---sensitive \
--x $REFERENCE \
--U ${SCREEN}.fastq \
--S ${SCREEN}.sam
-```
+### [filter]
 
 Filter for reads that
 
@@ -50,101 +76,31 @@ SAM format and SAM flags explained.
 + [Description of SAM format](http://samtools.github.io/hts-specs/SAMv1.pdf)
 + [Samflags explained](http://picard.sourceforge.net/explain-flags.html)
 
-```bash
-$SAMTOOLS view -H -S ${SCREEN}.sam >${SCREEN}.filt.header.sam
-awk -F"\t" '($0 ~ /^@/) {NR--; next}; ($2!=4 && ($13 !~/XS:i/) && $5>20)' ${SCREEN}.sam \
->> ${SCREEN}.filt.header.sam
-```
 
+### [sort]
 
-Sort samfile by coordinate with picard.
+Sort samfile by coordinate with [Picard] (http://picard.sourceforge.net/)
 
-```bash
-java -jar $NGS_PICARD/SortSam.jar \
-INPUT=${SCREEN}.filt.header.sam \
-OUTPUT=${SCREEN}.filt.header.sorted.sam \
-SORT_ORDER=coordinate
-```
+### [duplicates]
 
-Mark & remove duplicates with picard.
+Mark & remove duplicates with [Picard] (http://picard.sourceforge.net/)
 
-```bash
-java -jar $NGS_PICARD/MarkDuplicates.jar \
-INPUT=${SCREEN}.filt.header.sorted.sam \
-OUTPUT=${SCREEN}.filt.header.sorted.rem_dupl.sam \
-METRICS_FILE=${SCREEN}.rem_dupl.metrics.txt \
-REMOVE_DUPLICATES=true
-```
-
-Convert samfile to bedfile
-
-```bash
-awk 'BEGIN{OFS="\t"} \
-!/^@/ \
-{end=$4+1; print $3,$4,end,$1,$2,$5,$6,\
- $7,$8,$9,$10,$11,$12,$13,$14,$15,\
- $16,$17,$18,$19,$20 }' ${SCREEN}.filt.header.sorted.rem_dupl.sam \
- >${SCREEN}.filt.header.sorted.rem_dupl.bed
-```
+### [insertions]
 
 Remove insertions 1 or 2 base pairs away. Insertions that are within close proximity could be a result of mapping errors due to sequencing errors and are therefore removed from the analysis.
 
-```bash
-sort -k1,1 -k2n ${SCREEN}.filt.header.sorted.rem_dupl.bed | 
-awk '
-BEGIN {OFS="\t"} 
-{ROW[NR] = $2; sROW[NR] = $0}  \
-END { for (i=1;i<=NR;i++) print sROW[i],ROW[i-1]} 
-' |
-awk '
-BEGIN {OFS="\t"} 
-{subtract = $2-$22; print $0, subtract}
-' |
-awk '!($23<=2 && $23>0)' |
-cut -f1-21 >${SCREEN}.filt.header.sorted.rem_dupl.bp.bed
-```
+### [annotate]
 
 Annotate insertions. For annotation the genome assembly hg19 (ucsc) combined with the ensembl annotation (build 70) is used. The canonical transcripts for each gene is used as reference gene model. The bed file with coordinates for exons and introns is formated using the following [script] (https://gist.github.com/sp00nman/e9adb3c7e207c0de03d7)
 
-```bash
-$INTERSECTBED \
--a ${SCREEN}.filt.header.sorted.rem_dupl.bp.bed \
--b ${EXONS} \
--wo >${SCREEN}.filt.header.sorted.rem_dupl.bp.exon.bed
-
-$INTERSECTBED \
--a ${SCREEN}.filt.header.sorted.rem_dupl.bp.bed \
--b ${INTRONS} \
--wo >${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.bed
-```
-
 Annotate insertions within overlapping genes.
 
-![overlapping](https://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png?raw=true)
+![overlapping](https://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png?raw=true 100x200 %)
 
 | Gene (strand)       | insertions (chr[n]:position |  strand  | intronic/exonic   | group       |
 | :------------------ |:----------------------------|:---------|:------------------|:------------|
 | GENE A (+)          | chr1:4,389,753              | +        | intronic          | mutagenic  |
 | GENE B (-)          | chr1:4,389,753              | +        | intronic          | silent      |
-
-
-```bash
-awk '
-(($5==16 && $26=="+") || \
-($5==0 && $26=="-"))
-' ${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.bed \
->${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.antisense.bed
-
-awk '
-(($5==16 && $26=="-") || \
-($5==0 && $26=="+"))
-' ${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.bed \
->${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.sense.bed
-
-cat  ${SCREEN}.filt.header.sorted.rem_dupl.bp.exon.bed \
-${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.sense.bed \
->${SCREEN}.mutagenic.insertions.bed
-```
 
 "Gene trap-based insertional mutagenesis operates by random insertion of a splice acceptor followed by a GFP
 marker and termination sequence into the genome, thus disrupting gene expression. The insertion site must
@@ -163,27 +119,13 @@ to be mutagenic if the gene-trap cassette is inserted in the sense orientation."
 
 (*) strand refers to how the insertions was mapped to the genome.
 
+### [count]
+
 Count insertions.
 
-```bash
-cut -f28 ${SCREEN}.mutagenic.insertions.bed | sort | uniq -c | \
-sort -k1 -r -n | awk '{print $1"\t"$2}' >${SCREEN}.mutagenic.insertions.counts.bed
+### [fisher]
 
-cut -f28 ${SCREEN}.filt.header.sorted.rem_dupl.bp.intron.antisense.bed | \
-sort | uniq -c | sort -k1 -r -n | awk '{print $1"\t"$2}' \
->${SCREEN}.silent.insertions.counts.bed
-
-awk -F"\t" '
-NR==FNR {f1[$2]=$0; next}
-($2 in f1) \
-{print $0"\t"f1[$2]} \
-' ${SCREEN}.mutagenic.insertions.counts.bed \
-${SCREEN}.silent.insertions.counts.bed | \
-awk -F"\t" '
-BEGIN{OFS="\t"}
-{ratio=$3/$1} {print $2,$1,$3,ratio}' >${SCREEN}.counts.table.txt
-
-```
+### [plot]
 
 ### Output files explained
 
