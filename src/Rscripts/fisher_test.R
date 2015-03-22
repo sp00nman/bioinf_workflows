@@ -3,9 +3,15 @@
 
 read.input.control <- function(input){
   file1 <- read.table(file=input, sep="\t")
-  colnames(file1) <- c("genesymbol", "num_insertions")
-  total_insertions <- sum(file1$num_insertions)
-  file1$no_insertions <- total_insertions - file1$num_insertions
+  
+  if(ncol(file1)>2){
+    colnames(file1) <- c("genesymbol", "num_insertions", "no_insertions")
+  }
+  else{
+    colnames(file1) <- c("genesymbol", "num_insertions")
+    total_insertions <- sum(file1$num_insertions)
+    file1$no_insertions <- total_insertions - file1$num_insertions
+  }
   return(file1)
 }
 
