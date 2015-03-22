@@ -2,7 +2,7 @@ Analysis workflow
 =================
 
 
-### Software requirements
+## Software requirements
  
 + [Picard] (http://picard.sourceforge.net/)
 + [Bowtie2] (http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
@@ -10,9 +10,7 @@ Analysis workflow
 + [Samtools] (http://samtools.sourceforge.net/)
 
 
-### Step-by-step workflow
-
-Set environment variables. [Reference genome hg19 ](http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/human/)
+## Usage
 
 ```bash
 usage: gt_screen_workflow.py [-h] [--debug DEBUG] [--stage STAGE]
@@ -59,9 +57,11 @@ optional arguments:
 
 ```
 
+## --stage
+
 ### [alignment]
 
-Align data to reference genome hg19. Parameter ```--sensitive``` equals to ```-D 15 -R 2 -L 22 -i S,1,1.15``` 
+Align data to reference genome hg19 [Reference genome hg19 ](http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/human/). Parameter ```--sensitive``` equals to ```-D 15 -R 2 -L 22 -i S,1,1.15``` 
 
 ### [filter]
 
@@ -95,7 +95,7 @@ Annotate insertions. For annotation the genome assembly hg19 (ucsc) combined wit
 
 Annotate insertions within overlapping genes.
 
-![overlapping](https://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png?raw=true 100x200 %)
+![overlapping](https://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png?raw=true 100x200)
 
 | Gene (strand)       | insertions (chr[n]:position |  strand  | intronic/exonic   | group       |
 | :------------------ |:----------------------------|:---------|:------------------|:------------|
