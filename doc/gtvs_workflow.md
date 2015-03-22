@@ -95,7 +95,7 @@ Annotate insertions. For annotation the genome assembly hg19 (ucsc) combined wit
 
 Annotate insertions within overlapping genes.
 
-![overlapping](https://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png?raw=true 100x200)
+![overlapping](https://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png?raw=true 50x100)
 
 | Gene (strand)       | insertions (chr[n]:position |  strand  | intronic/exonic   | group       |
 | :------------------ |:----------------------------|:---------|:------------------|:------------|
@@ -108,7 +108,7 @@ be determined to identify the disrupted gene.....Of these, 321 clones contained 
 in a coding exon, directly disrupting the respective open reading frame. Insertions in introns are predictive
 to be mutagenic if the gene-trap cassette is inserted in the sense orientation." T. Bürckstümmer et al., "a reversible gene trap collection empowers haploid genetics in human cells", Nature Methods, 2013.
 
-![grouping](https://github.com/sp00nman/bionf_workflows/blob/master/img/grouping.png?raw=true )
+![grouping](https://github.com/sp00nman/bionf_workflows/blob/master/img/grouping.png?raw=true 50x100)
 
 | Gene A (chr[n]:position)   | strand(*)  | intronic/exonic   | group         |
 | :------------------------- |:--------|:------------------|:--------------|
@@ -162,10 +162,10 @@ Count insertions.
 The output file with the following extension ${SCREEN}.mutagenic.genome_browser.bed can be visualized with a genome browser. 
 + [UCSC] genome browser (https://genome.ucsc.edu/cgi-bin/hgCustom?hgsid=382317369_ghDqdehOZl31AdcEk6KiErMEyhw8)
 + [Ensembl] genome browser (http://www.ensembl.org/)
-![NF1 insertions](https://github.com/sp00nman/bionf_workflows/blob/master/img/NF1_2.png?raw=true)
+![NF1 insertions](https://github.com/sp00nman/bionf_workflows/blob/master/img/NF1_2.png?raw=true 50x100)
 
 ### Summary table
-[google spreadsheet with results of 41 screens](https://docs.google.com/spreadsheets/d/1XcimT1Aj45mjhUPsX4qHMlbFcj62h4InKtYPB6O1S4U/edit#gid=0)
+[google spreadsheet with results of 41 screens](https://docs.google.com/spreadsheets/d/1XcimT1Aj45mjhUPsX4qHMlbFcj62h4InKtYPB6O1S4U/edit#gid=0 50x100)
 
 ### Parameter description
 | metrics                 | description          |
