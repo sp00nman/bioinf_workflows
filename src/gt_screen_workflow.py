@@ -282,6 +282,7 @@ def remove2bpinsertions(project_name,
 
     input_file = sample_file
     output_file = project_dir + "/" + project_name + "." + file_ext
+    msg_rm2bpins = "Remove insertions 1 or 2 bp away."
 
     sam_file = load_files(input_file)
     sam_out = open(output_file, 'w')
