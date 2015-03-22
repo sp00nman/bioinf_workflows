@@ -359,10 +359,15 @@ def fix_end_position(project_name,
 
     input_file = sample_file
     output_file = project_dir + "/" + project_name + "." + file_ext
+    
     msg_fix = "Fix end position to be start+1."
-    cmd_fix = "awk 'BEGIN{OFS=\"\t\"}{end=$2+1; print $1,$2,end,$4,$5,$6,$7}' %s %s" % \
-                                 (input_file, output_file)
-    return msg_fix, cmd_fix
+    df = pd.read_csv(input_file, sep="\t", 
+                        names=["chr", "start", "end", 
+                                "id", "mapq", "strand", "cigar"])
+    df['end'] = df['start']+1
+    df.to_csv(output_file, sep="\t", index=0, header=0)
+
+    return msg_fix
 
 
 def intersectbed(project_name,
@@ -585,7 +590,7 @@ if __name__ == '__main__':
         sample_file = project_dir + "/" + args.project_name + ".rm_dupl.sorted.filt.aligned.sam"
 
     if re.search(r"all|insertions", args.stage):
-        msg_rm2bpins = "Remove insertions 1 or 2 bp away."
+        print "Remove insertions 1 or 2 bp away."
         remove2bpinsertions(args.project_name, project_dir, 
                             sample_file, file_ext="rm2bp_insertions.sam")
         sample_file = project_dir + "/" + args.project_name + ".rm2bp_insertions.sam"
@@ -606,10 +611,11 @@ if __name__ == '__main__':
                                 sample_file, file_ext="rm2bp_insertions_header.bed")
         status = run_cmd(msg, cmd)
         sample_file = project_dir + "/" + args.project_name + ".rm2bp_insertions_header.bed"
-
-        (msg, cmd) = fix_end_position(args.project_name, project_dir,
-                                      sample_file, file_ext="rm2bp_insertions_header_fix.bed")
-        status = run_cmd(msg, cmd)
+        
+        print "Fix end position to be start+1 "
+        fix_end_position(args.project_name, project_dir,
+                            sample_file, file_ext="rm2bp_insertions_header_fix.bed")
+        
         sample_file = project_dir + "/" + args.project_name + ".rm2bp_insertions_header_fix.bed"
 
         (msg, cmd) = intersectbed(args.project_name, project_dir,
