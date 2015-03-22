@@ -125,7 +125,7 @@ create.bubble.plot <- function(genetrap.screens, selection.list, upper.limit=0.1
                  "#F0E442", "#0072B2", "#D55E00")
   
   #creat ggplot
-  g_obj <- ggplot(data=genetrap.screens, aes(x=pos, y=mlog10Pval, size=num_insertions.x))
+  g_obj <- ggplot(data=genetrap.screens, aes(x=pos, y=mlog10Pval, size=num_insertions_screen))
     g_obj = g_obj + geom_point(aes(fill=chrom), colour="black", pch=21, alpha=1/4)
     g_obj = g_obj + geom_point(data=genetrap.screens[(genetrap.screens$genesymbol %in% selection.list),], 
                                aes(x=pos, y=mlog10Pval, fill=chrom), colour="black", pch=21)
@@ -136,7 +136,7 @@ create.bubble.plot <- function(genetrap.screens, selection.list, upper.limit=0.1
     else g_obj = g_obj + geom_text(data = genetrap.screens[(genetrap.screens$genesymbol %in% selection.list),], 
                                    aes(x=pos, y=mlog10Pval, label=genesymbol), size=10, colour="black", vjust=-0.5, hjust=1.1)
     g_obj = g_obj + geom_text(data = genetrap.screens[(genetrap.screens$genesymbol %in% selection.list),], 
-                              aes(x=pos, y=mlog10Pval, label=num_insertions.x), size=4, colour="black", vjust=1.5, hjust=-0.6)
+                              aes(x=pos, y=mlog10Pval, label=num_insertions_screen), size=4, colour="black", vjust=1.5, hjust=-0.6)
     g_obj = g_obj + scale_x_continuous(name=plot.col[1], breaks=ticks, labels=(unique(genetrap.screens$chrom)))
     g_obj = g_obj + scale_y_log10(name=expression(paste("Significance [-", log[10], "(",italic("FDR-corrected p-value"),")]")),
                                   breaks=breaks, limits=limits)
