@@ -87,7 +87,7 @@ def bam2fastq(sequences_dir,
 
     input_file = sequences_dir + "/" + sample_file
     msg_bam2fastq = "Convert bam to fastq."
-    cmd_bam2fastq = "java -jar $NGS_PICARD/SamToFastq.jar " \
+    cmd_bam2fastq = "java -Xmx6g -jar $NGS_PICARD/SamToFastq.jar " \
                     "INPUT=%s " \
                     "FASTQ=%s/%s.%s" % (input_file, project_dir, 
                                         project_name, file_ext)
@@ -174,7 +174,7 @@ def sort_bam(project_name,
     input_file = sample_file
     output_file = project_dir + "/" + project_name + "." + file_ext
     msg_sort = "Sort bam file (by coordinate)."
-    cmd_sort = "java -jar $NGS_PICARD/SortSam.jar " \
+    cmd_sort = "java -Xmx6g -jar $NGS_PICARD/SortSam.jar " \
                "INPUT=%s " \
                "OUTPUT=%s " \
                "SORT_ORDER=coordinate" % (input_file, output_file)
@@ -190,7 +190,7 @@ def reorder_sam(project_name,
     input_file = sample_file
     output_file = project_dir + "/" + project_name + "." + file_ext
     msg_reorder = "Reorder bam file."
-    cmd_reorder = "java -jar $NGS_PICARD/ReorderSam.jar " \
+    cmd_reorder = "java -Xmx6g -jar $NGS_PICARD/ReorderSam.jar " \
                   "INPUT=%s " \
                   "OUTPUT=%s " \
                   "REFERENCE=%s/hg19.fa" % (input_file, output_file, genomes)
@@ -207,9 +207,10 @@ def count_duplicates(project_name,
     msg_countdup = "Count duplicate reads for each position."
     #TODO: don't hardcode executable files
     cmd_countdup = "~/src/ngsutils/bin/bamutils pcrdup " \
-    "-frag " \
-    "-bam %s " \
-    "-counts %s " \
+    + "-frag " \
+    + "-bam %s " \
+    + "-counts %s "
+    return msg_countdup, cmd_countdup
 
 
 def remove_duplicates(project_name,
@@ -227,7 +228,7 @@ def remove_duplicates(project_name,
     output_file = project_dir + "/" + project_name + "." + file_ext
     metrics_file = project_dir + "/" + project_name + ".duplicates.metrics.txt"
     msg_rmdup = "Remove duplicate reads. "
-    cmd_rmdup = "java -jar $NGS_PICARD/MarkDuplicates.jar " \
+    cmd_rmdup = "java -Xmx6g -jar $NGS_PICARD/MarkDuplicates.jar " \
                 "INPUT=%s " \
                 "OUTPUT=%s " \
                 "METRICS_FILE=%s " \
@@ -362,9 +363,9 @@ def fix_end_position(project_name,
     output_file = project_dir + "/" + project_name + "." + file_ext
     
     msg_fix = "Fix end position to be start+1."
-    df = pd.read_csv(input_file, sep="\t", 
-                        names=["chr", "start", "end", 
-                                "id", "mapq", "strand", "cigar"])
+    df = pd.read_csv(input_file, sep="\t",
+                     names=["chr", "start", "end",
+                            "id", "mapq", "strand", "cigar"])
     df['end'] = df['start']+1
     df.to_csv(output_file, sep="\t", index=0, header=0)
 
@@ -519,7 +520,7 @@ if __name__ == '__main__':
     create_output_dir(args.output_dir, args.project_name)
 
     # create log file
-    logfile_name = project_dir + "/" + args.project_name + ".log"
+    logfile_name = args.output_dir + "/" + args.project_name + ".log"
     logging.basicConfig(filename=logfile_name,
                         format='%(levelname)s: %(asctime)s %(message)s',
                         datefmt='%m/%d/%Y %I:%M:%S %p',
