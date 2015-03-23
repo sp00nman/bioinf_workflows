@@ -69,11 +69,9 @@ def create_output_dir(output_dir,
             exit('%s\nFailed to create directory', (e, output_dir))
 
 
-def bam2fastq(sequences_dir,
-              project_dir,
+def bam2fastq(project_dir,
               sample_file,
               project_name,
-              output_dir,
               file_ext):
     """
     Converts bam file to fastq files with PICARD
@@ -85,12 +83,12 @@ def bam2fastq(sequences_dir,
     :return: message to be logged & command to be executed; type str
     """
 
-    input_file = sequences_dir + "/" + sample_file
+    input_file = sample_file
+    output_file = project_dir + "/" + project_name + "." + file_ext
     msg_bam2fastq = "Convert bam to fastq."
     cmd_bam2fastq = "java -Xmx6g -jar $NGS_PICARD/SamToFastq.jar " \
                     "INPUT=%s " \
-                    "FASTQ=%s/%s.%s" % (input_file, project_dir, 
-                                        project_name, file_ext)
+                    "FASTQ=%s" % (input_file, output_file)
     return msg_bam2fastq, cmd_bam2fastq
 
 
@@ -538,7 +536,8 @@ if __name__ == '__main__':
                                             str(args.num_cpus))
 
     # dictionary of file extensions
-    file_ext = {'alignment': 'aligned.sam',
+    file_ext = {'bam2fastq': 'fastq',
+                'alignment': 'aligned.sam',
                 'sam2bam': 'aligned.bam',
                 'filter': 'filt.aligned.bam',
                 'sort_bam': 'sort.filt.aligned.bam',
@@ -557,20 +556,17 @@ if __name__ == '__main__':
                 'bubble': 'bubble_plot.pdf'}
     
     # only necessary if --stage is not [all]                   
-    sample_file = args.sample_file
+    sample_file = args.sequences_dir + "/" + args.sample_file
 
     # start workflow
     if re.search(r"bam2fastq", args.stage):
-        (msg, cmd) = bam2fastq(args.sequences_dir, project_dir,
-                               sample_file, args.project_name, 
-                               args.output_dir, file_ext="fastq")
+        (msg, cmd) = bam2fastq(project_dir, sample_file,
+                               args.project_name, file_ext="fastq")
         status = run_cmd(msg, cmd)
+        sample_file = project_dir + "/" + args.project_name \
+                      + file_ext['bam2fastq']
 
     if re.search(r"all|alignment", args.stage):
-        if re.search(r".fastq", sample_file):
-            sample_file = args.sequences_dir + "/" + sample_file
-        else:
-            sample_file = project_dir + "/" + args.project_name + ".fastq"
 
         (msg, cmd) = alignment(args.genome_version, args.genomes, 
                                 args.project_name, sample_file, 
