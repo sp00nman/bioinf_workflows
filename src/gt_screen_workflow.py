@@ -456,8 +456,8 @@ if __name__ == '__main__':
     parser.add_argument('--stage', dest='stage', required=False,
                         help='Limit job submission to a particular '
                              'analysis stage. '
-                             '[all,alignment,filter, sort, duplicates, index,'
-                             'insertions, annotate, count, fisher, plot]')
+                             '[all,(bam2fastq),alignment,filter,sort,duplicates,index,'
+                             'insertions,annotate,count,fisher,plot]')
     parser.add_argument('--project_name', dest='project_name', required=False,
                         help='Name of project directory.')
     parser.add_argument('--output_dir', dest='output_dir', required=False,
@@ -520,7 +520,7 @@ if __name__ == '__main__':
     create_output_dir(args.output_dir, args.project_name)
 
     # create log file
-    logfile_name = args.output_dir + "/" + args.project_name + ".log"
+    logfile_name = args.output_dir + "/" + args.project_name + "/" + args.project_name + ".log"
     logging.basicConfig(filename=logfile_name,
                         format='%(levelname)s: %(asctime)s %(message)s',
                         datefmt='%m/%d/%Y %I:%M:%S %p',
@@ -555,17 +555,20 @@ if __name__ == '__main__':
                 'count': 'count_table.txt',
                 'fisher': 'fisher_test.txt',
                 'bubble': 'bubble_plot.pdf'}
+    
+    # only necessary if --stage is not [all]                   
+    sample_file = args.sample_file
 
     # start workflow
-    if re.search(r".bam", args.sample_file):
+    if re.search(r"bam2fastq", args.stage):
         (msg, cmd) = bam2fastq(args.sequences_dir, project_dir,
-                               args.sample_file, args.project_name, 
+                               sample_file, args.project_name, 
                                args.output_dir, file_ext="fastq")
         status = run_cmd(msg, cmd)
 
     if re.search(r"all|alignment", args.stage):
-        if re.search(r".fastq", args.sample_file):
-            sample_file = args.sequences_dir + "/" + args.sample_file
+        if re.search(r".fastq", sample_file):
+            sample_file = args.sequences_dir + "/" + sample_file
         else:
             sample_file = project_dir + "/" + args.project_name + ".fastq"
 
@@ -589,6 +592,7 @@ if __name__ == '__main__':
         sample_file = project_dir + "/" + args.project_name + file_ext['filter']
 
     if re.search(r"all|duplicates", args.stage):
+
         (msg, cmd) = sort_bam(args.project_name, project_dir, 
                                 sample_file, file_ext=file_ext['sort_bam'])
         status = run_cmd(msg, cmd)
