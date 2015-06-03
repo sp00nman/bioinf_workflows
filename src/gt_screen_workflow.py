@@ -611,13 +611,12 @@ if __name__ == '__main__':
                                 sample_file, file_ext=file_ext['index'])
         status = run_cmd(msg, cmd)
 
-    if re.search(r"all|bam2sam", args.stage):
+    if re.search(r"all|insertions", args.stage):
         (msg, cmd) = bam2sam(args.project_name, project_dir, 
                                 sample_file, file_ext=file_ext['bam2sam'])
         status = run_cmd(msg, cmd)
         sample_file = project_dir + "/" + args.project_name + "." + file_ext['bam2sam']
 
-    if re.search(r"all|insertions", args.stage):
         print "Remove insertions 1 or 2 bp away."
         remove2bpinsertions(args.project_name, project_dir, 
                             sample_file, file_ext=file_ext['insertions'])
