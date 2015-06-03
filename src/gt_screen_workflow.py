@@ -543,7 +543,7 @@ if __name__ == '__main__':
                 'sort_bam': 'sort.filt.aligned.bam',
                 'reorder_sam': 'reord.sort.filt.aligned.bam',
                 'duplicates': 'rm_dupl.reord.sort.filt.aligned.bam',
-                'index':'rm_dupl.sorted.filt.aligned.bai',
+                'index': 'rm_dupl.sorted.filt.aligned.bai',
                 'bam2sam': 'rm_dupl.sorted.filt.aligned.sam',
                 'insertions': 'rm2bp_insertions.sam',
                 'get_header': 'header',
@@ -563,7 +563,7 @@ if __name__ == '__main__':
         (msg, cmd) = bam2fastq(project_dir, sample_file,
                                args.project_name, file_ext="fastq")
         status = run_cmd(msg, cmd)
-        sample_file = project_dir + "/" + args.project_name \
+        sample_file = project_dir + "/" + args.project_name + "." \
                       + file_ext['bam2fastq']
 
     if re.search(r"all|alignment", args.stage):
@@ -573,37 +573,37 @@ if __name__ == '__main__':
                                 project_dir, str(args.num_cpus), 
                                 file_ext=file_ext['alignment'])
         status = run_cmd(msg, cmd)
-        sample_file = project_dir + "/" + args.project_name \
+        sample_file = project_dir + "/" + args.project_name + "." \
                       + file_ext['alignment']
 
     if re.search(r"all|filter", args.stage):
         (msg, cmd) = sam2bam(args.project_name, project_dir, 
                             sample_file, file_ext=file_ext['sam2bam'])
         status = run_cmd(msg,cmd)
-        sample_file = project_dir + "/" + args.project_name \
+        sample_file = project_dir + "/" + args.project_name + "." \
                       + file_ext['sam2bam']
         (msg, cmd) = filter_reads(args.project_name, project_dir, sample_file,
                                   mapq="20", file_ext=file_ext['filter'])
         status = run_cmd(msg, cmd)
-        sample_file = project_dir + "/" + args.project_name + file_ext['filter']
+        sample_file = project_dir + "/" + args.project_name + "." + file_ext['filter']
 
     if re.search(r"all|duplicates", args.stage):
 
         (msg, cmd) = sort_bam(args.project_name, project_dir, 
                                 sample_file, file_ext=file_ext['sort_bam'])
         status = run_cmd(msg, cmd)
-        sample_file = project_dir + "/" + args.project_name \
+        sample_file = project_dir + "/" + args.project_name + "." \
                       + file_ext['sort_bam']
         (msg, cmd) = reorder_sam(args.project_name, project_dir, 
                                     sample_file, args.genomes,
                                     file_ext=file_ext['reorder_sam'])
         status = run_cmd(msg,cmd)
-        sample_file = project_dir + "/" + args.project_name \
+        sample_file = project_dir + "/" + args.project_name + "." \
                       + file_ext['reorder_sam']
         (msg, cmd) = remove_duplicates(args.project_name, project_dir, sample_file,
                                        file_ext=file_ext['duplicates'])
         status = run_cmd(msg, cmd)
-        sample_file = project_dir + "/" + args.project_name \
+        sample_file = project_dir + "/" + args.project_name + "." \
                       + file_ext['duplicates']
 
     if re.search(r"all|index", args.stage):
@@ -615,13 +615,13 @@ if __name__ == '__main__':
         (msg, cmd) = bam2sam(args.project_name, project_dir, 
                                 sample_file, file_ext=file_ext['bam2sam'])
         status = run_cmd(msg, cmd)
-        sample_file = project_dir + "/" + args.project_name + file_ext['bam2sam']
+        sample_file = project_dir + "/" + args.project_name + "." + file_ext['bam2sam']
 
     if re.search(r"all|insertions", args.stage):
         print "Remove insertions 1 or 2 bp away."
         remove2bpinsertions(args.project_name, project_dir, 
                             sample_file, file_ext=file_ext['insertions'])
-        sample_file = project_dir + "/" + args.project_name \
+        sample_file = project_dir + "/" + args.project_name + "." \
                       + file_ext['insertions']
 
     if re.search(r"all|annotate", args.stage):
@@ -632,24 +632,24 @@ if __name__ == '__main__':
         (msg, cmd) = cutheader(args.project_name, project_dir, 
                                 sample_file, file_ext=file_ext['cut_header'])
         status = run_cmd(msg, cmd)
-        sample_file = project_dir + "/" + args.project_name \
+        sample_file = project_dir + "/" + args.project_name + "." \
                       + file_ext['cut_header']
         (msg, cmd) = sam2bam(args.project_name, project_dir, 
                                 sample_file, file_ext=file_ext['header2bam'])
         status = run_cmd(msg, cmd)
-        sample_file = project_dir + "/" + args.project_name \
+        sample_file = project_dir + "/" + args.project_name + "." \
                       + file_ext['header2bam']
         (msg, cmd) = sam2bed(args.project_name, project_dir, 
                                 sample_file, file_ext=file_ext['sam2bed'])
         status = run_cmd(msg, cmd)
-        sample_file = project_dir + "/" + args.project_name \
+        sample_file = project_dir + "/" + args.project_name + "." \
                       + file_ext['sam2bed']
         
         print "Fix end position to be start+1 "
         fix_end_position(args.project_name, project_dir,
                             sample_file, file_ext=file_ext['fix_pos'])
         
-        sample_file = project_dir + "/" + args.project_name + file_ext['fix_pos']
+        sample_file = project_dir + "/" + args.project_name + "." + file_ext['fix_pos']
 
         (msg, cmd) = intersectbed(args.project_name, project_dir,
                                     sample_file, args.annotation_exon, 
@@ -664,13 +664,13 @@ if __name__ == '__main__':
         (msg, cmd) = count_insertions(args.project_name, project_dir,
                                       file_ext=file_ext['count'])
         status = run_cmd(msg, cmd)
-        sample_file = project_dir + "/" + args.project_name + file_ext['count']
+        sample_file = project_dir + "/" + args.project_name + "." + file_ext['count']
 
     if re.search(r"all|fisher", args.stage):
         (msg, cmd) = fisher_test(args.project_name, project_dir, sample_file,
                                  args.control_file, file_ext=file_ext['fisher'])
         status = run_cmd(msg, cmd)
-        sample_file = project_dir + "/" + args.project_name + file_ext['fisher']
+        sample_file = project_dir + "/" + args.project_name + "." + file_ext['fisher']
 
     if re.search(r"all|plot", args.stage):
         (msg, cmd) = plot_results(args.project_name, project_dir, args.refseq_file,
