@@ -370,6 +370,20 @@ def fix_end_position(project_name,
     return msg_fix
 
 
+def parse_intersectfile(annotation_bed):
+    
+    try:
+        file_handle = open(annotation_bed)
+        bed_files = [line.rstrip('\r\n').split('\t') \
+                     for line in file_handle if line.rstrip('\r\n')]
+        file_handle.close()
+    
+    except IOError:
+        print('Annotation file is missing.')
+
+    return bed_files
+
+
 def intersectbed(project_name,
                  project_dir,
                  sample_file,
@@ -470,10 +484,9 @@ if __name__ == '__main__':
                         help='Genome version')
     parser.add_argument('--bowtie2', dest='bowtie2', required=False,
                         help='Path to bowtie2 indices')
-    parser.add_argument('--annotation_exon', dest='annotation_exon', required=False,
-                        help='Exon annotation file.')
-    parser.add_argument('--annotation_intron', dest='annotation_intron', required=False,
-                        help='Intron annotation file')
+    parser.add_argument('--annotation', dest='annotation', required=False,
+                        help='annotation file. Format (tab-separated: exon /path/to/annotation_1.txt
+                                                                      intron /path/to/annotation_2.txt')
     parser.add_argument('--control_file', dest='control_file', required=False,
                         help='Control file with insertions for fisher-test.')
     parser.add_argument('--refseq_file', dest='refseq_file', required=False,
@@ -499,10 +512,8 @@ if __name__ == '__main__':
         args.genome_version = "hg19"
     if not args.bowtie2:
         args.bowtie2 = "forBowtie2"
-    if not args.annotation_exon:
-        args.annotation_exon = home_dir + "hg19_exons.gtf"
-    if not args.annotation_intron:
-        args.annotation_intron = home_dir + "hg19_introns.gtf"
+    if not args.annotation:
+        args.annotation = home_dir + "annotation_file.txt"
     if not args.control_file:
         args.control_file = home_dir + "control_file.txt"
     if not args.refseq_file:
@@ -514,8 +525,9 @@ if __name__ == '__main__':
     # set project directory
     project_dir = args.output_dir + "/" + args.project_name
 
-    # creat project directory
+    # create directory structure
     create_output_dir(args.output_dir, args.project_name)
+    #TODO: create /img and /statistics
 
     # create log file
     logfile_name = args.output_dir + "/" + args.project_name + "/" + args.project_name + ".log"
@@ -560,6 +572,11 @@ if __name__ == '__main__':
 
     # start workflow
     if re.search(r"bam2fastq", args.stage):
+        
+        ####################################
+        print "Convert bam to fastq file." #
+        ####################################
+
         (msg, cmd) = bam2fastq(project_dir, sample_file,
                                args.project_name, file_ext="fastq")
         status = run_cmd(msg, cmd)
@@ -567,6 +584,10 @@ if __name__ == '__main__':
                       + file_ext['bam2fastq']
 
     if re.search(r"all|alignment", args.stage):
+        
+        #########################
+        print "Read alignment." #
+        #########################
 
         (msg, cmd) = alignment(args.genome_version, args.genomes, 
                                 args.project_name, sample_file, 
@@ -577,6 +598,11 @@ if __name__ == '__main__':
                       + file_ext['alignment']
 
     if re.search(r"all|filter", args.stage):
+        
+        #######################
+        print "Filter reads." #
+        #######################
+
         (msg, cmd) = sam2bam(args.project_name, project_dir, 
                             sample_file, file_ext=file_ext['sam2bam'])
         status = run_cmd(msg,cmd)
@@ -588,6 +614,10 @@ if __name__ == '__main__':
         sample_file = project_dir + "/" + args.project_name + "." + file_ext['filter']
 
     if re.search(r"all|duplicates", args.stage):
+        
+        ############################
+        print "Remove duplicates." #
+        ############################
 
         (msg, cmd) = sort_bam(args.project_name, project_dir, 
                                 sample_file, file_ext=file_ext['sort_bam'])
@@ -607,24 +637,31 @@ if __name__ == '__main__':
                       + file_ext['duplicates']
 
     if re.search(r"all|index", args.stage):
+        
         (msg, cmd) = bam2bai(args.project_name, project_dir, 
                                 sample_file, file_ext=file_ext['index'])
         status = run_cmd(msg, cmd)
 
     if re.search(r"all|insertions", args.stage):
+        
         (msg, cmd) = bam2sam(args.project_name, project_dir, 
                                 sample_file, file_ext=file_ext['bam2sam'])
         status = run_cmd(msg, cmd)
         sample_file = project_dir + "/" + args.project_name + "." + file_ext['bam2sam']
-
-        print "Remove insertions 1 or 2 bp away."
+        
+        ###########################################
+        print "Remove insertions 1 or 2 bp away." #
+        ###########################################
         remove2bpinsertions(args.project_name, project_dir, 
                             sample_file, file_ext=file_ext['insertions'])
         sample_file = project_dir + "/" + args.project_name + "." \
                       + file_ext['insertions']
 
     if re.search(r"all|annotate", args.stage):
-        msg_rm2bpins = "Annotate insertions."
+        
+        ##############################
+        print "Annotate insertions." #
+        ##############################
         (msg, cmd) = getheader(args.project_name, project_dir,
                                file_ext=file_ext['get_header'])
         status = run_cmd(msg, cmd)
@@ -644,34 +681,57 @@ if __name__ == '__main__':
         sample_file = project_dir + "/" + args.project_name + "." \
                       + file_ext['sam2bed']
         
-        print "Fix end position to be start+1 "
+        ##############################################################
+        print "Add +1 to end position in bedfile. chr start star+1 " #
+        ##############################################################
         fix_end_position(args.project_name, project_dir,
                             sample_file, file_ext=file_ext['fix_pos'])
         
         sample_file = project_dir + "/" + args.project_name + "." + file_ext['fix_pos']
-
-        (msg, cmd) = intersectbed(args.project_name, project_dir,
-                                    sample_file, args.annotation_exon, 
-                                    annotation_name="exon", file_ext="insertions" )
-        status = run_cmd(msg, cmd)
-        (msg, cmd) = intersectbed(args.project_name, project_dir, 
-                                    sample_file, args.annotation_intron, 
-                                    annotation_name="intron", file_ext="insertions")
-        status = run_cmd(msg, cmd)
+        
+        ######################################
+        print "Intersect annotation files. " #
+        ######################################
+        
+        bed_files = parse_intersectfile(args.annotation)
+        
+        for bed in bed_files:
+            annotation_name = bed[0]
+            annotation_file = bed[1]
+        
+            (msg, cmd) = intersectbed(args.project_name, project_dir,
+                                    sample_file, annotation_file, 
+                                    annotation_name=annotation_name, file_ext="insertions" )
+            status = run_cmd(msg, cmd)
 
     if re.search(r"all|count", args.stage):
+        
+        #####################################
+        print "Count number of insertions." #
+        #####################################
         (msg, cmd) = count_insertions(args.project_name, project_dir,
                                       file_ext=file_ext['count'])
         status = run_cmd(msg, cmd)
         sample_file = project_dir + "/" + args.project_name + "." + file_ext['count']
 
     if re.search(r"all|fisher", args.stage):
+        
+        ######################
+        print "Fisher-test." #
+        ######################
+        
         (msg, cmd) = fisher_test(args.project_name, project_dir, sample_file,
                                  args.control_file, file_ext=file_ext['fisher'])
         status = run_cmd(msg, cmd)
         sample_file = project_dir + "/" + args.project_name + "." + file_ext['fisher']
 
     if re.search(r"all|plot", args.stage):
+        
+        #########################################
+        print "Plot insertions in bubble plot." #
+        #########################################
         (msg, cmd) = plot_results(args.project_name, project_dir, args.refseq_file,
                                   sample_file, file_ext=file_ext['bubble'])
         status = run_cmd(msg, cmd)
+
+
