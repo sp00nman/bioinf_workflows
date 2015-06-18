@@ -454,6 +454,45 @@ def plot_results(project_name,
                                                         output_file)
     return msg_plot, cmd_plot
 
+
+def browser_track(project_name,
+                  project_dir,
+                  annotation_name,
+                  file_ext):
+
+    input_file = project_dir + "/" + project_name + "." 
+                 + "insertions" + "." + annotation_name ".bed"
+    output_file = project_dir + "/" + project_name + "." 
+                 + annotation_name + ". " + file_ext
+    
+    header = "track name= " + "\"" + project_name + "_" + annotation_name + "\" " + "\n"
+             + "description= " + "\"" + "Color by strand " + "\"" + "\n"
+             + "visibility=2" + "\n" 
+             + "colorByStrand=" + "\"" + "255,0,0,0,0,255" + "\n"
+
+    file_out = open(output_file, "wb")
+    file_out.write(header)
+    file_out.close()
+
+    msg_track = "Create browser tracks. "
+    df = pd.read_csv(input_file, sep="\t",
+                     names=["chr", "start", "end",
+                            "id", "mapq", "strand", 
+                            "cigar", "ens_id", "ens_start",
+                            "ens_end", "ens_annotation", 
+                            "ens_strand", "ens_ensid", 
+                            "ens_gsymbol", "ens_transid",
+                            "ens_num"])
+    track_name = df['id'] + "~" + df['ens_gsymbol'] + "~" + annotation_name 
+                 + df['strand'] + "/" + df['ens_strand']
+    reshape = df.loc[:,['chr', 'start', 'end', 'id']]
+    reshape['track_name'] = track_name
+
+    df.to_csv(output_file, mode='a+', sep="\t", index=0, header=0)
+
+    return msg_track
+
+ 
 #def report_statistics():
     # number of mapped reads...duplicates,..insertion count..
 
@@ -469,7 +508,7 @@ if __name__ == '__main__':
                         help='Limit job submission to a particular '
                              'analysis stage. '
                              '[all,(bam2fastq),alignment,filter,sort,duplicates,index,'
-                             'insertions,annotate,count,fisher,plot]')
+                             'insertions,annotate,count,fisher,plot,browser]')
     parser.add_argument('--project_name', dest='project_name', required=False,
                         help='Name of project directory.')
     parser.add_argument('--output_dir', dest='output_dir', required=False,
@@ -485,8 +524,7 @@ if __name__ == '__main__':
     parser.add_argument('--bowtie2', dest='bowtie2', required=False,
                         help='Path to bowtie2 indices')
     parser.add_argument('--annotation', dest='annotation', required=False,
-                        help='annotation file. Format (tab-separated: exon /path/to/annotation_1.txt
-                                                                      intron /path/to/annotation_2.txt')
+                        help='annotation file. Format (tab-separated: exon /path/to/annotation_1.txt \n intron /path/to/annotation_2.txt')
     parser.add_argument('--control_file', dest='control_file', required=False,
                         help='Control file with insertions for fisher-test.')
     parser.add_argument('--refseq_file', dest='refseq_file', required=False,
@@ -565,7 +603,8 @@ if __name__ == '__main__':
                 'fix_pos': 'rm2bp_insertions_header_fix.bed',
                 'count': 'count_table.txt',
                 'fisher': 'fisher_test.txt',
-                'bubble': 'bubble_plot.pdf'}
+                'bubble': 'bubble_plot.pdf'
+                'browser': 'browser_track'}
     
     # only necessary if --stage is not [all]                   
     sample_file = args.sequences_dir + "/" + args.sample_file
@@ -718,8 +757,7 @@ if __name__ == '__main__':
         
         ######################
         print "Fisher-test." #
-        ######################
-        
+        ###################### 
         (msg, cmd) = fisher_test(args.project_name, project_dir, sample_file,
                                  args.control_file, file_ext=file_ext['fisher'])
         status = run_cmd(msg, cmd)
@@ -733,5 +771,20 @@ if __name__ == '__main__':
         (msg, cmd) = plot_results(args.project_name, project_dir, args.refseq_file,
                                   sample_file, file_ext=file_ext['bubble'])
         status = run_cmd(msg, cmd)
+
+    if re.search(r"all|browser", args.stage):
+
+        ##########################################################
+        print "Create browser tracks to view insertions sites. " #
+        ##########################################################
+        bed_files = parse_intersectfile(args.annotation)
+
+        for bed in bed_files:
+            annotation_name = bed[0]
+            (msg, cmd) = browser_track(args.project_name, project_dir, annotation_name=annotation_name
+                                       file_ext=file_ext['browser_track'])
+            status = run_cmd(msg, cmd)
+
+
 
 
