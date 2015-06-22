@@ -460,35 +460,38 @@ def browser_track(project_name,
                   annotation_name,
                   file_ext):
 
-    input_file = project_dir + "/" + project_name + "." 
-                 + "insertions" + "." + annotation_name ".bed"
-    output_file = project_dir + "/" + project_name + "." 
-                 + annotation_name + ". " + file_ext
+    input_file = project_dir + "/" + project_name + "." + "insertions" + "." \
+        + annotation_name + ".bed"
+    output_file = project_dir + "/" + project_name + "." \
+        + annotation_name + "." + file_ext
     
-    header = "track name= " + "\"" + project_name + "_" + annotation_name + "\" " + "\n"
-             + "description= " + "\"" + "Color by strand " + "\"" + "\n"
-             + "visibility=2" + "\n" 
-             + "colorByStrand=" + "\"" + "255,0,0,0,0,255" + "\n"
-
-    file_out = open(output_file, "wb")
-    file_out.write(header)
-    file_out.close()
-
     msg_track = "Create browser tracks. "
-    df = pd.read_csv(input_file, sep="\t",
-                     names=["chr", "start", "end",
-                            "id", "mapq", "strand", 
-                            "cigar", "ens_id", "ens_start",
-                            "ens_end", "ens_annotation", 
-                            "ens_strand", "ens_ensid", 
-                            "ens_gsymbol", "ens_transid",
-                            "ens_num"])
-    track_name = df['id'] + "~" + df['ens_gsymbol'] + "~" + annotation_name 
-                 + df['strand'] + "/" + df['ens_strand']
-    reshape = df.loc[:,['chr', 'start', 'end', 'id']]
-    reshape['track_name'] = track_name
+    
+    if annotation_name=="exon" or annotation_name=="intron":
+        df = pd.read_csv(input_file, sep="\t",
+                         names=["chr", "start", "end",
+                                "id", "mapq", "strand", 
+                                "cigar", "ens_chr", "ens_start",
+                                "ens_end", "ens_annotation", 
+                                "ens_strand", "ens_ensid", 
+                                "ens_gsymbol", "ens_transid",
+                                "ens_num"])
+        track_name = df['id'] + "~" + df['ens_gsymbol'] + "~" + annotation_name \
+                     + df['strand'] + "/" + df['ens_strand']
+        reshape = df.loc[:,['chr', 'start', 'end']]
+        reshape['track_name'] = track_name
+        reshape['score'] = 0
+        reshape['strand'] = df['strand']
+        
+    else:
+        df = pd.read_csv(input_file, sep="\t",
+                         names=["chr", "start", "end",
+                                "id", "mapq", "strand", "cigar",
+                                "e_chr", "e_start", "e_end",
+                                "e_peak_id", "e_score", "e_strand", "e_num"])
+        reshape = df.loc[:,['chr', 'start', 'end','e_peak_id','e_score','strand']]
 
-    df.to_csv(output_file, mode='a+', sep="\t", index=0, header=0)
+    reshape.to_csv(output_file, mode='w', sep="\t", index=0, header=0)
 
     return msg_track
 
@@ -603,7 +606,7 @@ if __name__ == '__main__':
                 'fix_pos': 'rm2bp_insertions_header_fix.bed',
                 'count': 'count_table.txt',
                 'fisher': 'fisher_test.txt',
-                'bubble': 'bubble_plot.pdf'
+                'bubble': 'bubble_plot.pdf',
                 'browser': 'browser_track'}
     
     # only necessary if --stage is not [all]                   
@@ -781,9 +784,7 @@ if __name__ == '__main__':
 
         for bed in bed_files:
             annotation_name = bed[0]
-            (msg, cmd) = browser_track(args.project_name, project_dir, annotation_name=annotation_name
-                                       file_ext=file_ext['browser_track'])
-            status = run_cmd(msg, cmd)
+            browser_track(args.project_name, project_dir, annotation_name=annotation_name, file_ext=file_ext['browser'])
 
 
 
