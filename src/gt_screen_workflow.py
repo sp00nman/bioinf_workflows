@@ -41,9 +41,9 @@ if __name__ == '__main__':
     parser.add_argument('--bowtie2', dest='bowtie2', required=False,
                         help='Path to bowtie2 indices')
     parser.add_argument('--annotation', dest='annotation', required=False,
-                        help='annotation file. Format (tab-separated: exon '
-                             '/path/to/annotation_1.txt'
-                             ' intron /path/to/annotation_2.txt')
+                        help='annotation file. Format (tab-separated: '
+                             'exon /path/to/annotation_1.txt '
+                             'intron /path/to/annotation_2.txt)')
     parser.add_argument('--control_file', dest='control_file', required=False,
                         help='Control file with insertions for fisher-test.')
     parser.add_argument('--refseq_file', dest='refseq_file', required=False,
@@ -487,7 +487,7 @@ if __name__ == '__main__':
             refseq_file=args.refseq_file,
             outfile=project_dir + "/" \
                     + args.project_name + "." \
-                    + file_ext['plot'],
+                    + file_ext['bubble'],
             dn=dn
         )
 
