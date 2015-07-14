@@ -1,0 +1,21 @@
+bam2fastq:      Convert file from BAM format to FASTQ format.
+alignment:      Align reads to reference genome.
+sam2bam:        Convert file from SAM format to BAM format.
+filter:         Filter reads by MAPQ and non unique reads.
+sort_bam:       Sort BAM file by coordinate.
+reorder_sam:    Reorder SAM file.
+duplicates:     Remove duplicate reads.
+index:          Index BAM file.
+bam2sam:        Convert file from BAM to SAM format.
+insertions:     Remove insertions 1 or 2 base pairs apart from each other.
+get_header:     Extract header from BAM file.
+cut_header:     Concatenate files.
+header2bam:     Convert file from SAM format to BAM format.
+sam2bed:        Convert file from SAM format to BED format.
+fix_pos:        Add +1 base pair to end position of BED file.
+count:          Count number of insertions.
+fisher:         Perform fisher-test for each gene.
+bubble:         Plot insertions in bubble plot.
+browser:        Generate browser track to view insertions sites.
+statistics:     Generate summary statistic.
+bam2bai:        Index BAM file.
