@@ -1,5 +1,5 @@
 """
-Collection of functions that execute external software.
+Collection of functions that execute external software or UNIX commands.
 """
 
 
@@ -46,19 +46,19 @@ def alignment(genome_path,
     return cmd_align
 
 
-def sam2bam(samfile,
-            bamfile):
+def sam2bam(insamfile,
+            outbamfile):
     """
     Convert SAM formatted file to BAM formatted file.
-    :param samfile: Input samfile
-    :param bamfile: Output bamfile
+    :param insamfile: Input samfile
+    :param outbamfile: Output bamfile
     :return: Command to be executed; type str
     """
     cmd_sam2bam = "samtools view " \
                   "-S " \
                   "-b %s " \
-                  ">%s" % (samfile,
-                           bamfile)
+                  ">%s" % (insamfile,
+                           outbamfile)
     return cmd_sam2bam
 
 
@@ -86,147 +86,174 @@ def filter_reads(inbamfile,
     return cmd_filter
 
 
-def sort_bam(project_name,
-             project_dir,
-             sample_file,
-             file_ext):
+def sort_bam(inbamfile,
+             outbamfile,
+             sort_order="coordinate"):
     """
-    Sort sam ? bam file by coordinate.
-    :param project_name: name of project (given by user)
-    :param output_dir: where the output files should be written
-    :return: message to be logged & command to be executed; type str
+    Sort BAM file by variable
+    :param inbamfile: name of BAM formatted file
+    :param outbamfile: name of output file (BAM formatted and sorted)
+    :param sort_order: sort by (default: coordinate)
+    :return: Command to be executed; type str
     """
 
-    input_file = sample_file
-    output_file = project_dir + "/" + project_name + "." + file_ext
-    msg_sort = "Sort bam file (by coordinate)."
     cmd_sort = "java -Xmx6g -jar $NGS_PICARD/SortSam.jar " \
                "INPUT=%s " \
                "OUTPUT=%s " \
-               "SORT_ORDER=coordinate" % (input_file, output_file)
-    return msg_sort, cmd_sort
+               "SORT_ORDER=%s" % (inbamfile,
+                                  outbamfile,
+                                  sort_order)
+    return cmd_sort
 
 
-def reorder_sam(project_name,
-                project_dir,
-                sample_file,
-                genomes,
-                file_ext):
+def reorder_sam(inbamfile,
+                outbamfile,
+                genome_path):
+    """
+    Reorder BAM file.
+    :param inbamfile: name of BAM formatted file
+    :param outbamfile: name of output file
+    :param genomes: path to genome
+    :return: Command to be executed; type str
+    """
 
-    input_file = sample_file
-    output_file = project_dir + "/" + project_name + "." + file_ext
-    msg_reorder = "Reorder bam file."
     cmd_reorder = "java -Xmx6g -jar $NGS_PICARD/ReorderSam.jar " \
                   "INPUT=%s " \
                   "OUTPUT=%s " \
-                  "REFERENCE=%s/hg19.fa" % (input_file, output_file, genomes)
-    return msg_reorder, cmd_reorder
+                  "REFERENCE=%s" % (inbamfile,
+                                    outbamfile,
+                                    genome_path)
+    return cmd_reorder
 
 
-def count_duplicates(project_name,
-                     project_dir,
-                     sample_file,
-                     file_ext):
+def count_duplicates(inbamfile,
+                     out_statistics):
+    """
+    Output of the number of reads at each position. This is actually
+    the number of duplicate reads at each position. If a position has
+    multiple reads mapped to it, but they are not pcr duplicates, then
+    there each will be reported separately.
+    :param inbamfile: name of BAM formatted file
+    :param out_statistics: name of output file
+    :return: Command to be executed; type str
+    """
 
-    input_file = sample_file
-    output_file = project_dir + "/" + project_name + "." + file_ext
-    msg_countdup = "Count duplicate reads for each position."
-    #TODO: don't hardcode executable files
-    cmd_countdup = "~/src/ngsutils/bin/bamutils pcrdup " \
-    + "-frag " \
-    + "-bam %s " \
-    + "-counts %s "
-    return msg_countdup, cmd_countdup
+    cmd_countdup = "bamutils pcrdup " \
+                   + "-frag " \
+                   + "-counts %s %s " % (out_statistics,
+                                         inbamfile)
+    return cmd_countdup
 
 
-def remove_duplicates(project_name,
-                      project_dir,
-                      sample_file,
-                      file_ext):
+def remove_duplicates(inbamfile,
+                      outbamfile,
+                      metrics_file):
     """
     Remove duplicate reads.
-    :param project_name: name of project (given by user)
-    :param output_dir: where the output files should be written
-    :return: message to be logged & command to be executed; type str
+    :param inbamfile: name of BAM formatted file
+    :param outbamfile: name of output file
+    :param metrics_file: file with summary statistics about
+    :return: Command to be executed; type str
     """
 
-    input_file = sample_file
-    output_file = project_dir + "/" + project_name + "." + file_ext
-    metrics_file = project_dir + "/" + project_name + ".duplicates.metrics.txt"
-    msg_rmdup = "Remove duplicate reads. "
     cmd_rmdup = "java -Xmx6g -jar $NGS_PICARD/MarkDuplicates.jar " \
                 "INPUT=%s " \
                 "OUTPUT=%s " \
                 "METRICS_FILE=%s " \
-                "REMOVE_DUPLICATES=true" % (input_file, output_file,
+                "REMOVE_DUPLICATES=true" % (inbamfile,
+                                            outbamfile,
                                             metrics_file)
-    return msg_rmdup, cmd_rmdup
+    return cmd_rmdup
 
 
-def bam2bai(project_name,
-            project_dir,
-            sample_file,
-            file_ext):
+def bam2bai(inbamfile,
+            outbaifile):
+    """
+    Index BAM file.
+    :param inbamfile: name of BAM formatted file
+    :param outbaifile: name of index BAM file
+    :return: Command to be executed; type str
+    """
 
-    input_file = sample_file
-    output_file = project_dir + "/" + project_name + "." + file_ext
-    msg_bam2bai = "Index bam file."
-    cmd_bam2bai = "samtools index %s %s" % (input_file, output_file)
-
-    return msg_bam2bai, cmd_bam2bai
-
-def bam2sam(project_name,
-            project_dir,
-            sample_file,
-            file_ext):
-
-    input_file = sample_file
-    output_file = project_dir + "/" + project_name + "." + file_ext
-    msg_bam2bai = "Convert bam to sam."
-    cmd_bam2bai = "samtools view %s > %s" % (input_file, output_file)
-
-    return msg_bam2bai, cmd_bam2bai
+    cmd_bam2bai = "samtools index %s %s" % (inbamfile,
+                                            outbaifile)
+    return cmd_bam2bai
 
 
-def getheader(project_name,
-              project_dir,
-              file_ext):
+def bam2sam(inbamfile,
+            outsamfile):
+    """
+    Convert BAM file to SAM file.
+    :param inbamfile: name of BAM formatted file
+    :param outsamfile: name of SAM file
+    :return: Command to be executed; type str
+    """
 
-    input_file = project_dir + "/" + project_name + ".aligned.bam"
-    output_file = project_dir + "/" + project_name + "." + file_ext
-
-    msg_getheader = "Get header."
-    cmd_getheader = "samtools view -H %s > %s" % (input_file, output_file)
-
-    return msg_getheader, cmd_getheader
+    cmd_bam2bai = "samtools view %s > %s" % (inbamfile,
+                                             outsamfile)
+    return cmd_bam2bai
 
 
-def sam2bed(project_name,
-            project_dir,
-            sample_file,
-            file_ext):
+def get_header(inbamfile,
+               header):
+    """
+    Extract header from BAM file.
+    :param inbamfile: name of BAM formatted file
+    :param header: header file
+    :return: Command to be executed; type str
+    """
 
-    input_file = sample_file
-    output_file = project_dir + "/" + project_name + "." + file_ext
-    msg_sam2bed = "Convert samformat to bedformat."
-    cmd_sam2bed = "bamToBed -cigar -i %s >%s " % (input_file, output_file)
+    cmd_get_header = "samtools view -H %s > %s" % (inbamfile,
+                                                   header)
+    return cmd_get_header
 
-    return msg_sam2bed, cmd_sam2bed
 
-def intersectbed(project_name,
-                 project_dir,
-                 sample_file,
+def concatenate_files(file_1,
+                      file_2,
+                      output_file):
+    """
+    Concatenate two files write output to new file. Uses standard UNIX cat
+    :param file_1: 1st parameter
+    :param file_2: 2nd parameter
+    :param output_file: name of output file
+    :return: Command to be executed; type str
+    """
+
+    cmd_concatenate_files = "cat %s %s >%s" % (file_1,
+                                               file_2,
+                                               output_file)
+    return cmd_concatenate_files
+
+
+def sam2bed(insamfile,
+            outbedfile):
+    """
+    Convert SAM file to BED file
+    :param insamfile: input SAM file
+    :param outbedfile: input BED file
+    :return: Command to be executed; type str
+    """
+
+    cmd_sam2bed = "bamToBed -cigar -i %s >%s " % (insamfile,
+                                                  outbedfile)
+    return cmd_sam2bed
+
+
+def intersectbed(inbedfile,
                  annotation_file,
-                 annotation_name,
-                 file_ext):
+                 outbedfile):
+    """
+    Intersect two BED files by coordinate.
+    :param inbedfile: input BED file
+    :param annotation_file: annotation file
+    :param outbedfile: output BED file
+    :return: Command to be executed; type str
+    """
 
-    input_file = sample_file
-    output_file = project_dir + "/" + project_name + "." + file_ext + "." + annotation_name
-    msg_intersect = "Intersect " + annotation_file
     cmd_intersect = "intersectBed " \
                     "-a %s " \
                     "-b %s " \
-                    "-wo >%s.bed" % (input_file, annotation_file,
-                                        output_file)
-
-    return msg_intersect, cmd_intersect
+                    "-wo >%s.bed" % (inbedfile,
+                                     annotation_file,
+                                     outbedfile)
+    return cmd_intersect

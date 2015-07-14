@@ -56,26 +56,6 @@ def run_cmd(message, command, debug):
     return status
 
 
-def concatenate_files(file1, file2):
-
-    pass
-
-
-def cutheader(project_name,
-              project_dir,
-              sample_file,
-              file_ext):
-
-    input_file = sample_file
-    output_file = project_dir + "/" + project_name + "." + file_ext
-    header = project_dir + "/" + project_name + ".header"
-
-    msg_cutheader = "Concatenate header & samfile."
-    cmd_cutheader = "cat %s %s >%s" % (header, input_file, output_file)
-
-    return msg_cutheader, cmd_cutheader
-
-
 def print_config_param(project_name,
                        home_dir,
                        output_dir,
@@ -116,12 +96,15 @@ def create_output_dir(output_dir,
             exit('%s\nFailed to create directory', (e, output_dir))
 
 
-def load_files(filename):
+def load_file(filename):
     """
-    read in files of the following structure
+    Read in files of the following structure
     ID1\tID2\t? --> \t tab separated
     could be 1 or more ids
+    :param filename: name of file
+    :return: return content of file, type: list
     """
+
     file_obj = open(filename, 'r')
     try:
         all_content = [line.strip('\n').split('\t') for line in file_obj]
@@ -131,6 +114,11 @@ def load_files(filename):
 
 
 def parse_intersectfile(annotation_bed):
+    """
+    Read in annotaion files
+    :param annotation_bed: annotation file
+    :return: list of BED files
+    """
 
     try:
         file_handle = open(annotation_bed)

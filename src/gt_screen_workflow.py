@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 
 # Author: Fiorella Schischlik
-# python script to initialize the analysis of genetic screens (eg. genetrap or
-# crispr systems in cell lines like KBM7 or BaF3), tested for human and mouse,
-# but any other species is feasible
+
 
 import argparse
 import re
@@ -11,10 +9,9 @@ import logging
 from sys import exit
 from os import (system, remove, mkdir)
 from os.path import (split, splitext, join, exists)
-import pandas as pd
 import os
 from lib import runnables as rb
-from lib.process_files import *
+from lib import process_files as pf
 from utils import tools as ts
 
 
@@ -44,7 +41,9 @@ if __name__ == '__main__':
     parser.add_argument('--bowtie2', dest='bowtie2', required=False,
                         help='Path to bowtie2 indices')
     parser.add_argument('--annotation', dest='annotation', required=False,
-                        help='annotation file. Format (tab-separated: exon /path/to/annotation_1.txt \n intron /path/to/annotation_2.txt')
+                        help='annotation file. Format (tab-separated: exon '
+                             '/path/to/annotation_1.txt'
+                             ' intron /path/to/annotation_2.txt')
     parser.add_argument('--control_file', dest='control_file', required=False,
                         help='Control file with insertions for fisher-test.')
     parser.add_argument('--refseq_file', dest='refseq_file', required=False,
@@ -100,21 +99,27 @@ if __name__ == '__main__':
 
     # print command line arguments (if debug)
     if args.debug:
-        config_param = ts.print_config_param(args.project_name,home_dir, args.output_dir,
-                                            args.sequences_dir, project_dir,
-                                            args.sample_file, args.genomes, 
-                                            args.genome_version, args.bowtie2, 
-                                            str(args.num_cpus))
+        config_param = ts.print_config_param(
+            args.project_name,home_dir, args.output_dir,
+            args.sequences_dir, project_dir,
+            args.sample_file, args.genomes,
+            args.genome_version, args.bowtie2,
+            str(args.num_cpus)
+        )
 
 
     # only necessary if --stage is not [all]                   
     sample_file = args.sequences_dir + "/" + args.sample_file
 
     # load dictionary for file extensions
-    data_dir = str(os.path.dirname(os.path.realpath(__file__)).strip('src')) + "data" + "/"
+    data_dir = str(os.path.dirname(os.path.realpath(__file__)).strip('src')) \
+               + "data" + "/"
     file_ext = ts.load_dictionary(data_dir + 'file_extension.txt')
     # load dictionary for stdout messages
     stdout_msg = ts.load_dictionary(data_dir + 'stdout_message.txt')
+
+    #get execution directory
+    dn = os.path.dirname(os.path.realpath(__file__))
 
     if re.search(r"bam2fastq", args.stage):
         out_filename = project_dir + "/" \
@@ -162,9 +167,9 @@ if __name__ == '__main__':
                        + file_ext['sam2bam']
 
         cmd = rb.sam2bam(
-            samfile=sample_file,
-            bamfile=project_dir + "/" \
-                    + args.project_name + "." \
+            insamfile=sample_file,
+            outbamfile=project_dir + "/"
+                    + args.project_name + "."
                     + file_ext['sam2bam']
         )
 
@@ -190,142 +195,325 @@ if __name__ == '__main__':
             command=cmd,
             debug=args.debug
         )
+
         sample_file = filter_filename
 
     if re.search(r"all|duplicates", args.stage):
 
-        (msg, cmd) = sort_bam(args.project_name, project_dir, 
-                                sample_file, file_ext=file_ext['sort_bam'])
-        status = run_cmd(msg, cmd, args)
-        sample_file = project_dir + "/" + args.project_name + "." \
-                      + file_ext['sort_bam']
-        (msg, cmd) = reorder_sam(args.project_name, project_dir, 
-                                    sample_file, args.genomes,
-                                    file_ext=file_ext['reorder_sam'])
-        status = run_cmd(msg,cmd,args)
-        sample_file = project_dir + "/" + args.project_name + "." \
-                      + file_ext['reorder_sam']
-        (msg, cmd) = remove_duplicates(args.project_name, project_dir,
-                                       sample_file, file_ext=file_ext['duplicates'])
-        status = run_cmd(msg, cmd,args)
-        sample_file = project_dir + "/" + args.project_name + "." \
+        out_filename = project_dir + "/" \
+                       + args.project_name + "." \
+                       + file_ext['sort_bam']
+
+        cmd = rb.sort_bam(
+            inbamfile=out_filename,
+            outbamfile=project_dir + "/"
+                       + args.project_name + "."
+                       + file_ext['sort_bam'],
+            sort_order="coordinate"
+        )
+
+        status = ts.run_cmd(
+            message=stdout_msg['sort_bam'],
+            command=cmd,
+            debug=args.debug
+        )
+
+        sort_bam = project_dir + "/" \
+                   + args.project_name + "." \
+                   + file_ext['sort_bam']
+
+        cmd = rb.reorder_sam(
+            inbamfile=sort_bam,
+            outbamfile=project_dir + "/"
+                       + args.project_name + "."
+                       + file_ext['reorder_sam'],
+            genome_path=args.genomes + "/"
+                        + args.genome_version
+        )
+
+        status = ts.run_cmd(
+            message=stdout_msg['reorder_sam'],
+            command=cmd,
+            debug=args.debug
+        )
+
+        reord_bam = project_dir + "/" \
+                    + args.project_name + "." \
+                    + file_ext['reorder_sam']
+
+        cmd = rb.remove_duplicates(
+            inbamfile=reord_bam,
+            outbamfile=project_dir + "/"
+                        + args.project_name + "."
+                        + file_ext['duplicates'],
+            metrics_file=project_dir + "/" \
+                         + args.project_name + "."
+                         + "duplicate_metrics.txt"
+        )
+
+        status = ts.run_cmd(
+            message=stdout_msg['duplicates'],
+            command=cmd,
+            debug=args.debug
+        )
+
+        sample_file = project_dir + "/" \
+                      + args.project_name + "." \
                       + file_ext['duplicates']
 
     if re.search(r"all|index", args.stage):
         
-        (msg, cmd) = bam2bai(args.project_name, project_dir, 
-                                sample_file, file_ext=file_ext['index'])
-        status = run_cmd(msg, cmd, args)
+        cmd = rb.bam2bai(
+            inbamfile=sample_file,
+            outbaifile=project_dir + "/"
+                        + args.project_name + "."
+                        + file_ext['bam2bai']
+        )
+
+        status = ts.run_cmd(
+            message=stdout_msg['bam2bai'],
+            command=cmd,
+            debug=args.debug
+        )
 
     if re.search(r"all|insertions", args.stage):
         
-        (msg, cmd) = bam2sam(args.project_name, project_dir, 
-                                sample_file, file_ext=file_ext['bam2sam'])
-        status = run_cmd(msg, cmd, args)
-        sample_file = project_dir + "/" + args.project_name + "." \
+        cmd = rb.bam2sam(
+            inbamfile=sample_file,
+            outsamfile=project_dir + "/"
+                       + args.project_name + "."
+                       + file_ext['bam2sam']
+        )
+
+        status = ts.run_cmd(
+            message=stdout_msg['bam2sam'],
+            command=cmd,
+            debug=args.debug
+        )
+
+        sample_file = project_dir + "/" \
+                      + args.project_name + "." \
                       + file_ext['bam2sam']
-        
-        #############################
-        print stdout_msg['filter']  #
-        #############################
-        remove2bpinsertions(args.project_name, project_dir, 
-                            sample_file, file_ext=file_ext['insertions'])
-        sample_file = project_dir + "/" + args.project_name + "." \
+
+        sam_file_name = project_dir + "/" \
+                        + args.project_name + "." \
+                        + file_ext['insertions']
+        try:
+            sam_out = open(sam_file_name, 'w')
+
+            sam_out = pf.remove2bpinsertions(
+                insamfile=sample_file,
+                sam_out=sam_out
+            )
+
+        except Exception, exc:
+            logging.warning("Error. The reason is: %s", exc)
+
+        finally:
+            sam_out.close()
+
+        sample_file = project_dir + "/" \
+                      + args.project_name + "." \
                       + file_ext['insertions']
 
     if re.search(r"all|annotate", args.stage):
-        
-        #############################
-        print stdout_msg['filter']  #
-        #############################
-        (msg, cmd) = getheader(args.project_name, project_dir,
-                               file_ext=file_ext['get_header'])
-        status = run_cmd(msg, cmd, args)
-        (msg, cmd) = cutheader(args.project_name, project_dir, 
-                                sample_file, file_ext=file_ext['cut_header'])
-        status = run_cmd(msg, cmd, args)
-        sample_file = project_dir + "/" + args.project_name + "." \
+
+        cmd = rb.get_header(
+            inbamfile=sample_file,
+            header=project_dir + "/"
+                       + args.project_name + "."
+                       + file_ext['get_header']
+        )
+
+        status = ts.run_cmd(
+            message=stdout_msg['get_header'],
+            command=cmd,
+            debug=args.debug
+        )
+
+        cmd = rb.concatenate_files(
+            file_1=project_dir + "/"
+                   + args.project_name + "."
+                   + file_ext['get_header'],
+            file_2=sample_file,
+            output_file=project_dir + "/"
+                        + args.project_name + "."
+                        + file_ext['cut_header']
+        )
+
+        status = ts.run_cmd(
+            message=stdout_msg['cut_header'],
+            command=cmd,
+            debug=args.debug
+        )
+
+        sample_file = project_dir + "/" \
+                      + args.project_name + "." \
                       + file_ext['cut_header']
-        (msg, cmd) = sam2bam(args.project_name, project_dir, 
-                                sample_file, file_ext=file_ext['header2bam'])
-        status = run_cmd(msg, cmd, args)
-        sample_file = project_dir + "/" + args.project_name + "." \
+
+        cmd = rb.sam2bam(
+            insamfile=sample_file,
+            outbamfile=project_dir + "/"
+                       + args.project_name + "."
+                       + file_ext['header2bam']
+        )
+
+        status = ts.run_cmd(
+            message=stdout_msg['header2bam'],
+            command=cmd,
+            debug=args.debug
+        )
+
+        sample_file = project_dir + "/" \
+                      + args.project_name + "." \
                       + file_ext['header2bam']
-        (msg, cmd) = sam2bed(args.project_name, project_dir, 
-                                sample_file, file_ext=file_ext['sam2bed'])
-        status = run_cmd(msg, cmd, args)
-        sample_file = project_dir + "/" + args.project_name + "." \
+
+        cmd = rb.sam2bed(
+            insamfile=sample_file,
+            outbedfile=project_dir + "/"
+                        + args.project_name + "."
+                        + file_ext['sam2bed']
+        )
+
+        status = ts.run_cmd(
+            message=stdout_msg['sam2bed'],
+            command=cmd,
+            debug=args.debug
+        )
+
+        sample_file = project_dir + "/" \
+                      + args.project_name + "." \
                       + file_ext['sam2bed']
-        
-        ##############################
-        print stdout_msg['fix_pos']  #
-        ##############################
-        fix_end_position(args.project_name, project_dir,
-                            sample_file, file_ext=file_ext['fix_pos'])
-        
-        sample_file = project_dir + "/" + args.project_name + "." \
+        try:
+
+            pf.fix_end_position(
+                inbedfile=sample_file,
+                outbedfile=project_dir + "/" \
+                           + args.project_name + "." \
+                           + file_ext['fix_pos']
+            )
+
+        except Exception, exc:
+            logging.warning("Error. The reason is: %s", exc)
+
+        sample_file = project_dir + "/" \
+                      + args.project_name + "." \
                       + file_ext['fix_pos']
         
-        #################################
-        print stdout_msg['insertions']  #
-        #################################
-        
-        bed_files = parse_intersectfile(args.annotation)
+        bed_files = ts.parse_intersectfile(args.annotation)
         
         for bed in bed_files:
             annotation_name = bed[0]
             annotation_file = bed[1]
-        
-            (msg, cmd) = intersectbed(args.project_name, project_dir,
-                                    sample_file, annotation_file, 
-                                    annotation_name=annotation_name,
-                                    file_ext="insertions" )
-            status = run_cmd(msg, cmd, args)
+
+            output_file = project_dir + "/" \
+                          + args.project_name + "." \
+                          + file_ext['fix_pos'] + "." \
+                          + annotation_name
+
+            cmd = rb.intersectbed(
+                inbedfile=sample_file,
+                annotation_file=annotation_file,
+                outbedfile=output_file
+            )
+
+            status = ts.run_cmd(
+                message=stdout_msg['fix_pos'],
+                command=cmd,
+                debug=args.debug
+            )
 
     if re.search(r"all|count", args.stage):
-        
-        ############################
-        print stdout_msg['count']  #
-        ############################
-        (msg, cmd) = count_insertions(args.project_name, project_dir,
-                                      file_ext=file_ext['count'])
-        status = run_cmd(msg, cmd, args)
-        sample_file = project_dir + "/" + args.project_name + "." \
+
+        #TODO: make this more flexible
+        exon = project_dir + "/" \
+               + args.project_name + "." \
+               + "insertions" + "." \
+               + "exon" + "." + "bed"
+        intron = project_dir + "/" \
+                 + args.project_name + "." \
+                 + "insertions" + "." \
+                 + "intron" + "." + "bed"
+        output_file = project_dir + "/" \
+                      + args.project_name + "." \
+                      + file_ext['count']
+
+        cmd = pf.count_insertions(
+            exonfile=exon,
+            intronfile=intron,
+            outcountfile=output_file,
+            dn=dn
+        )
+
+        status = ts.run_cmd(
+            message=stdout_msg,
+            command=cmd,
+            debug=args.debug
+        )
+
+        sample_file = project_dir + "/" \
+                      + args.project_name + "." \
                       + file_ext['count']
 
     if re.search(r"all|fisher", args.stage):
-        
-        #############################
-        print stdout_msg['filter']  #
-        #############################
-        (msg, cmd) = fisher_test(args.project_name, project_dir, sample_file,
-                                 args.control_file, file_ext=file_ext['fisher'])
-        status = run_cmd(msg, cmd, args)
-        sample_file = project_dir + "/" + args.project_name + "." \
+
+        output_file = project_dir + "/" \
+                      + args.project_name + "." \
+                      + file_ext['fisher']
+
+        cmd = pf.fisher_test(
+            infile=sample_file,
+            control_file=args.control_file,
+            outfile=project_dir + "/" \
+                    + args.project_name + "." \
+                    + file_ext['fisher'],
+            dn=dn
+        )
+
+        status = ts.run_cmd(
+            message=stdout_msg,
+            command=cmd,
+            debug=args.debug
+        )
+
+        sample_file = project_dir + "/" \
+                      + args.project_name + "." \
                       + file_ext['fisher']
 
     if re.search(r"all|plot", args.stage):
-        
-        #############################
-        print stdout_msg['bubble']  #
-        #############################
-        (msg, cmd) = plot_results(args.project_name, project_dir,
-                                  args.refseq_file, sample_file,
-                                  file_ext=file_ext['bubble'])
-        status = run_cmd(msg, cmd, args)
+
+        cmd = pf.plot_results(
+            infile=sample_file,
+            refseq_file=args.refseq_file,
+            outfile=project_dir + "/" \
+                    + args.project_name + "." \
+                    + file_ext['plot'],
+            dn=dn
+        )
+
+        status = ts.run_cmd(
+            message=stdout_msg,
+            command=cmd,
+            debug=args.debug
+        )
 
     if re.search(r"all|browser", args.stage):
 
-        ##############################
-        print stdout_msg['browser']  #
-        ##############################
-        bed_files = parse_intersectfile(args.annotation)
+        bed_files = ts.parse_intersectfile(args.annotation)
 
         for bed in bed_files:
             annotation_name = bed[0]
-            browser_track(args.project_name, project_dir,
-                          annotation_name=annotation_name,
-                          file_ext=file_ext['browser'])
+            pf.browser_track(
+                input_file=project_dir + "/" \
+                           + args.project_name + "." \
+                           + "insertions" + "." \
+                           + annotation_name + ".bed",
+                output_file=project_dir + "/" \
+                            + args.project_name + "." \
+                            + annotation_name + "." \
+                            + file_ext['browser'],
+                annotation_name=annotation_name
+            )
 
     if re.search(r"all|statistics", args.stage):
 
@@ -333,8 +521,3 @@ if __name__ == '__main__':
         print stdout_msg['statistics']  #
         print "Not implemented."        #
         #################################
-
-
-
-
-
