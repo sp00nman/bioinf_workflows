@@ -5,8 +5,8 @@ filter:         filt_aligned.bam
 sort_bam:       sorted_filt_aligned.bam
 reorder_sam:    reord_sorted_filt_aligned.bam
 duplicates:     rmdupl_reord_sorted_filt_aligned.bam
-index:          rmdupl_reord.sorted_filt_aligned.bai
-bam2sam:        rmdupl_reord.sorted_filt_aligned.sam
+index:          rmdupl_reord_sorted_filt_aligned.bai
+bam2sam:        rmdupl_reord_sorted_filt_aligned.sam
 insertions:     rm2bp_insertions.sam
 get_header:     header.txt
 cut_header:     header_rm2bp_insertions.sam
