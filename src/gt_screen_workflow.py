@@ -200,12 +200,8 @@ if __name__ == '__main__':
 
     if re.search(r"all|duplicates", args.stage):
 
-        out_filename = project_dir + "/" \
-                       + args.project_name + "." \
-                       + file_ext['sort_bam']
-
         cmd = rb.sort_bam(
-            inbamfile=out_filename,
+            inbamfile=sample_file,
             outbamfile=project_dir + "/"
                        + args.project_name + "."
                        + file_ext['sort_bam'],
@@ -263,15 +259,12 @@ if __name__ == '__main__':
 
     if re.search(r"all|index", args.stage):
         
-        cmd = rb.bam2bai(
-            inbamfile=sample_file,
-            outbaifile=project_dir + "/"
-                        + args.project_name + "."
-                        + file_ext['bam2bai']
+        cmd = rb.index_bam(
+            inbamfile=sample_file
         )
 
         status = ts.run_cmd(
-            message=stdout_msg['bam2bai'],
+            message=stdout_msg['index'],
             command=cmd,
             debug=args.debug
         )
@@ -319,7 +312,9 @@ if __name__ == '__main__':
     if re.search(r"all|annotate", args.stage):
 
         cmd = rb.get_header(
-            inbamfile=sample_file,
+            inbamfile=project_dir + "/"
+                        + args.project_name + "."
+                        + file_ext['sam2bam'],
             header=project_dir + "/"
                        + args.project_name + "."
                        + file_ext['get_header']

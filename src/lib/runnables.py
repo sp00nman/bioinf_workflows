@@ -120,7 +120,7 @@ def reorder_sam(inbamfile,
     cmd_reorder = "java -Xmx6g -jar $NGS_PICARD/ReorderSam.jar " \
                   "INPUT=%s " \
                   "OUTPUT=%s " \
-                  "REFERENCE=%s" % (inbamfile,
+                  "REFERENCE=%s.fa" % (inbamfile,
                                     outbamfile,
                                     genome_path)
     return cmd_reorder
@@ -166,18 +166,15 @@ def remove_duplicates(inbamfile,
     return cmd_rmdup
 
 
-def bam2bai(inbamfile,
-            outbaifile):
+def index_bam(inbamfile):
     """
     Index BAM file.
     :param inbamfile: name of BAM formatted file
-    :param outbaifile: name of index BAM file
     :return: Command to be executed; type str
     """
 
-    cmd_bam2bai = "samtools index %s %s" % (inbamfile,
-                                            outbaifile)
-    return cmd_bam2bai
+    cmd_index_bam = "samtools index %s" % (inbamfile)
+    return cmd_index_bam
 
 
 def bam2sam(inbamfile,
@@ -189,9 +186,9 @@ def bam2sam(inbamfile,
     :return: Command to be executed; type str
     """
 
-    cmd_bam2bai = "samtools view %s > %s" % (inbamfile,
+    cmd_bam2sam = "samtools view %s > %s" % (inbamfile,
                                              outsamfile)
-    return cmd_bam2bai
+    return cmd_bam2sam
 
 
 def get_header(inbamfile,
