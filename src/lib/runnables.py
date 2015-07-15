@@ -250,7 +250,7 @@ def intersectbed(inbedfile,
     cmd_intersect = "intersectBed " \
                     "-a %s " \
                     "-b %s " \
-                    "-wo >%s.bed" % (inbedfile,
+                    "-wo >%s" % (inbedfile,
                                      annotation_file,
                                      outbedfile)
     return cmd_intersect

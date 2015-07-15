@@ -404,7 +404,7 @@ if __name__ == '__main__':
             output_file = project_dir + "/" \
                           + args.project_name + "." \
                           + file_ext['fix_pos'] + "." \
-                          + annotation_name
+                          + annotation_name + ".bed"
 
             cmd = rb.intersectbed(
                 inbedfile=sample_file,
@@ -423,11 +423,11 @@ if __name__ == '__main__':
         #TODO: make this more flexible
         exon = project_dir + "/" \
                + args.project_name + "." \
-               + "insertions" + "." \
+               + file_ext['fix_pos'] + "." \
                + "exon" + "." + "bed"
         intron = project_dir + "/" \
                  + args.project_name + "." \
-                 + "insertions" + "." \
+                 + file_ext['fix_pos'] + "." \
                  + "intron" + "." + "bed"
         output_file = project_dir + "/" \
                       + args.project_name + "." \
