@@ -246,31 +246,30 @@ The output file with the following extension ${SCREEN}.mutagenic.genome_browser.
 Not implemented yet.
 
 
-### Output files explained
+### Output files generated at each `--stage` & explanation
 
-| file extension                        | explanation                                                           |
-| :-------------------------------------| :---------------------------------------------------------------------|
-| fastq                                 | FASTQ file                                                            |
-| aligned.sam                           | [SAM file](http://samtools.github.io/hts-specs/SAMv1.pdf)             |
-| aligned.bam                           | BAM file                                                              |
-| filt_aligned.bam                      | BAM file, filtered according to [filter]                              |
-| sorted_filt_aligned.bam               | BAM file, filtered and sorted                                         |
-| reord_sorted_filt_aligned.bam         | BAM file, filtered, sorted and reordered                              |
-| rmdupl_reord_sorted_filt_aligned.bam  | BAM file, after removal of duplicate reads                            |
-| rmdupl_reord.sorted_filt_aligned.bai  | index of BAM file, after removal of duplicate reads                   |
-| rmdupl_reord.sorted_filt_aligned.sam  | SAM file, after removal of duplicate reads                            |
-| rm2bp_insertions.sam                  | SAM file, after removal of insertions 1 or 2 bp away (without header) |
-| header.txt                            | header of BAM file                                                    |
-| header_rm2bp_insertions.sam           | SAM file, after removal of insertions 1 or 2 bp away (with header)    |
-| header_rm2bp_insertions.bam           | BAM file, after removal of insertions 1 or 2 bp away (with header)    |
-| header_rm2bp_insertions.bed           | BED file                                                              |
-| fix_header_rm2bp_insertions.bed       | BED file, added 1 bp to end position                                  |
-| count_table.txt                       | Plain text file with counts of insertios for each gene                |
-| fisher_test.txt                       | Plain text file with result table of fisher-test calculations         |
-| bubble_plot.pdf                       | R generated bubble plot as pdf                                        |
-| browser_track.txt                     | browser track files - can be uploaded to genome browser               |
-| summary_statistics.txt                | not implemented yet                                                   |
-| aligned.bai                           | index of aligned.bam file                                             |
+| stage          | file extension                        | explanation                                                           |
+|:-------------- |:--------------------------------------|:----------------------------------------------------------------------|
+|                | fastq                                 | FASTQ file                                                            |
+| alignment      | aligned.sam                           | [SAM file](http://samtools.github.io/hts-specs/SAMv1.pdf)             |
+| filter         | aligned.bam                           | BAM file                                                              |
+| filter         | filt_aligned.bam                      | BAM file, filtered according to [filter]                              |
+| duplicates     | sorted_filt_aligned.bam               | BAM file, filtered and sorted                                         |
+| duplicates     | reord_sorted_filt_aligned.bam         | BAM file, filtered, sorted and reordered                              |
+| duplicates     | rmdupl_reord_sorted_filt_aligned.bam  | BAM file, after removal of duplicate reads                            |
+| index          | rmdupl_reord_sorted_filt_aligned.bai  | index of BAM file, after removal of duplicate reads                   |
+| insertions     | rmdupl_reord_sorted_filt_aligned.sam  | SAM file, after removal of duplicate reads                            |
+| insertions     | rm2bp_insertions.sam                  | SAM file, after removal of insertions 1 or 2 bp away (without header) |
+| insertions     | header.txt                            | header of BAM file                                                    |
+| insertions     | header_rm2bp_insertions.sam           | SAM file, after removal of insertions 1 or 2 bp away (with header)    |
+| insertions     | header_rm2bp_insertions.bam           | BAM file, after removal of insertions 1 or 2 bp away (with header)    |
+| insertions     | header_rm2bp_insertions.bed           | BED file                                                              |
+| insertions     | fix_header_rm2bp_insertions.bed       | BED file, added 1 bp to end position                                  |
+| count          | count_table.txt                       | Plain text file with counts of insertions for each gene                |
+| fisher         | fisher_test.txt                       | Plain text file with result table of fisher-test calculations         |
+| plot           | bubble_plot.pdf                       | R generated bubble plot as pdf                                        |
+| browser        | browser_track.txt                     | browser track files - can be uploaded to genome browser               |
+| statistics     | summary_statistics.txt                | not implemented yet                                                   |
 
 
 ###TODOs
