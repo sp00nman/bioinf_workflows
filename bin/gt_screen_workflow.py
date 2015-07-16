@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-# Author: Fiorella Schischlik
-
-
 import argparse
 import re
 import logging
@@ -10,8 +7,8 @@ from sys import exit
 from os import (system, remove, mkdir)
 from os.path import (split, splitext, join, exists)
 import os
-from lib import runnables as rb
-from lib import process_files as pf
+import runnables as rb
+import process_files as pf
 from utils import tools as ts
 
 
@@ -112,8 +109,9 @@ if __name__ == '__main__':
     sample_file = args.sequences_dir + "/" + args.sample_file
 
     # load dictionary for file extensions
-    data_dir = str(os.path.dirname(os.path.realpath(__file__)).strip('src')) \
+    data_dir = str(os.path.dirname(os.path.realpath(__file__)).strip('bin')) \
                + "data" + "/"
+    print data_dir
     file_ext = ts.load_dictionary(data_dir + 'file_extension.txt')
     # load dictionary for stdout messages
     stdout_msg = ts.load_dictionary(data_dir + 'stdout_message.txt')
@@ -441,7 +439,7 @@ if __name__ == '__main__':
         )
 
         status = ts.run_cmd(
-            message=stdout_msg,
+            message=stdout_msg['count'],
             command=cmd,
             debug=args.debug
         )
@@ -466,7 +464,7 @@ if __name__ == '__main__':
         )
 
         status = ts.run_cmd(
-            message=stdout_msg,
+            message=stdout_msg['fisher'],
             command=cmd,
             debug=args.debug
         )
@@ -487,7 +485,7 @@ if __name__ == '__main__':
         )
 
         status = ts.run_cmd(
-            message=stdout_msg,
+            message=stdout_msg['bubble'],
             command=cmd,
             debug=args.debug
         )
@@ -501,7 +499,7 @@ if __name__ == '__main__':
             pf.browser_track(
                 input_file=project_dir + "/" \
                            + args.project_name + "." \
-                           + "insertions" + "." \
+                           + file_ext['fix_pos'] + "." \
                            + annotation_name + ".bed",
                 output_file=project_dir + "/" \
                             + args.project_name + "." \
