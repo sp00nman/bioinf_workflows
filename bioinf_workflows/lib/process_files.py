@@ -66,7 +66,7 @@ def count_insertions(exonfile,
     """
 
     cmd_count = "Rscript --vanilla " + dn \
-                + "/Rscripts/count_insertions.R %s %s %s" % (exonfile,
+                + "/" + "count_insertions.R %s %s %s" % (exonfile,
                                                              intronfile,
                                                              outcountfile)
     return cmd_count
@@ -86,7 +86,7 @@ def fisher_test(infile,
     """
 
     cmd_count = "Rscript --vanilla " + dn \
-                + "/Rscripts/fisher_test.R %s %s %s " % (infile,
+                + "/" + "fisher_test.R %s %s %s " % (infile,
                                                          control_file,
                                                          outfile)
     return cmd_count
@@ -106,7 +106,7 @@ def plot_results(infile,
     """
 
     cmd_plot = "Rscript --vanilla " + dn \
-               + "/Rscripts/plot_screen.R %s %s %s " % (refseq_file,
+               + "/" + "/plot_screen.R %s %s %s " % (refseq_file,
                                                         infile,
                                                         outfile)
     return cmd_plot
