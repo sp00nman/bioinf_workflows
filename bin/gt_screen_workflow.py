@@ -150,11 +150,11 @@ if __name__ == '__main__':
             num_cpus=str(args.num_cpus),
             metrics=project_dir + "/"
                     + args.project_name
-                    + ".align.metrics.txt"
+                    + ".align_metrics.txt"
         )
 
         status = ts.run_cmd(
-            message=stdout_msg['bam2fastq'],
+            message=stdout_msg['alignment'],
             command=cmd,
             debug=args.debug
         )
