@@ -137,6 +137,7 @@ if __name__ == '__main__':
         sample_file = out_filename
 
     if re.search(r"all|alignment", args.stage):
+        
         out_filename = project_dir + "/" \
                        + args.project_name + "." \
                        + file_ext['alignment']
@@ -157,9 +158,14 @@ if __name__ == '__main__':
             command=cmd,
             debug=args.debug
         )
-        sample_file = out_filename
+        
 
     if re.search(r"all|filter", args.stage):
+        
+        sample_file = project_dir + "/" \
+                        + args.project_name + "." \
+                        + file_ext['alignment']
+        
         out_filename = project_dir + "/" \
                        + args.project_name + "." \
                        + file_ext['sam2bam']
@@ -194,9 +200,11 @@ if __name__ == '__main__':
             debug=args.debug
         )
 
-        sample_file = filter_filename
-
     if re.search(r"all|duplicates", args.stage):
+        
+        sample_file = project_dir + "/" \
+                        + args.project_name + "." \
+                        + file_ext['filter']
 
         cmd = rb.sort_bam(
             inbamfile=sample_file,
@@ -251,12 +259,12 @@ if __name__ == '__main__':
             debug=args.debug
         )
 
-        sample_file = project_dir + "/" \
-                      + args.project_name + "." \
-                      + file_ext['duplicates']
-
     if re.search(r"all|index", args.stage):
         
+        sample_file = project_dir + "/" \
+                        + args.project_name + "." \
+                        + file_ext['duplicates']
+
         cmd = rb.index_bam(
             inbamfile=sample_file
         )
@@ -268,6 +276,10 @@ if __name__ == '__main__':
         )
 
     if re.search(r"all|insertions", args.stage):
+        
+        sample_file = project_dir + "/" \
+                        + args.project_name + "." \
+                        + file_ext['duplicates']
         
         cmd = rb.bam2sam(
             inbamfile=sample_file,
@@ -303,11 +315,11 @@ if __name__ == '__main__':
         finally:
             sam_out.close()
 
+    if re.search(r"all|annotate", args.stage):
+        
         sample_file = project_dir + "/" \
                       + args.project_name + "." \
                       + file_ext['insertions']
-
-    if re.search(r"all|annotate", args.stage):
 
         cmd = rb.get_header(
             inbamfile=project_dir + "/"
@@ -444,11 +456,11 @@ if __name__ == '__main__':
             debug=args.debug
         )
 
-        sample_file = project_dir + "/" \
-                      + args.project_name + "." \
-                      + file_ext['count']
-
     if re.search(r"all|fisher", args.stage):
+        
+        sample_file = project_dir + "/" \
+                        + args.project_name + "." \
+                        + file_ext['count']
 
         output_file = project_dir + "/" \
                       + args.project_name + "." \
@@ -469,11 +481,11 @@ if __name__ == '__main__':
             debug=args.debug
         )
 
+    if re.search(r"all|plot", args.stage):
+    
         sample_file = project_dir + "/" \
                       + args.project_name + "." \
                       + file_ext['fisher']
-
-    if re.search(r"all|plot", args.stage):
 
         cmd = pf.plot_results(
             infile=sample_file,
@@ -495,7 +507,9 @@ if __name__ == '__main__':
         bed_files = ts.parse_intersectfile(args.annotation)
 
         for bed in bed_files:
+
             annotation_name = bed[0]
+            
             pf.browser_track(
                 input_file=project_dir + "/" \
                            + args.project_name + "." \
