@@ -84,9 +84,7 @@ def print_config_param(project_name,
 def create_output_dir(output_dir,
                       project_name):
     """
-    :param output_dir:
-    :param project_name:
-    :return:
+    Create project directory.
     """
     if not exists(output_dir + "/" + project_name):
         logging.info('Create folder %s' % output_dir)

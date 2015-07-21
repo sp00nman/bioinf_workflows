@@ -19,3 +19,4 @@ bubble:         bubble_plot.pdf
 browser:        browser_track.txt
 statistics:     summary_statistics.txt
 bam2bai:        aligned.bai
+insertion_plot: insertion_plot.pdf

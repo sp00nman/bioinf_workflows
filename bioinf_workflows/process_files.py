@@ -112,6 +112,30 @@ def plot_results(infile,
     return cmd_plot
 
 
+def plot_insertions(annotFilePath,
+                    infile,
+                    insertions,
+                    outdir,
+                    fdrCutoff,
+                    screenName,
+                    plotOption,
+                    plotWidth,
+                    plotHeight,
+                    minDistFactor,
+                    dn):
+    """
+    Plot insertions for gene above a specified FDR cutoff.
+    """
+    cmd_plot_insertions = "Rscript --vanilla " + dn \
+                          + "/" + "create_insertion_plots_150721.R " \
+                          + "%s %s %s %s %s %s %s %s %s %s " % \
+                            (annotFilePath, infile, insertions, outdir,
+                             fdrCutoff, screenName, plotOption, plotWidth,
+                             plotHeight, minDistFactor)
+
+    return cmd_plot_insertions
+
+
 def browser_track(input_file,
                   output_file,
                   annotation_name):
@@ -152,7 +176,3 @@ def browser_track(input_file,
 
     return None
 
-
-def report_statistics():
-    # number of mapped reads...duplicates,..insertion count..
-    pass

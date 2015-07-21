@@ -45,6 +45,8 @@ if __name__ == '__main__':
                         help='Control file with insertions for fisher-test.')
     parser.add_argument('--refseq_file', dest='refseq_file', required=False,
                         help='Refseq file with start & end position of gene.')
+    parser.add_argument('--ins_annotation', dest='ins_annotation',
+                        required=False, help='gtf file for insertion annotation')
     parser.add_argument('--num_cpus', dest='num_cpus', required=False,
                         help='Number of cpus.')
 
@@ -75,13 +77,17 @@ if __name__ == '__main__':
         args.refseq_file = home_dir + "All_genes_data_ct_srt_sed.txt"
     if not args.num_cpus:
         args.num_cpus = "4"
+    if not args.ins_annotation:
+        args.ins_annotation = home_dir + "ucsc_hg19_ensembl_73_genes_parsed.txt"
 
     # set project directory
     project_dir = args.output_dir + "/" + args.project_name
 
     # create directory structure
     ts.create_output_dir(args.output_dir, args.project_name)
-    #TODO: create /img and /statistics
+    sub_dir = args.output_dir + "/" + args.project_name
+    ts.create_output_dir(sub_dir, "img")
+    ts.create_output_dir(sub_dir, "statistics")
 
     # create log file
     logfile_name = args.output_dir + "/" + args.project_name + "/" \
@@ -498,6 +504,29 @@ if __name__ == '__main__':
 
         status = ts.run_cmd(
             message=stdout_msg['bubble'],
+            command=cmd,
+            debug=args.debug
+        )
+
+        insertion_data = project_dir + "/" \
+                            + args.project_name + "." \
+                            + file_ext['sam2bed']
+
+        cmd = pf.plot_insertions(
+            annotFilePath=args.ins_annotation,
+            infile=sample_file,
+            insertions=insertion_data,
+            outdir=sub_dir + "/" + "img",
+            fdrCutoff=0.05,
+            screenName=args.project_name,
+            plotOption="png",
+            plotWidth=3000,
+            plotHeight=2400,
+            minDistFactor=10
+        )
+
+        status = ts.run_cmd(
+            message=stdout_msg['plot_ins'],
             command=cmd,
             debug=args.debug
         )

@@ -19,3 +19,4 @@ bubble:         Plot insertions in bubble plot.
 browser:        Generate browser track to view insertions sites.
 statistics:     Generate summary statistic.
 bam2bai:        Index BAM file.
+plot_ins:       Plot insertions for each gene.
