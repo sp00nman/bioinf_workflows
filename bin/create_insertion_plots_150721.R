@@ -7,6 +7,7 @@ library(grid)
 create_insertion_plots <- function(annotFilePath, hitFilePath, insFilePath, outDir, fdrCutoff, minDistFactor, screenName, plotOption, plotWidth, plotHeight)
 {  # defaults
    padjIndex <- 7  # in hits table
+   geneIndex <- 1  # in hits table
    
    # create output folders if not existing
    if(!file.exists(outDir))
