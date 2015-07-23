@@ -84,6 +84,8 @@ optional arguments:
                         Control file with insertions for fisher-test.
   --refseq_file REFSEQ_FILE
                         Refseq file with start & end position of gene.
+  --ins_annotation INS_ANNOTATION
+                        GTF file for insertion annotation.
   --num_cpus NUM_CPUS   Number of cpus.
 
 ```
@@ -229,10 +231,15 @@ positives for a threshold value.
 
 ### [plot]
 
+#### bubble plot
 Traditionally, genetrap screens were plotted as gene names (alphabetical order) on the x-axis vs
 q-values on the y-axis. Using R library(ggplot2) genetrap screens can now be displayed with
 their chromosomal position of each gene on the x-axis and the corresponding -log10 transformed
-q-value on the log scale y-axis.
+q-value on the log scale y-axis. 
+
+#### insertion plots
+Insertion plots are generated with R (script kindly provided by Doris Chen) for each transcript separately. PNG images are saved to /img subdirectory.
+
 
 ### [browser]
 
