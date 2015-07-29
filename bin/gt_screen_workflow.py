@@ -23,6 +23,8 @@ if __name__ == '__main__':
                              '[all,(bam2fastq),alignment,filter,sort,duplicates,'
                              'index,insertions,annotate,count,fisher,plot,'
                              'browser,statistics]')
+
+    # directory and sample input
     parser.add_argument('--project_name', dest='project_name', required=False,
                         help='Name of project directory.')
     parser.add_argument('--output_dir', dest='output_dir', required=False,
@@ -31,6 +33,8 @@ if __name__ == '__main__':
                         help='Directory of sequence files.')
     parser.add_argument('--sample_file', dest='sample_file', required=False,
                         help='Input filename.')
+
+    # genome path & annotation
     parser.add_argument('--genomes', dest='genomes', required=False,
                         help='Path to genome.')
     parser.add_argument('--genome_version', dest='genome_version', required=False,
@@ -43,10 +47,18 @@ if __name__ == '__main__':
                              'intron /path/to/annotation_2.txt)')
     parser.add_argument('--control_file', dest='control_file', required=False,
                         help='Control file with insertions for fisher-test.')
+
+    # resources & parameters for plotting
     parser.add_argument('--refseq_file', dest='refseq_file', required=False,
                         help='Refseq file with start & end position of gene.')
     parser.add_argument('--ins_annotation', dest='ins_annotation',
                         required=False, help='gtf file for insertion annotation')
+    parser.add_argument('--plot_option', dest='plotOption', required=False,
+                        help='[png|pdf]')
+    parser.add_argument('--fdr_cutoff', dest='fdrCutoff', required=False,
+                        help='FDR cutoff for plotting')
+
+    # hardware related requirements
     parser.add_argument('--num_cpus', dest='num_cpus', required=False,
                         help='Number of cpus.')
 
@@ -79,6 +91,10 @@ if __name__ == '__main__':
         args.num_cpus = "4"
     if not args.ins_annotation:
         args.ins_annotation = home_dir + "ucsc_hg19_ensembl_73_genes_parsed.txt"
+    if not args.plot_option:
+        args.plot_option = "pdf"
+    if not args.plot_option:
+        args.fdr_cutoff = "0.05"
 
     # set project directory
     project_dir = args.output_dir + "/" + args.project_name
@@ -488,7 +504,14 @@ if __name__ == '__main__':
         )
 
     if re.search(r"all|plot", args.stage):
-    
+
+        if args.plot_option is "pdf":
+            plotWidth = 14
+            plotHeight = 10
+        else:  # for png
+            plotWidth = 3000
+            plotHeight = 2400
+
         sample_file = project_dir + "/" \
                       + args.project_name + "." \
                       + file_ext['fisher']
@@ -509,19 +532,19 @@ if __name__ == '__main__':
         )
 
         insertion_data = project_dir + "/" \
-                            + args.project_name + "." \
-                            + file_ext['sam2bed']
+                         + args.project_name + "." \
+                         + file_ext['sam2bed']
 
         cmd = pf.plot_insertions(
             annotFilePath=args.ins_annotation,
             infile=sample_file,
             insertions=insertion_data,
             outdir=sub_dir + "/" + "img",
-            fdrCutoff=0.05,
+            fdrCutoff=args.fdr_cutoff,
             screenName=args.project_name,
-            plotOption="png",
-            plotWidth=3000,
-            plotHeight=2400,
+            plotOption=args.plot_option,
+            plotWidth=plotWidth,
+            plotHeight=plotHeight,
             minDistFactor=10
         )
 
