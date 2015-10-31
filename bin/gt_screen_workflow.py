@@ -3,13 +3,19 @@
 import argparse
 import re
 import logging
-from sys import exit
-from os import (system, remove, mkdir)
-from os.path import (split, splitext, join, exists)
 import os
-import runnables as rb
-import process_files as pf
-from utils import tools as ts
+
+from bioinf_workflows.runnables import bamutils_runnables as bamutils
+from bioinf_workflows.runnables import bedtools_runnable as bedtools
+from bioinf_workflows.runnables import samtools_runnables as samtools
+from bioinf_workflows.runnables import picard_runnables as picard
+from bioinf_workflows.runnables import bowtie_runnables as bowtie
+from bioinf_workflows.runnables import R_runnables as rexe
+from bioinf_workflows.process_screens import count_insertions
+from bioinf_workflows.process_screens import fisher_test
+from bioinf_workflows.process_screens import browser_track
+from bioinf_workflows.utils import process_files as pf
+from bioinf_workflows.utils import tools as ts
 
 
 if __name__ == '__main__':
@@ -53,9 +59,9 @@ if __name__ == '__main__':
                         help='Refseq file with start & end position of gene.')
     parser.add_argument('--ins_annotation', dest='ins_annotation',
                         required=False, help='gtf file for insertion annotation')
-    parser.add_argument('--plot_option', dest='plotOption', required=False,
+    parser.add_argument('--plot_option', dest='plot_option', required=False,
                         help='[png|pdf]')
-    parser.add_argument('--fdr_cutoff', dest='fdrCutoff', required=False,
+    parser.add_argument('--fdr_cutoff', dest='fdr_cutoff', required=False,
                         help='FDR cutoff for plotting')
 
     # hardware related requirements
@@ -93,7 +99,7 @@ if __name__ == '__main__':
         args.ins_annotation = home_dir + "ucsc_hg19_ensembl_73_genes_parsed.txt"
     if not args.plot_option:
         args.plot_option = "pdf"
-    if not args.plot_option:
+    if not args.fdr_cutoff:
         args.fdr_cutoff = "0.05"
 
     # set project directory
@@ -146,7 +152,7 @@ if __name__ == '__main__':
                        + args.project_name + "." \
                        + file_ext['bam2fastq']
 
-        cmd = rb.bam2fastq(
+        cmd = picard.bam2fastq(
             bamfile=sample_file,
             fastqfile=out_filename
         )
@@ -164,7 +170,7 @@ if __name__ == '__main__':
                        + args.project_name + "." \
                        + file_ext['alignment']
 
-        cmd = rb.alignment(
+        cmd = bowtie.alignment(
             genome_path=args.genomes + "/"
                         + args.genome_version,
             fastqfile=sample_file,
@@ -180,7 +186,6 @@ if __name__ == '__main__':
             command=cmd,
             debug=args.debug
         )
-        
 
     if re.search(r"all|filter", args.stage):
         
@@ -192,7 +197,7 @@ if __name__ == '__main__':
                        + args.project_name + "." \
                        + file_ext['sam2bam']
 
-        cmd = rb.sam2bam(
+        cmd = samtools.sam2bam(
             insamfile=sample_file,
             outbamfile=project_dir + "/"
                     + args.project_name + "."
@@ -209,7 +214,7 @@ if __name__ == '__main__':
                        + args.project_name + "." \
                        + file_ext['filter']
 
-        cmd = rb.filter_reads(
+        cmd = samtools.filter_reads(
             inbamfile=out_filename,
             outbamfile=filter_filename,
             mapq="20",
@@ -225,10 +230,10 @@ if __name__ == '__main__':
     if re.search(r"all|duplicates", args.stage):
         
         sample_file = project_dir + "/" \
-                        + args.project_name + "." \
-                        + file_ext['filter']
+                      + args.project_name + "." \
+                      + file_ext['filter']
 
-        cmd = rb.sort_bam(
+        cmd = picard.sort_bam(
             inbamfile=sample_file,
             outbamfile=project_dir + "/"
                        + args.project_name + "."
@@ -246,7 +251,7 @@ if __name__ == '__main__':
                    + args.project_name + "." \
                    + file_ext['sort_bam']
 
-        cmd = rb.reorder_sam(
+        cmd = picard.reorder_sam(
             inbamfile=sort_bam,
             outbamfile=project_dir + "/"
                        + args.project_name + "."
@@ -265,7 +270,7 @@ if __name__ == '__main__':
                     + args.project_name + "." \
                     + file_ext['reorder_sam']
 
-        cmd = rb.remove_duplicates(
+        cmd = picard.remove_duplicates(
             inbamfile=reord_bam,
             outbamfile=project_dir + "/"
                         + args.project_name + "."
@@ -287,7 +292,7 @@ if __name__ == '__main__':
                         + args.project_name + "." \
                         + file_ext['duplicates']
 
-        cmd = rb.index_bam(
+        cmd = samtools.index_bam(
             inbamfile=sample_file
         )
 
@@ -303,7 +308,7 @@ if __name__ == '__main__':
                         + args.project_name + "." \
                         + file_ext['duplicates']
         
-        cmd = rb.bam2sam(
+        cmd = samtools.bam2sam(
             inbamfile=sample_file,
             outsamfile=project_dir + "/"
                        + args.project_name + "."
@@ -323,9 +328,9 @@ if __name__ == '__main__':
         sam_file_name = project_dir + "/" \
                         + args.project_name + "." \
                         + file_ext['insertions']
-        try:
-            sam_out = open(sam_file_name, 'w')
 
+        sam_out = open(sam_file_name, 'w')
+        try:
             sam_out = pf.remove2bpinsertions(
                 insamfile=sample_file,
                 sam_out=sam_out
@@ -343,7 +348,7 @@ if __name__ == '__main__':
                       + args.project_name + "." \
                       + file_ext['insertions']
 
-        cmd = rb.get_header(
+        cmd = samtools.get_header(
             inbamfile=project_dir + "/"
                         + args.project_name + "."
                         + file_ext['sam2bam'],
@@ -358,7 +363,7 @@ if __name__ == '__main__':
             debug=args.debug
         )
 
-        cmd = rb.concatenate_files(
+        cmd = ts.concatenate_files(
             file_1=project_dir + "/"
                    + args.project_name + "."
                    + file_ext['get_header'],
@@ -378,7 +383,7 @@ if __name__ == '__main__':
                       + args.project_name + "." \
                       + file_ext['cut_header']
 
-        cmd = rb.sam2bam(
+        cmd = samtools.sam2bam(
             insamfile=sample_file,
             outbamfile=project_dir + "/"
                        + args.project_name + "."
@@ -395,7 +400,7 @@ if __name__ == '__main__':
                       + args.project_name + "." \
                       + file_ext['header2bam']
 
-        cmd = rb.sam2bed(
+        cmd = bedtools.sam2bed(
             insamfile=sample_file,
             outbedfile=project_dir + "/"
                         + args.project_name + "."
@@ -428,17 +433,19 @@ if __name__ == '__main__':
                       + file_ext['fix_pos']
         
         bed_files = ts.parse_intersectfile(args.annotation)
-        
+        # loop through bed files
         for bed in bed_files:
-            annotation_name = bed[0]
-            annotation_file = bed[1]
+            # annotation_method is only needed for count
+            annotation_method = bed[0]
+            annotation_name = bed[1]
+            annotation_file = bed[2]
 
             output_file = project_dir + "/" \
                           + args.project_name + "." \
                           + file_ext['fix_pos'] + "." \
                           + annotation_name + ".bed"
 
-            cmd = rb.intersectbed(
+            cmd = bedtools.intersectbed(
                 inbedfile=sample_file,
                 annotation_file=annotation_file,
                 outbedfile=output_file
@@ -452,56 +459,47 @@ if __name__ == '__main__':
 
     if re.search(r"all|count", args.stage):
 
-        #TODO: make this more flexible
-        exon = project_dir + "/" \
-               + args.project_name + "." \
-               + file_ext['fix_pos'] + "." \
-               + "exon" + "." + "bed"
-        intron = project_dir + "/" \
-                 + args.project_name + "." \
-                 + file_ext['fix_pos'] + "." \
-                 + "intron" + "." + "bed"
-        output_file = project_dir + "/" \
-                      + args.project_name + "." \
-                      + file_ext['count']
+        bed_files = ts.parse_intersectfile(args.annotation)
+        # loop through bed files,
+        for bed in bed_files:
+            # annotation_method is only needed for count
+            annotation_method = bed[0]
+            annotation_name = bed[1]
 
-        cmd = pf.count_insertions(
-            exonfile=exon,
-            intronfile=intron,
-            outcountfile=output_file,
-            dn=dn
-        )
-
-        status = ts.run_cmd(
-            message=stdout_msg['count'],
-            command=cmd,
-            debug=args.debug
-        )
+            # count insertions
+            count_insertions.count_insertions_pythonic(
+                inbedfile=project_dir + "/"
+                          + args.project_name + "."
+                          + file_ext['fix_pos'] + "."
+                          + annotation_name + ".bed",
+                outfile=project_dir + "/"
+                        + args.project_name + "."
+                        + annotation_name + "."
+                        + file_ext['count'],
+                annotation_method=annotation_method,
+            )
 
     if re.search(r"all|fisher", args.stage):
-        
-        sample_file = project_dir + "/" \
+
+        bed_files = ts.parse_intersectfile(args.annotation)
+        # loop through bed files,
+        for bed in bed_files:
+            annotation_name = bed[1]
+            control_file = bed[3]
+
+            cmd = fisher_test.analysis_workflow(
+                infile=sample_file,
+                control_file=args.control_file,
+                outfile=project_dir + "/" \
                         + args.project_name + "." \
-                        + file_ext['count']
+                        + file_ext['fisher']
+            )
 
-        output_file = project_dir + "/" \
-                      + args.project_name + "." \
-                      + file_ext['fisher']
-
-        cmd = pf.fisher_test(
-            infile=sample_file,
-            control_file=args.control_file,
-            outfile=project_dir + "/" \
-                    + args.project_name + "." \
-                    + file_ext['fisher'],
-            dn=dn
-        )
-
-        status = ts.run_cmd(
-            message=stdout_msg['fisher'],
-            command=cmd,
-            debug=args.debug
-        )
+            status = ts.run_cmd(
+                message=stdout_msg['fisher'],
+                command=cmd,
+                debug=args.debug
+            )
 
     if re.search(r"all|plot", args.stage):
 
@@ -516,7 +514,7 @@ if __name__ == '__main__':
                       + args.project_name + "." \
                       + file_ext['fisher']
 
-        cmd = pf.plot_results(
+        cmd = rexe.plot_results(
             infile=sample_file,
             refseq_file=args.refseq_file,
             outfile=project_dir + "/" \
@@ -535,7 +533,7 @@ if __name__ == '__main__':
                          + args.project_name + "." \
                          + file_ext['sam2bed']
 
-        cmd = pf.plot_insertions(
+        cmd = rexe.plot_insertions(
             annotFilePath=args.ins_annotation,
             infile=sample_file,
             insertions=insertion_data,
@@ -545,7 +543,8 @@ if __name__ == '__main__':
             plotOption=args.plot_option,
             plotWidth=plotWidth,
             plotHeight=plotHeight,
-            minDistFactor=10
+            minDistFactor=10,
+            dn=dn
         )
 
         status = ts.run_cmd(
@@ -560,9 +559,9 @@ if __name__ == '__main__':
 
         for bed in bed_files:
 
-            annotation_name = bed[0]
+            annotation_name = bed[1]
             
-            pf.browser_track(
+            browser_track.create_track(
                 input_file=project_dir + "/" \
                            + args.project_name + "." \
                            + file_ext['fix_pos'] + "." \
