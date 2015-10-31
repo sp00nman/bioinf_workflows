@@ -1,6 +1,6 @@
 import pandas as pd
-import os
-from utils import tools as ts
+
+from bioinf_workflows.bioinf_workflows.utils import tools as ts
 
 
 def remove2bpinsertions(insamfile,
