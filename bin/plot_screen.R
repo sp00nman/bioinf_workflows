@@ -4,12 +4,16 @@
 
 read.screen <- function(filename, header=TRUE) {
   gentrap.Pval <- read.table(filename, header=header, sep="\t")
-  if (!header){
-      screen.header <- c("genesymbol", "num_insertions_screen", 
-                         "no_insertions_screen", "num_insertions_control", 
-                         "no_insertions_control", "pval")
-      colnames(gentrap.Pval) = screen.header
-  }
+  gentrap.Pval <- gentrap.Pval[,1:7]
+  screen.header <- c("genesymbol",
+                     "num_insertions_screen",
+                     "no_insertions_screen",
+                     "num_insertions_control",
+                     "no_insertions_control",
+                     "pval",
+                     "adj_pval")
+  colnames(gentrap.Pval) = screen.header
+  gentrap.Pval$adj_pval <- as.numeric(as.character(gentrap.Pval$adj_pval))
   return(gentrap.Pval)
 }
 
@@ -200,6 +204,7 @@ signif_genes <- subset.genes(screen,
                              num.genes=NULL, 
                              siglevel=0.05)
 breaksforplot <- optimize_limits(screen$adj_pval)
+print(breaksforplot)
 g_obj <- create.bubble.plot(screen, signif_genes, 
                             upper.limit=0.05,
                             lower.limit=0.05,
