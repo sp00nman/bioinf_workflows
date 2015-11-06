@@ -432,7 +432,8 @@ if __name__ == '__main__':
                       + args.project_name + "." \
                       + file_ext['fix_pos']
         
-        bed_files = ts.parse_intersectfile(args.annotation)
+        bed_files = ts.parse_intersectfile(
+            args.annotation)
         # loop through bed files
         for bed in bed_files:
             # annotation_method is only needed for count
@@ -459,7 +460,8 @@ if __name__ == '__main__':
 
     if re.search(r"all|count", args.stage):
 
-        bed_files = ts.parse_intersectfile(args.annotation)
+        bed_files = ts.parse_intersectfile(
+            args.annotation)
         # loop through bed files,
         for bed in bed_files:
             # annotation_method is only needed for count
@@ -481,28 +483,30 @@ if __name__ == '__main__':
 
     if re.search(r"all|fisher", args.stage):
 
-        bed_files = ts.parse_intersectfile(args.annotation)
-        # loop through bed files,
+        bed_files = ts.parse_intersectfile(
+            args.annotation)
+
         for bed in bed_files:
+            annotation_method = bed[0]
             annotation_name = bed[1]
             control_file = bed[3]
 
-            cmd = fisher_test.analysis_workflow(
-                infile=sample_file,
-                control_file=args.control_file,
-                outfile=project_dir + "/" \
-                        + args.project_name + "." \
-                        + file_ext['fisher']
-            )
-
-            status = ts.run_cmd(
-                message=stdout_msg['fisher'],
-                command=cmd,
-                debug=args.debug
+            fisher_test.analysis_workflow(
+                infile=project_dir + "/"
+                        + args.project_name + "."
+                        + annotation_name + "."
+                        + file_ext['count'],
+                control_file=control_file,
+                outfile=project_dir + "/"
+                        + args.project_name + "."
+                        + annotation_name + "."
+                        + file_ext['fisher'],
+                annotation_method=annotation_method
             )
 
     if re.search(r"all|plot", args.stage):
 
+        # plotting options for bubble plot
         if args.plot_option is "pdf":
             plotWidth = 14
             plotHeight = 10
@@ -510,24 +514,35 @@ if __name__ == '__main__':
             plotWidth = 3000
             plotHeight = 2400
 
-        sample_file = project_dir + "/" \
-                      + args.project_name + "." \
-                      + file_ext['fisher']
+        bed_files = ts.parse_intersectfile(
+            args.annotation)
 
-        cmd = rexe.plot_results(
-            infile=sample_file,
-            refseq_file=args.refseq_file,
-            outfile=project_dir + "/" \
-                    + args.project_name + "." \
-                    + file_ext['bubble'],
-            dn=dn
-        )
+        for bed in bed_files:
+            annotation_method = bed[0]
+            annotation_name = bed[1]
 
-        status = ts.run_cmd(
-            message=stdout_msg['bubble'],
-            command=cmd,
-            debug=args.debug
-        )
+            if annotation_method == "exon-intron-bed":
+
+                cmd = rexe.plot_results(
+                    infile=project_dir + "/"
+                            + args.project_name + "."
+                            + annotation_name + "."
+                            + file_ext['fisher'],
+                    refseq_file=args.refseq_file,
+                    outfile=project_dir + "/"
+                            + args.project_name + "."
+                            + annotation_name + "."
+                            + file_ext['bubble'],
+                    dn=dn
+                )
+
+                status = ts.run_cmd(
+                    message=stdout_msg['bubble'],
+                    command=cmd,
+                    debug=args.debug
+                )
+            else:
+                print annotation_method + " not supported for plotting"
 
         insertion_data = project_dir + "/" \
                          + args.project_name + "." \
@@ -554,23 +569,22 @@ if __name__ == '__main__':
         )
 
     if re.search(r"all|browser", args.stage):
-
-        bed_files = ts.parse_intersectfile(args.annotation)
-
+        bed_files = ts.parse_intersectfile(
+            args.annotation)
         for bed in bed_files:
-
+            annotation_method = bed[0]
             annotation_name = bed[1]
             
             browser_track.create_track(
-                input_file=project_dir + "/" \
-                           + args.project_name + "." \
-                           + file_ext['fix_pos'] + "." \
-                           + annotation_name + ".bed",
-                output_file=project_dir + "/" \
-                            + args.project_name + "." \
-                            + annotation_name + "." \
+                input_file=project_dir + "/"
+                          + args.project_name + "."
+                          + file_ext['fix_pos'] + "."
+                          + annotation_name + ".bed",
+                output_file=project_dir + "/"
+                            + args.project_name + "."
+                            + annotation_name + "."
                             + file_ext['browser'],
-                annotation_name=annotation_name
+                annotation_method=annotation_method
             )
 
     if re.search(r"all|statistics", args.stage):
