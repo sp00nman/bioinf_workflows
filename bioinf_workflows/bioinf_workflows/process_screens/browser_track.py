@@ -11,7 +11,16 @@ exon_intron_bed_BED_FILE = [
     "id",
     "mapq",
     "strand",
-    "cigar"
+    "cigar",
+    "ens_chr",
+    "ens_start",
+    "ens_end",
+    "ens_annotation",
+    "ens_strand",
+    "ens_ensid",
+    "ens_gsymbol",
+    "ens_transid",
+    "ens_num"
 ]
 
 kbm7_bed_BED_FILE = [
@@ -26,15 +35,19 @@ kbm7_bed_BED_FILE = [
     "e_start",
     "e_end",
     "e_peak_id",
-    "e_score",
-    "e_strand",
+    "e_ensids",
+    "e_gsymbols",
+    "e_annotation",
+    "peak_length",
+    "bp_overlap",
+    "percent_overlap",
     "e_num"
 ]
 
 
 def create_track(input_file,
                  output_file,
-                 annotation_name):
+                 annotation_method):
     """
     Create browser tracks.
     :param input_file: input file
@@ -43,23 +56,40 @@ def create_track(input_file,
     :return: None
     """
 
-    if annotation_name == "exon" or annotation_name == "intron":
-        df = pd.read_csv(input_file, sep="\t",
-                         names=exon_intron_bed_BED_FILE)
-        track_name = df['id'] + "~" + df['ens_gsymbol'] + "~" \
-                     + annotation_name + df['strand'] + "/" + df['ens_strand']
-        reshape = df.loc[:,['chr', 'start', 'end']]
-        reshape['track_name'] = track_name
-        reshape['score'] = 0
-        reshape['strand'] = df['strand']
+    if annotation_method == "exon-intron-bed":
+        colnames = exon_intron_bed_BED_FILE
+        track_genesymbol = 'ens_gsymbol'
+        anno = 'ens_annotation'
+        estrand = 'ens_strand'
 
     else:
-        df = pd.read_csv(input_file, sep="\t",
-                         names=kbm7_bed_BED_FILE)
-        reshape = df.loc[:, ['chr', 'start', 'end',
-                             'e_peak_id', 'e_score',
-                             'strand']]
+        colnames = kbm7_bed_BED_FILE
+        track_genesymbol = 'e_peak_id'
+        anno = 'peak_length'
+        estrand = 'e_num'
 
-    reshape.to_csv(output_file, mode='w', sep="\t", index=0, header=0)
+    df = pd.read_csv(input_file,
+                     sep="\t",
+                     names=colnames)
 
+    track_name = df['id'] \
+                 + "~" \
+                 + df[track_genesymbol]\
+                 + "~" \
+                 + df[anno].apply(str) \
+                 + "~" \
+                 + df['strand'] \
+                 + "/" + df[estrand].apply(str)
+
+    reshape = df.loc[:, ['chr', 'start', 'end']]
+    reshape['track_name'] = track_name
+    reshape['score'] = 0
+    reshape['strand'] = df['strand']
+
+    out_filehandle = open(output_file, 'w')
+    reshape.to_csv(out_filehandle,
+                   sep="\t",
+                   index=0,
+                   header=0)
+    out_filehandle.close()
     return None
