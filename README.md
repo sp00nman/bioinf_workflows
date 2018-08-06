@@ -133,7 +133,7 @@ Annotate insertions. For annotation the genome assembly hg19 (ucsc) combined wit
 
 Annotate insertions within overlapping genes.
 
-![overlapping](http://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png 50x100)
+![overlapping](img/overlapping.png?raw=true 50x100)
 
 | Gene (strand)       | insertions (chr[n]:position |  strand  | intronic/exonic   | group       |
 | :------------------ |:----------------------------|:---------|:------------------|:------------|
