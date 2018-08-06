@@ -45,15 +45,18 @@ Analysis workflow
 ## Usage
 
 ```bash
-usage: gt_screen_workflow.py [-h] [--debug DEBUG] [--stage STAGE]
-                             [--project_name PROJECT_NAME]
-                             [--output_dir OUTPUT_DIR]
-                             [--sequences_dir SEQUENCES_DIR]
-                             [--sample_file SAMPLE_FILE] [--genomes GENOMES]
-                             [--genome_version GENOME_VERSION]
-                             [--bowtie2 BOWTIE2] [--annotation ANNOTATION]
-                             [--control_file CONTROL_FILE]
-                             [--refseq_file REFSEQ_FILE] [--num_cpus NUM_CPUS]
+usage: gt_screen_workflow.py 
+[-h] 
+[--debug DEBUG] 
+[--stage STAGE]
+[--project_name PROJECT_NAME]
+[--output_dir OUTPUT_DIR]
+[--sequences_dir SEQUENCES_DIR]
+[--sample_file SAMPLE_FILE] [--genomes GENOMES]
+[--genome_version GENOME_VERSION]
+[--bowtie2 BOWTIE2] [--annotation ANNOTATION]
+[--control_file CONTROL_FILE]
+[--refseq_file REFSEQ_FILE] [--num_cpus NUM_CPUS]
 
 Genetic screen workflow 0.0.1
 
@@ -246,7 +249,8 @@ Insertion plots are generated with R (script kindly provided by Doris Chen) for 
 The output file with the following extension ${SCREEN}.mutagenic.genome_browser.bed can be visualized with a genome browser. 
 + [UCSC] genome browser (https://genome.ucsc.edu/cgi-bin/hgCustom?hgsid=382317369_ghDqdehOZl31AdcEk6KiErMEyhw8)
 + [Ensembl] genome browser (http://www.ensembl.org/)
-![NF1 insertions](https://github.com/sp00nman/bionf_workflows/blob/master/img/NF1_2.png?raw=true 50x100)
+
+<img src="https://github.com/sp00nman/bionf_workflows/blob/master/img/NF1_2.png" alt="NF1 insertions" width="537" height="158">
 
 ### [statistics]
 
@@ -278,6 +282,3 @@ Not implemented yet.
 | browser        | browser_track.txt                     | browser track files - can be uploaded to genome browser               |
 | statistics     | summary_statistics.txt                | not implemented yet                                                   |
 
-
-###TODOs
-+ gene lists of highly gene-trapped genes (?)
