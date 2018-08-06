@@ -36,10 +36,10 @@ Analysis workflow
 
 ## Software requirements
  
-+ [Picard] (http://picard.sourceforge.net/)
-+ [Bowtie2] (http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
-+ [Bedtools] (https://github.com/arq5x/bedtools2)
-+ [Samtools] (http://samtools.sourceforge.net/)
++ [Picard](http://picard.sourceforge.net/)
++ [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
++ [Bedtools](https://github.com/arq5x/bedtools2)
++ [Samtools](http://samtools.sourceforge.net/)
 + [ngsutils - only for --stage statistics ](http://ngsutils.org/)
 
 ## Usage
@@ -117,11 +117,11 @@ SAM format and SAM flags explained.
 
 ### [sort]
 
-Sort samfile by coordinate with [Picard] (http://picard.sourceforge.net/)
+Sort samfile by coordinate with [Picard](http://picard.sourceforge.net/)
 
 ### [duplicates]
 
-Mark & remove duplicates with [Picard] (http://picard.sourceforge.net/)
+Mark & remove duplicates with [Picard](http://picard.sourceforge.net/)
 
 ### [insertions]
 
@@ -129,11 +129,11 @@ Remove insertions 1 or 2 base pairs away. Insertions that are within close proxi
 
 ### [annotate]
 
-Annotate insertions. For annotation the genome assembly hg19 (ucsc) combined with the ensembl annotation (build 70) is used. The canonical transcripts for each gene is used as reference gene model. The bed file with coordinates for exons and introns is formated using the following [script] (https://gist.github.com/sp00nman/e9adb3c7e207c0de03d7)
+Annotate insertions. For annotation the genome assembly hg19 (ucsc) combined with the ensembl annotation (build 70) is used. The canonical transcripts for each gene is used as reference gene model. The bed file with coordinates for exons and introns is formated using the following [script](https://gist.github.com/sp00nman/e9adb3c7e207c0de03d7)
 
 Annotate insertions within overlapping genes.
 
-![overlapping](https://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png?raw=true 50x100)
+![overlapping](http://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png 50x100)
 
 | Gene (strand)       | insertions (chr[n]:position |  strand  | intronic/exonic   | group       |
 | :------------------ |:----------------------------|:---------|:------------------|:------------|
