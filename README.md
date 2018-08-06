@@ -133,7 +133,7 @@ Annotate insertions. For annotation the genome assembly hg19 (ucsc) combined wit
 
 Annotate insertions within overlapping genes.
 
-![overlapping](img/overlapping.png?raw=true 50x100)
+<img src="https://github.com/sp00nman/bionf_workflows/blob/master/img/overlapping.png" alt="overlapping" width="460" height="167">
 
 | Gene (strand)       | insertions (chr[n]:position |  strand  | intronic/exonic   | group       |
 | :------------------ |:----------------------------|:---------|:------------------|:------------|
@@ -146,7 +146,7 @@ be determined to identify the disrupted gene.....Of these, 321 clones contained 
 in a coding exon, directly disrupting the respective open reading frame. Insertions in introns are predictive
 to be mutagenic if the gene-trap cassette is inserted in the sense orientation." T. Bürckstümmer et al., "a reversible gene trap collection empowers haploid genetics in human cells", Nature Methods, 2013.
 
-![grouping](https://github.com/sp00nman/bionf_workflows/blob/master/img/grouping.png?raw=true 50x100)
+<img src="https://github.com/sp00nman/bionf_workflows/blob/master/img/grouping.png" alt="grouping" width="524" height="280">
 
 | Gene A (chr[n]:position)   | strand(*)  | intronic/exonic   | group         |
 | :------------------------- |:--------|:------------------|:--------------|
